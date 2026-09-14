@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  body { margin:0; background:#e9e6e1; font-family:'Work Sans', Helvetica, sans-serif; color:#231f20; -webkit-font-smoothing:antialiased; }
+  a { color:#0b6fb4; text-decoration:none; }
+  a:hover { color:#0a3d63; text-decoration:underline; }
+
+  @keyframes slatA { 0% { clip-path:inset(100% 0 0 0); } 14% { clip-path:inset(0 0 0 0); } 100% { clip-path:inset(0 0 0 0); } }
+  @keyframes slatB { 0% { clip-path:inset(0 0 100% 0); } 14% { clip-path:inset(0 0 0 0); } 100% { clip-path:inset(0 0 0 0); } }
+
+  @keyframes driftA { 0% { transform:scale(1.05) translate3d(0,0,0); } 100% { transform:scale(1.19) translate3d(-1.8%,-1.2%,0); } }
+  @keyframes driftB { 0% { transform:scale(1.19) translate3d(1.6%,1.1%,0); } 100% { transform:scale(1.05) translate3d(0,0,0); } }
+
+  @keyframes nameA { 0% { opacity:1; clip-path:inset(0 0 100% 0); transform:translateY(46px); letter-spacing:.015em; } 19% { opacity:1; clip-path:inset(-28% 0 -28% 0); transform:translateY(0); letter-spacing:-.03em; } 86% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-70px); } }
+  @keyframes nameB { 0% { opacity:1; clip-path:inset(0 0 100% 0); transform:translateY(46px); letter-spacing:.015em; } 19% { opacity:1; clip-path:inset(-28% 0 -28% 0); transform:translateY(0); letter-spacing:-.03em; } 86% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-70px); } }
+
+  @keyframes ruleA { 0% { transform:scaleX(0); } 13% { transform:scaleX(1); } 88% { transform:scaleX(1); } 100% { transform:scaleX(0); } }
+  @keyframes ruleB { 0% { transform:scaleX(0); } 13% { transform:scaleX(1); } 88% { transform:scaleX(1); } 100% { transform:scaleX(0); } }
+
+  @keyframes upA { 0% { opacity:0; transform:translateY(32px); } 21% { opacity:1; transform:translateY(0); } 86% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-26px); } }
+  @keyframes upB { 0% { opacity:0; transform:translateY(32px); } 21% { opacity:1; transform:translateY(0); } 86% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-26px); } }
+
+  @keyframes qrA { 0% { opacity:0; transform:translateY(30px) scale(.96); } 23% { opacity:1; transform:translateY(0) scale(1); } 87% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(20px) scale(.98); } }
+  @keyframes qrB { 0% { opacity:0; transform:translateY(30px) scale(.96); } 23% { opacity:1; transform:translateY(0) scale(1); } 87% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(20px) scale(.98); } }
+
+  @keyframes thumbA { 0% { opacity:0; transform:translateY(16px); } 26% { opacity:1; transform:translateY(0); } 100% { opacity:1; transform:translateY(0); } }
+  @keyframes thumbB { 0% { opacity:0; transform:translateY(16px); } 26% { opacity:1; transform:translateY(0); } 100% { opacity:1; transform:translateY(0); } }
+
+  @keyframes tickA { 0% { transform:scaleX(0); } 100% { transform:scaleX(1); } }
+  @keyframes tickB { 0% { transform:scaleX(0); } 100% { transform:scaleX(1); } }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:56px; padding:64px">
+  <header style="display:flex; flex-direction:column; gap:12px; max-width:900px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:46px; width:auto; display:block" />
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#0b6fb4">Turn 6 · Motion · the wall in movement</span>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.02em">One beat, choreographed</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#3d3937; max-width:68ch; text-wrap:pretty">Every cat gets a single 6.5-second beat with five moves inside it: a six-slat photo wipe, a continuous Ken Burns drift, the name unmasking upward as its letter-spacing tightens, a blue rule sweeping open, and a staggered exit that clears the frame before the next slat wipe lands. Use the controls to slow it to a quarter speed and watch the stagger, or switch motion off to see the reduced-motion wall.</p>
+  </header>
+
+  <div id="6a" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">6a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">CAROUSEL · 1920×1080 · live loop</span>
+    </div>
+
+    <div style="width:1920px; height:1080px; position:relative; overflow:hidden; background:#0d0f11; box-shadow:0 40px 90px -30px rgba(11,63,99,.55)">
+      <div style="position:absolute; inset:-4%; background-size:cover; background-position:center; background-image:{{ prevPhoto }}; transform:{{ prevTransform }}"></div>
+
+      <div style="position:absolute; inset:-4%; will-change:transform; animation:{{ driftAnim }}; animation-play-state:{{ playState }}">
+        <div style="position:absolute; inset:0; display:flex">
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:0% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:0ms"></div>
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:20% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:55ms"></div>
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:40% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:110ms"></div>
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:60% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:165ms"></div>
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:80% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:220ms"></div>
+          <div style="flex:1; background-image:{{ curPhoto }}; background-size:600% auto; background-position:100% center; will-change:clip-path; animation:{{ slatAnim }}; animation-play-state:{{ playState }}; animation-delay:275ms"></div>
+        </div>
+      </div>
+
+      <div style="position:absolute; inset:0; background:linear-gradient(78deg, rgba(8,12,16,.94) 0%, rgba(8,12,16,.72) 34%, rgba(8,12,16,.12) 66%, rgba(8,12,16,.42) 100%)"></div>
+      <div style="position:absolute; inset:0; background:radial-gradient(120% 90% at 78% 18%, rgba(11,111,180,.28) 0%, rgba(11,111,180,0) 58%)"></div>
+
+      <div style="position:absolute; inset:64px 96px; display:flex; flex-direction:column">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:20px">
+            <img src="media/logo-transparent.png" alt="South County Cats" style="height:76px; width:auto; display:block; filter:brightness(0) invert(1)" />
+            <div style="width:1px; height:56px; background:rgba(255,255,255,.28)"></div>
+            <div style="display:flex; flex-direction:column; gap:4px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:17px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Adoptable now</span>
+              <span style="font-size:22px; color:rgba(255,255,255,.72)">Ask any volunteer to meet one</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:19px; letter-spacing:.16em; color:rgba(255,255,255,.6)">{{ counter }}</span>
+            <div style="display:flex; gap:8px; align-items:center">
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px; overflow:hidden"><div style="height:100%; background:#8fd0ff; transform-origin:left; animation:{{ tickAnim }}; animation-play-state:{{ playState }}"></div></div>
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1; display:flex; align-items:flex-end; padding-bottom:8px">
+          <div style="max-width:1080px; display:flex; flex-direction:column; gap:26px">
+            <div style="display:flex; align-items:center; gap:18px">
+              <div style="width:80px; height:4px; background:#0b6fb4; transform-origin:left; animation:{{ ruleAnim }}; animation-play-state:{{ playState }}"></div>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:20px; letter-spacing:.24em; text-transform:uppercase; color:#8fd0ff; animation:{{ upAnim }}; animation-play-state:{{ playState }}; animation-delay:40ms">{{ tag }}</span>
+            </div>
+            <div style="font-family:'Instrument Serif',serif; font-size:190px; line-height:.86; letter-spacing:-.03em; color:#fff; text-shadow:0 24px 60px rgba(0,0,0,.4); will-change:clip-path,transform; animation:{{ nameAnim }}; animation-play-state:{{ playState }}; animation-delay:90ms">{{ name }}</div>
+            <div style="font-size:46px; line-height:1.3; color:rgba(255,255,255,.94); max-width:900px; text-wrap:pretty; animation:{{ upAnim }}; animation-play-state:{{ playState }}; animation-delay:210ms">{{ line }}</div>
+            <div style="display:flex; gap:14px; margin-top:10px">
+              <div style="border:2px solid rgba(255,255,255,.45); border-radius:99px; padding:16px 30px; display:flex; flex-direction:column; gap:2px; animation:{{ upAnim }}; animation-play-state:{{ playState }}; animation-delay:300ms"><span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.62)">Age</span><span style="font-size:28px; color:#fff">{{ age }}</span></div>
+              <div style="border:2px solid rgba(255,255,255,.45); border-radius:99px; padding:16px 30px; display:flex; flex-direction:column; gap:2px; animation:{{ upAnim }}; animation-play-state:{{ playState }}; animation-delay:360ms"><span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.62)">Good with</span><span style="font-size:28px; color:#fff">{{ goodWith }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:40px">
+          <div style="display:flex; gap:18px; align-items:center">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.5)">Up next</span>
+            <div style="display:flex; gap:14px">
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next1 }}; border:2px solid rgba(255,255,255,.5); animation:{{ thumbAnim }}; animation-play-state:{{ playState }}; animation-delay:120ms"></div>
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next2 }}; opacity:.6; animation:{{ thumbAnim }}; animation-play-state:{{ playState }}; animation-delay:180ms"></div>
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next3 }}; opacity:.35; animation:{{ thumbAnim }}; animation-play-state:{{ playState }}; animation-delay:240ms"></div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-end; gap:26px">
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; padding-bottom:6px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:rgba(255,255,255,.5)">{{ mediaLabel }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:rgba(255,255,255,.5)">Loop {{ cycleLabel }}</span>
+            </div>
+            <div style="background:#fff; border-radius:14px; padding:18px; display:flex; align-items:center; gap:20px; box-shadow:0 18px 46px -14px rgba(0,0,0,.5); animation:{{ qrAnim }}; animation-play-state:{{ playState }}; animation-delay:260ms">
+              <div ref="{{ qrRef }}" role="img" aria-label="Scan for this cat's profile" style="width:150px; height:150px; background:#fff; background-size:contain; background-repeat:no-repeat; background-position:center; image-rendering:pixelated"></div>
+              <div style="display:flex; flex-direction:column; gap:8px; max-width:250px">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Scan to keep</span>
+                <span style="font-family:'Instrument Serif',serif; font-size:34px; line-height:1.05; color:#231f20">{{ name }}'s page</span>
+                <span style="font-size:16px; line-height:1.35; color:#57534d">Photos, full story, and the application form</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:1920px; box-sizing:border-box; background:#fff; padding:18px 24px; display:flex; align-items:center; gap:18px; flex-wrap:wrap">
+      <span onClick="{{ togglePlay }}" style="background:#0b6fb4; color:#fff; border-radius:4px; padding:11px 22px; font-size:15px; font-weight:500; cursor:pointer; min-width:104px; text-align:center" style-hover="background:#0a3d63">{{ playLabel }}</span>
+      <span onClick="{{ prev }}" style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:10px 18px; font-size:14.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">← previous</span>
+      <span onClick="{{ next }}" style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:10px 18px; font-size:14.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">next →</span>
+
+      <div style="display:flex; gap:4px; background:#f6f4f0; border-radius:4px; padding:3px">
+        <span onClick="{{ sp1 }}" style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:9px 15px; border-radius:3px; cursor:pointer; background:{{ s1bg }}; color:{{ s1ink }}">1×</span>
+        <span onClick="{{ sp05 }}" style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:9px 15px; border-radius:3px; cursor:pointer; background:{{ s05bg }}; color:{{ s05ink }}">0.5×</span>
+        <span onClick="{{ sp025 }}" style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:9px 15px; border-radius:3px; cursor:pointer; background:{{ s025bg }}; color:{{ s025ink }}">0.25×</span>
+      </div>
+
+      <div onClick="{{ toggleMotion }}" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+        <span style="width:38px; height:22px; border-radius:99px; background:{{ motionTrack }}; position:relative; flex:none"><span style="position:absolute; top:3px; left:{{ motionKnob }}; width:16px; height:16px; border-radius:50%; background:#fff"></span></span>
+        <span style="font-size:14.5px">Motion</span>
+      </div>
+
+      <div style="flex:1"></div>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.06em; color:#6f6a63">{{ readout }}</span>
+    </div>
+
+    <div style="width:1920px; display:grid; grid-template-columns:repeat(5,1fr); gap:16px">
+      <div style="background:#fff; padding:20px; display:flex; flex-direction:column; gap:9px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">0.00 – 0.90s</span>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.08">Slat wipe</span>
+        <span style="font-size:14px; line-height:1.6; color:#3d3937">Six vertical slats of the new photo rise over the old one, 55ms apart, alternating up and down each beat so the loop never feels mechanical.</span>
+      </div>
+      <div style="background:#fff; padding:20px; display:flex; flex-direction:column; gap:9px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">whole beat</span>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.08">Drift</span>
+        <span style="font-size:14px; line-height:1.6; color:#3d3937">1.05 → 1.19 scale with a 1.8% pan, direction flipped per beat so consecutive cats drift opposite ways. Linear, never eased — eased zoom reads as a wobble at this size.</span>
+      </div>
+      <div style="background:#fff; padding:20px; display:flex; flex-direction:column; gap:9px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">0.09 – 1.30s</span>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.08">Name unmask</span>
+        <span style="font-size:14px; line-height:1.6; color:#3d3937">The name is revealed by a rising clip, not a fade, while letter-spacing tightens .015em → −.03em. It arrives instead of appearing.</span>
+      </div>
+      <div style="background:#fff; padding:20px; display:flex; flex-direction:column; gap:9px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">0.04 – 1.60s</span>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.08">Rule &amp; stagger</span>
+        <span style="font-size:14px; line-height:1.6; color:#3d3937">The blue rule sweeps open from the left; tag, line, then the three facts follow 60ms apart. One easing everywhere: cubic-bezier(.16,.84,.28,1).</span>
+      </div>
+      <div style="background:#fff; padding:20px; display:flex; flex-direction:column; gap:9px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">5.60 – 6.50s</span>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.08">Clear out</span>
+        <span style="font-size:14px; line-height:1.6; color:#3d3937">Text leaves upward in the same order it arrived and the frame is empty for ~120ms before the next wipe — the pause is what makes the next name land.</span>
+      </div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.8; color:#6f6a63; max-width:1920px">Motion off is not a downgrade: the same composition holds still, the photo is the cover frame, and paging is manual. Nothing in the layout depends on movement to be legible. Photos here are the three Charlotte shots standing in for the rest of the roster.</div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;hold&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:6.5,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Beat&quot;}}">
+class Component extends DCLogic {
+  state = {
+    step: 0,
+    playing: true,
+    speed: 1,
+    motion: true,
+    elapsed: 0
+  };
+
+  qrRef = React.createRef();
+
+  cats() {
+    return [
+      { name: 'Charlotte', slug: 'charlotte', tag: 'Explorer', age: '3 years', goodWith: 'Cats, kids',
+        line: 'Never gives up, and will loudly ask for pets.',
+        media: [
+          { url: 'media/charlotte-1.jpg', label: 'Photo 1 of 3' },
+          { url: 'media/charlotte-3.jpg', label: 'Photo 3 of 3' },
+          { url: 'media/charlotte-2.jpg', label: 'Clip · rain-day stakeout' }
+        ] },
+      { name: 'Mango', slug: 'mango', tag: 'Lap specialist', age: '2 years', goodWith: 'Everyone',
+        line: 'Will find the one warm spot in any room and hold it.',
+        media: [
+          { url: 'media/charlotte-2.jpg', label: 'Photo 1 of 2' },
+          { url: 'media/charlotte-1.jpg', label: 'Clip · morning patrol' }
+        ] },
+      { name: 'Juniper', slug: 'juniper', tag: 'Quiet type', age: '5 years', goodWith: 'Calm homes',
+        line: 'Takes a week to decide about you, then never leaves.',
+        media: [
+          { url: 'media/charlotte-3.jpg', label: 'Photo 1 of 3' },
+          { url: 'media/charlotte-2.jpg', label: 'Photo 2 of 3' },
+          { url: 'media/charlotte-1.jpg', label: 'Photo 3 of 3' }
+        ] }
+    ];
+  }
+
+  beatMs() {
+    const hold = Number(this.props.hold ?? 6.5);
+    return (hold * 1000) / this.state.speed;
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (!this.state.playing || !this.state.motion) return;
+      this.setState(p => {
+        const el = p.elapsed + 100;
+        if (el >= this.beatMs()) return { elapsed: 0, step: p.step + 1 };
+        return { elapsed: el };
+      });
+    }, 100);
+    this.paintQr();
+  }
+  componentDidUpdate() { this.paintQr(); }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this.qrPoll); }
+
+  mediaFor(step) {
+    const cats = this.cats();
+    const c = cats[((step % cats.length) + cats.length) % cats.length];
+    const cycle = Math.floor(step / cats.length);
+    return c.media[((cycle % c.media.length) + c.media.length) % c.media.length];
+  }
+
+  paintQr() {
+    const node = this.qrRef.current;
+    if (!node) return;
+    const cats = this.cats();
+    const slug = cats[((this.state.step % cats.length) + cats.length) % cats.length].slug;
+    if (node.dataset.qrSlug === slug) return;
+    if (!window.qrcode) {
+      if (this.qrPoll) return;
+      let n = 0;
+      this.qrPoll = setInterval(() => {
+        if (window.qrcode) { clearInterval(this.qrPoll); this.qrPoll = null; this.paintQr(); }
+        else if (++n > 80) { clearInterval(this.qrPoll); this.qrPoll = null; }
+      }, 150);
+      return;
+    }
+    this._qr = this._qr || {};
+    if (!this._qr[slug]) {
+      const qr = window.qrcode(0, 'M');
+      qr.addData('https://southcountycats.org/' + slug);
+      qr.make();
+      this._qr[slug] = qr.createDataURL(8, 0);
+    }
+    node.style.backgroundImage = 'url(' + this._qr[slug] + ')';
+    node.dataset.qrSlug = slug;
+  }
+
+  go = (d) => this.setState(p => ({ step: p.step + d, elapsed: 0 }));
+
+  renderVals() {
+    const s = this.state;
+    const cats = this.cats();
+    const i = ((s.step % cats.length) + cats.length) % cats.length;
+    const cat = cats[i];
+    const cycle = Math.floor(s.step / cats.length);
+    const media = this.mediaFor(s.step);
+    const even = ((s.step % 2) + 2) % 2 === 0;
+    const url = u => "url('" + u + "')";
+    const beat = this.beatMs();
+    const ms = Math.round(beat) + 'ms';
+    const swing = 'cubic-bezier(.16,.84,.28,1)';
+    const A = even;
+    const anim = (base, dur, ease) => s.motion
+      ? (base + (A ? 'A' : 'B')) + ' ' + dur + ' ' + ease + ' both'
+      : 'none';
+
+    return {
+      name: cat.name,
+      slug: cat.slug,
+      tag: cat.tag,
+      line: cat.line,
+      age: cat.age,
+      goodWith: cat.goodWith,
+      qrRef: this.qrRef,
+      curPhoto: url(media.url),
+      prevPhoto: url(this.mediaFor(s.step - 1).url),
+      prevTransform: !s.motion ? 'none'
+        : (A ? 'scale(1.05) translate3d(0,0,0)' : 'scale(1.19) translate3d(-1.8%,-1.2%,0)'),
+      mediaLabel: media.label,
+      counter: String(i + 1).padStart(2, '0') + ' / ' + String(cats.length).padStart(2, '0'),
+      cycleLabel: cycle + 1,
+      next1: url(this.mediaFor(s.step + 1).url),
+      next2: url(this.mediaFor(s.step + 2).url),
+      next3: url(this.mediaFor(s.step + 3).url),
+
+      slatAnim: anim('slat', Math.round(beat) + 'ms', 'cubic-bezier(.72,0,.16,1)'),
+      driftAnim: anim('drift', ms, 'linear'),
+      nameAnim: anim('name', ms, swing),
+      ruleAnim: anim('rule', ms, swing),
+      upAnim: anim('up', ms, swing),
+      qrAnim: anim('qr', ms, swing),
+      thumbAnim: anim('thumb', ms, swing),
+      tickAnim: anim('tick', ms, 'linear'),
+      playState: s.playing && s.motion ? 'running' : 'paused',
+
+      playLabel: s.playing ? '❙❙ Pause' : '▶ Play',
+      togglePlay: () => this.setState(p => ({ playing: !p.playing })),
+      prev: () => this.go(-1),
+      next: () => this.go(1),
+
+      s1bg: s.speed === 1 ? '#0b6fb4' : 'transparent', s1ink: s.speed === 1 ? '#fff' : '#6f6a63',
+      s05bg: s.speed === 0.5 ? '#0b6fb4' : 'transparent', s05ink: s.speed === 0.5 ? '#fff' : '#6f6a63',
+      s025bg: s.speed === 0.25 ? '#0b6fb4' : 'transparent', s025ink: s.speed === 0.25 ? '#fff' : '#6f6a63',
+      sp1: () => this.setState({ speed: 1, elapsed: 0 }),
+      sp05: () => this.setState({ speed: 0.5, elapsed: 0 }),
+      sp025: () => this.setState({ speed: 0.25, elapsed: 0 }),
+
+      motionTrack: s.motion ? '#0b6fb4' : 'rgba(35,31,32,.22)',
+      motionKnob: s.motion ? '19px' : '3px',
+      toggleMotion: () => this.setState(p => ({ motion: !p.motion, elapsed: 0 })),
+
+      readout: s.motion
+        ? cat.name + ' · beat ' + (s.step + 1) + ' · ' + (beat / 1000).toFixed(2) + 's per cat · ' + (s.playing ? 'running' : 'paused')
+        : cat.name + ' · motion off · manual paging'
+    };
+  }
+}
+</script>
+</body>
+</html>

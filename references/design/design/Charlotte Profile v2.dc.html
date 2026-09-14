@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html { scroll-behavior:smooth; background:#0a0e12; }
+  body { margin:0; background:#f6f4f0; font-family:'Work Sans', Helvetica, sans-serif; color:#231f20; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a { color:#0b6fb4; text-decoration:none; }
+  a:hover { color:#0a3d63; text-decoration:underline; }
+
+  @keyframes portalPhoto { 0% { transform:scale(1.08); opacity:1; } 62% { transform:scale(2.1); opacity:1; } 78% { opacity:.94; } 100% { transform:scale(4.6); opacity:0; } }
+  @keyframes portalVeil { 0% { opacity:.08; } 62% { opacity:.16; } 100% { opacity:1; } }
+  @keyframes portalInk { 0% { opacity:1; transform:translateY(0) scale(1); } 38% { opacity:1; transform:translateY(-26px) scale(.98); } 70% { opacity:0; transform:translateY(-90px) scale(.9); } 100% { opacity:0; transform:translateY(-90px) scale(.9); } }
+  @keyframes portalCue { 0% { opacity:1; } 25% { opacity:0; } 100% { opacity:0; } }
+  @keyframes navName { 0%, 55% { opacity:0; transform:translateY(14px); } 100% { opacity:1; transform:translateY(0); } }
+  @keyframes navSolid { 0%, 40% { background-color:rgba(246,244,240,.72); border-bottom-color:rgba(35,31,32,.06); } 100% { background-color:rgba(246,244,240,.9); border-bottom-color:rgba(35,31,32,.1); } }
+  @keyframes progress { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+
+  @keyframes riseIn { from { opacity:0; transform:translateY(54px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes riseSoft { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes wipeIn { from { opacity:0; clip-path:inset(0 0 100% 0); transform:translateY(22px); } to { opacity:1; clip-path:inset(0 0 -12% 0); transform:translateY(0); } }
+  @keyframes drift { from { transform:scale(1.16) translateY(-6%); } to { transform:scale(1.16) translateY(6%); } }
+  @keyframes driftSlow { from { transform:scale(1.12) translateY(-3.5%); } to { transform:scale(1.12) translateY(3.5%); } }
+  @keyframes frameOpen { from { transform:scale(.9); border-radius:34px; } to { transform:scale(1); border-radius:10px; } }
+  @keyframes barIn { 0%, 42% { transform:translateY(105%); } 100% { transform:translateY(0); } }
+
+  @keyframes seqA { 0%, 26% { opacity:1; transform:scale(1.06); } 36%, 100% { opacity:0; transform:scale(1.14); } }
+  @keyframes seqB { 0%, 26% { opacity:0; transform:scale(1.14); } 36%, 60% { opacity:1; transform:scale(1.06); } 70%, 100% { opacity:0; transform:scale(1.14); } }
+  @keyframes seqC { 0%, 60% { opacity:0; transform:scale(1.14); } 70%, 100% { opacity:1; transform:scale(1.04); } }
+  @keyframes capA { 0%, 24% { opacity:1; transform:translateY(0); } 32%, 100% { opacity:0; transform:translateY(-28px); } }
+  @keyframes capB { 0%, 28% { opacity:0; transform:translateY(28px); } 38%, 58% { opacity:1; transform:translateY(0); } 68%, 100% { opacity:0; transform:translateY(-28px); } }
+  @keyframes capC { 0%, 62% { opacity:0; transform:translateY(28px); } 72%, 100% { opacity:1; transform:translateY(0); } }
+  @keyframes dotA { 0%, 30% { transform:scaleX(1); } 34%, 100% { transform:scaleX(0); } }
+  @keyframes dotB { 0%, 30% { transform:scaleX(0); } 36%, 64% { transform:scaleX(1); } 70%, 100% { transform:scaleX(0); } }
+  @keyframes dotC { 0%, 66% { transform:scaleX(0); } 72%, 100% { transform:scaleX(1); } }
+  @keyframes seqClock { from { transform:scaleY(0); } to { transform:scaleY(1); } }
+</style>
+</helmet>
+
+<div style="position:relative; width:100%; timeline-scope:--portal, --day">
+  <div style="position:fixed; top:0; left:0; right:0; height:3px; background:rgba(35,31,32,.12); z-index:60">
+    <div style="height:100%; background:#0b6fb4; transform-origin:left; animation:progress linear both; animation-timeline:scroll(root); animation-range:0% 100%"></div>
+  </div>
+
+  <header style="position:fixed; top:3px; left:0; right:0; z-index:50; backdrop-filter:blur(18px) saturate(1.4); border-bottom:1px solid rgba(35,31,32,.06); background-color:rgba(246,244,240,.72); animation:navSolid linear both; animation-timeline:scroll(root); animation-range:0vh 140vh">
+    <div style="max-width:1280px; margin:0 auto; height:66px; box-sizing:border-box; padding:0 28px; display:flex; align-items:center; justify-content:space-between; gap:20px">
+      <div style="display:flex; align-items:center; gap:16px; min-width:0">
+        <img src="media/logo-transparent.png" alt="South County Cats" style="height:32px; width:auto; display:block; flex:none" />
+        <div style="width:1px; height:24px; background:rgba(35,31,32,.16); animation:navName linear both; animation-timeline:scroll(root); animation-range:0vh 150vh"></div>
+        <span style="font-family:'Instrument Serif',serif; font-size:24px; white-space:nowrap; animation:navName linear both; animation-timeline:scroll(root); animation-range:0vh 150vh">Charlotte</span>
+      </div>
+      <nav style="display:flex; align-items:center; gap:clamp(12px,2.2vw,30px); font-size:15px; color:#4a4644">
+        <a href="#story" style="color:#4a4644">Story</a>
+        <a href="#day" style="color:#4a4644">Her day</a>
+        <a href="#film" style="color:#4a4644">Film</a>
+        <a href="#adopt" style="background:#0b6fb4; color:#fff; border-radius:99px; padding:10px 20px; font-weight:500">Adopt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PORTAL ZOOM -->
+  <div style="position:relative; height:260svh; view-timeline-name:--portal; view-timeline-axis:block; background:#0a0e12">
+    <div style="position:sticky; top:0; height:100svh; overflow:hidden; display:flex; align-items:flex-end">
+      <div style="position:absolute; inset:0; overflow:hidden">
+        <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:64% 44%; transform-origin:64% 44%; will-change:transform,opacity; animation:portalPhoto linear both; animation-timeline:--portal; animation-range:contain 0% contain 100%"></div>
+      </div>
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,14,20,.4) 0%, rgba(8,14,20,0) 34%, rgba(8,14,20,.12) 55%, rgba(8,14,20,.86) 100%)"></div>
+      <div style="position:absolute; inset:0; background:#0a0e12; opacity:.1; animation:portalVeil linear both; animation-timeline:--portal; animation-range:contain 0% contain 100%"></div>
+
+      <div style="position:relative; width:100%; max-width:1280px; margin:0 auto; padding:0 28px clamp(90px,11vh,120px); display:flex; align-items:flex-end; justify-content:space-between; gap:32px; flex-wrap:wrap; animation:portalInk linear both; animation-timeline:--portal; animation-range:contain 0% contain 100%">
+        <div style="display:flex; flex-direction:column; gap:clamp(10px,1.6vw,18px)">
+          <div style="display:flex; align-items:center; gap:12px">
+            <span style="width:8px; height:8px; border-radius:50%; background:#8fd0ff"></span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:clamp(11px,1vw,13px); letter-spacing:.22em; text-transform:uppercase; color:#c9e7ff">Looking for a home · Wakefield, RI</span>
+          </div>
+          <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(74px,13vw,196px); line-height:.82; letter-spacing:-.035em; font-weight:400; color:#fff">Charlotte</h1>
+          <p style="margin:0; font-size:clamp(17px,1.6vw,24px); line-height:1.45; color:rgba(255,255,255,.9); max-width:34ch; text-wrap:pretty">An explorer who never gives up, and will loudly ask for pets.</p>
+        </div>
+      </div>
+
+      <div style="position:absolute; left:50%; bottom:34px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:10px; animation:portalCue linear both; animation-timeline:--portal; animation-range:contain 0% contain 100%">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:rgba(255,255,255,.6)">Scroll in</span>
+        <div style="width:1px; height:44px; background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0))"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FACTS -->
+  <div style="position:relative; z-index:2; background:#fff; border-bottom:1px solid rgba(35,31,32,.08)">
+    <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))">
+      <div style="padding:22px 24px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:6px"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Age</span><span style="font-family:'Instrument Serif',serif; font-size:clamp(22px,2vw,30px)">3 years</span></div>
+      <div style="padding:22px 24px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:6px"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Sex</span><span style="font-family:'Instrument Serif',serif; font-size:clamp(22px,2vw,30px)">Female</span></div>
+      <div style="padding:22px 24px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:6px"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Coat</span><span style="font-family:'Instrument Serif',serif; font-size:clamp(22px,2vw,30px)">Brown tabby</span></div>
+      <div style="padding:22px 24px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:6px"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Good with</span><span style="font-family:'Instrument Serif',serif; font-size:clamp(22px,2vw,30px)">Cats, kids</span></div>
+      <div style="padding:22px 24px; display:flex; flex-direction:column; gap:6px; background:#0b6fb4"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.75)">Fee</span><span style="font-family:'Instrument Serif',serif; font-size:clamp(22px,2vw,30px); color:#fff">$95</span></div>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <section id="story" style="position:relative; z-index:2; background:#f6f4f0; max-width:1280px; margin:0 auto; padding:clamp(80px,13vh,150px) 28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:clamp(36px,5vw,80px); align-items:start">
+    <div style="display:flex; flex-direction:column; gap:22px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#0b6fb4; animation:riseSoft linear both; animation-timeline:view(); animation-range:entry 0% entry 70%">Who she is</span>
+      <h2 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(38px,4.4vw,68px); line-height:1.05; letter-spacing:-.02em; font-weight:400; text-wrap:pretty; animation:wipeIn linear both; animation-timeline:view(); animation-range:entry 5% cover 22%">An explorer who never gives up, and will loudly ask for pets.</h2>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px; padding-top:6px">
+      <p style="margin:0; font-size:clamp(17px,1.35vw,21px); line-height:1.65; color:#3d3937; text-wrap:pretty; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% entry 85%">Charlotte came in from a laundromat parking lot in April, thin and unbothered. Two weeks later she had claimed the highest shelf in the foster room and started supervising the household from it.</p>
+      <p style="margin:0; font-size:clamp(17px,1.35vw,21px); line-height:1.65; color:#3d3937; text-wrap:pretty; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% entry 90%">She is a talker. Not a complainer — a negotiator. She will follow you room to room stating her case for attention, and once you sit down she settles against your leg and goes quiet, as if the matter had been resolved reasonably.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; animation:riseSoft linear both; animation-timeline:view(); animation-range:entry 0% entry 95%">
+        <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:9px 18px; font-size:14.5px; color:#3d3937">Talkative</span>
+        <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:9px 18px; font-size:14.5px; color:#3d3937">Lap cat, eventually</span>
+        <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:9px 18px; font-size:14.5px; color:#3d3937">Loves high places</span>
+        <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:9px 18px; font-size:14.5px; color:#3d3937">Spayed · vaccinated</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PINNED SEQUENCE: A DAY IN HER LIFE -->
+  <div id="day" style="position:relative; z-index:2; height:340svh; view-timeline-name:--day; view-timeline-axis:block; background:#0a0e12">
+    <div style="position:sticky; top:0; height:100svh; overflow:hidden">
+      <div style="position:absolute; inset:0; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:56% 42%; will-change:transform,opacity; animation:seqA linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div>
+      <div style="position:absolute; inset:0; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:50% 48%; will-change:transform,opacity; animation:seqB linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div>
+      <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:66% 44%; will-change:transform,opacity; animation:seqC linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div>
+      <div style="position:absolute; inset:0; background:linear-gradient(94deg, rgba(8,14,20,.9) 0%, rgba(8,14,20,.55) 42%, rgba(8,14,20,.08) 72%, rgba(8,14,20,.4) 100%)"></div>
+
+      <div style="position:absolute; inset:0; max-width:1280px; margin:0 auto; padding:0 28px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center">
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:clamp(20px,4vh,42px)">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:clamp(10px,.9vw,12px); letter-spacing:.24em; text-transform:uppercase; color:#8fd0ff">A day in her life</span>
+          <div style="display:flex; gap:8px">
+            <div style="width:44px; height:3px; background:rgba(255,255,255,.24); overflow:hidden"><div style="width:100%; height:100%; background:#8fd0ff; transform-origin:left; animation:dotA linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div></div>
+            <div style="width:44px; height:3px; background:rgba(255,255,255,.24); overflow:hidden"><div style="width:100%; height:100%; background:#8fd0ff; transform-origin:left; animation:dotB linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div></div>
+            <div style="width:44px; height:3px; background:rgba(255,255,255,.24); overflow:hidden"><div style="width:100%; height:100%; background:#8fd0ff; transform-origin:left; animation:dotC linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div></div>
+          </div>
+        </div>
+
+        <div style="position:relative; height:clamp(230px,34vh,340px); max-width:720px">
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; gap:16px; animation:capA linear both; animation-timeline:--day; animation-range:contain 0% contain 100%">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:clamp(13px,1.2vw,17px); letter-spacing:.2em; color:#8fd0ff">06:40</span>
+            <p style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(38px,5.4vw,84px); line-height:1.02; letter-spacing:-.025em; color:#fff; text-wrap:pretty">First light, and the window is already claimed.</p>
+            <p style="margin:0; font-size:clamp(15px,1.3vw,19px); line-height:1.55; color:rgba(255,255,255,.78); max-width:44ch">She wakes before the house does and takes up her post on the sill until the street starts moving.</p>
+          </div>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; gap:16px; animation:capB linear both; animation-timeline:--day; animation-range:contain 0% contain 100%">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:clamp(13px,1.2vw,17px); letter-spacing:.2em; color:#8fd0ff">13:15</span>
+            <p style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(38px,5.4vw,84px); line-height:1.02; letter-spacing:-.025em; color:#fff; text-wrap:pretty">Hammock hours. Non-negotiable.</p>
+            <p style="margin:0; font-size:clamp(15px,1.3vw,19px); line-height:1.55; color:rgba(255,255,255,.78); max-width:44ch">Two hours of sun in the window seat, one eye open for anything worth commenting on.</p>
+          </div>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; gap:16px; animation:capC linear both; animation-timeline:--day; animation-range:contain 0% contain 100%">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:clamp(13px,1.2vw,17px); letter-spacing:.2em; color:#8fd0ff">19:30</span>
+            <p style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(38px,5.4vw,84px); line-height:1.02; letter-spacing:-.025em; color:#fff; text-wrap:pretty">Rounds. She wants you to follow.</p>
+            <p style="margin:0; font-size:clamp(15px,1.3vw,19px); line-height:1.55; color:rgba(255,255,255,.78); max-width:44ch">Doorway to doorway, stating her case, until someone finally sits down and settles the matter.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:absolute; right:28px; top:50%; transform:translateY(-50%); width:2px; height:34vh; background:rgba(255,255,255,.16)"><div style="width:100%; height:100%; background:#8fd0ff; transform-origin:top; animation:seqClock linear both; animation-timeline:--day; animation-range:contain 0% contain 100%"></div></div>
+    </div>
+  </div>
+
+  <!-- WHAT SHE NEEDS -->
+  <section style="position:relative; z-index:2; background:#f6f4f0; padding:clamp(80px,13vh,150px) 0">
+    <div style="max-width:1280px; margin:0 auto; padding:0 28px; display:flex; flex-direction:column; gap:clamp(34px,6vh,60px)">
+      <div style="display:flex; flex-direction:column; gap:18px; max-width:820px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#0b6fb4; animation:riseSoft linear both; animation-timeline:view(); animation-range:entry 0% entry 70%">What she needs in a home</span>
+        <h2 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(36px,4.4vw,66px); line-height:1.05; letter-spacing:-.02em; font-weight:400; text-wrap:pretty; animation:wipeIn linear both; animation-timeline:view(); animation-range:entry 5% cover 20%">Three things, and she'll take care of the rest herself.</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:16px">
+        <div style="background:#fff; padding:clamp(26px,3vw,40px); display:flex; flex-direction:column; gap:14px; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% entry 80%">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; color:#0b6fb4">01</span>
+          <h3 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(26px,2.4vw,36px); font-weight:400; line-height:1.1">A window she can own</h3>
+          <p style="margin:0; font-size:16.5px; line-height:1.6; color:#3d3937">Any sill will do, as long as it's hers and it faces something that moves.</p>
+        </div>
+        <div style="background:#fff; padding:clamp(26px,3vw,40px); display:flex; flex-direction:column; gap:14px; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% entry 90%">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; color:#0b6fb4">02</span>
+          <h3 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(26px,2.4vw,36px); font-weight:400; line-height:1.1">Someone who talks back</h3>
+          <p style="margin:0; font-size:16.5px; line-height:1.6; color:#3d3937">She is a conversationalist. A quiet house suits her; a silent one doesn't.</p>
+        </div>
+        <div style="background:#fff; padding:clamp(26px,3vw,40px); display:flex; flex-direction:column; gap:14px; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% cover 8%">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; color:#0b6fb4">03</span>
+          <h3 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(26px,2.4vw,36px); font-weight:400; line-height:1.1">Patience for week one</h3>
+          <p style="margin:0; font-size:16.5px; line-height:1.6; color:#3d3937">She hides for a few days, then decides you're staff. Cats and confident kids are fine.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILM -->
+  <section id="film" style="position:relative; z-index:2; background:#fff; padding:clamp(70px,11vh,130px) 0">
+    <div style="max-width:1280px; margin:0 auto; padding:0 28px; display:flex; flex-direction:column; gap:clamp(24px,4vh,44px)">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; gap:20px; flex-wrap:wrap; animation:riseSoft linear both; animation-timeline:view(); animation-range:entry 0% entry 80%">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#0b6fb4">Moving picture</span>
+        <span style="font-size:15px; color:#8a857e">0:14 · no sound needed</span>
+      </div>
+      <div style="position:relative; aspect-ratio:16/9; overflow:hidden; will-change:transform; animation:frameOpen linear both; animation-timeline:view(); animation-range:entry 10% cover 40%">
+        <div style="position:absolute; inset:0; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center 40%; animation:driftSlow linear both; animation-timeline:view(); animation-range:cover 0% cover 100%"></div>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,16,24,.08), rgba(8,16,24,.52))"></div>
+        <div style="position:absolute; left:clamp(18px,2.4vw,36px); bottom:clamp(18px,2.4vw,32px); display:flex; align-items:center; gap:16px">
+          <div style="width:clamp(52px,5vw,74px); height:clamp(52px,5vw,74px); border-radius:50%; background:rgba(255,255,255,.94); display:grid; place-items:center; font-size:clamp(16px,1.6vw,22px); color:#0b6fb4">▶</div>
+          <div style="display:flex; flex-direction:column; gap:4px"><span style="font-size:clamp(15px,1.4vw,19px); color:#fff; font-weight:500">Rain-day stakeout</span><span style="font-size:clamp(13px,1.1vw,15px); color:rgba(255,255,255,.74)">Autoplays muted · tap for sound</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE PHOTO -->
+  <section style="position:relative; z-index:2; height:88svh; min-height:500px; overflow:hidden; display:flex; align-items:flex-end">
+    <div style="position:absolute; inset:0; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:52% 46%; will-change:transform; animation:drift linear both; animation-timeline:view(); animation-range:cover 0% cover 100%"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,16,24,0) 38%, rgba(8,16,24,.74) 100%)"></div>
+    <div style="position:relative; max-width:1280px; margin:0 auto; width:100%; padding:0 28px clamp(34px,6vh,64px)">
+      <div style="max-width:660px; display:flex; flex-direction:column; gap:14px; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 20% cover 45%">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#c9e7ff">Her foster, Dana</span>
+        <p style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(28px,3.6vw,54px); line-height:1.1; color:#fff; text-wrap:pretty">“She decided on week two that I was hers. I didn't get a vote.”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADOPT -->
+  <section id="adopt" style="position:relative; z-index:2; background:#0a3d63; padding:clamp(80px,13vh,150px) 0">
+    <div style="max-width:1280px; margin:0 auto; padding:0 28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:clamp(36px,5vw,72px); align-items:end">
+      <div style="display:flex; flex-direction:column; gap:20px; animation:riseIn linear both; animation-timeline:view(); animation-range:entry 0% entry 85%">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#8fd0ff">Next step</span>
+        <h2 style="margin:0; font-family:'Instrument Serif',serif; font-size:clamp(40px,5vw,74px); line-height:1.02; letter-spacing:-.02em; font-weight:400; color:#fff; text-wrap:pretty">Come meet Charlotte this Saturday.</h2>
+        <p style="margin:0; font-size:clamp(16px,1.3vw,19px); line-height:1.6; color:rgba(255,255,255,.8); max-width:52ch">Open hours 11–3 at the Wakefield adoption centre, or send an application and we'll call you within two days.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; animation:riseSoft linear both; animation-timeline:view(); animation-range:entry 0% entry 95%">
+        <a href="#adopt" style="background:#fff; color:#0a3d63; border-radius:99px; padding:19px; text-align:center; font-size:17px; font-weight:600">Start an application</a>
+        <a href="#adopt" style="border:1.5px solid rgba(255,255,255,.5); color:#fff; border-radius:99px; padding:18px; text-align:center; font-size:17px">Ask about Charlotte</a>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(255,255,255,.5); text-align:center; margin-top:8px">Updated 4 days ago by a volunteer</span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="position:relative; z-index:2; background:#f6f4f0; padding:44px 28px 120px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap">
+    <img src="media/logo-transparent.png" alt="South County Cats" style="height:38px; width:auto; display:block" />
+    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8a857e">southcountycats.org · a volunteer-run rescue in South County, Rhode Island</span>
+  </footer>
+
+  <div style="position:fixed; left:0; right:0; bottom:0; z-index:55; backdrop-filter:blur(18px) saturate(1.4); background:rgba(246,244,240,.88); border-top:1px solid rgba(35,31,32,.12); transform:translateY(105%); will-change:transform; animation:barIn linear both; animation-timeline:scroll(root); animation-range:0vh 150vh">
+    <div style="max-width:1280px; margin:0 auto; padding:10px 28px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+      <div style="display:flex; align-items:baseline; gap:12px; min-width:0">
+        <span style="font-family:'Instrument Serif',serif; font-size:22px; white-space:nowrap">Charlotte</span>
+        <span style="font-size:13.5px; color:#8a857e; white-space:nowrap">3 yrs · female · $95</span>
+      </div>
+      <a href="#adopt" style="background:#0b6fb4; color:#fff; border-radius:99px; padding:13px 24px; font-size:15px; font-weight:500; white-space:nowrap; flex:none">Adopt</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+
+</script>
+</body>
+</html>

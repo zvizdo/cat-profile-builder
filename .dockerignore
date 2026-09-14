@@ -1,0 +1,34 @@
+node_modules
+.next
+.git
+.data
+test-media
+.env
+.env.*
+
+# Build/test output and OS/IDE noise: not needed inside the build context.
+coverage
+playwright-report
+test-results
+.playwright-mcp
+.DS_Store
+npm-debug.log*
+
+# Non-app folders: `pnpm build` (next build) only reads source under src/, public/, config
+# files and the committed generated CSS — nothing here. Excluding them keeps Terraform's
+# secrets and state (infra/terraform/*.tfvars, *.tfstate*, .terraform/) and ~550 MB of docs,
+# specs and provider binaries out of the build context and out of every build-stage layer
+# (F18 review finding 1).
+infra
+.superpowers
+.specify
+specs
+references
+.github
+*.tfstate*
+*.tfvars
+
+# Claude Code's own project-local state (plugin caches, worktrees) — not part of the
+# review's finding 1 list, but the single largest thing in this checkout's build context
+# (multiple GB, dwarfing the folders above) and just as unrelated to `pnpm build`.
+.claude

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin:0; background:#e9e6e1; font-family:'Work Sans', Helvetica, sans-serif; color:#231f20; -webkit-font-smoothing:antialiased; }
+  a { color:#0b6fb4; text-decoration:none; }
+  a:hover { color:#0a3d63; text-decoration:underline; }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:56px; padding:64px 64px 0">
+  <header style="display:flex; flex-direction:column; gap:12px; max-width:900px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:46px; width:auto; display:block" />
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#0b6fb4">Turn 7 · Handoff · crops and smaller screens</span>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.02em">The two things a developer can't guess</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#3d3937; max-width:68ch; text-wrap:pretty">Every crop in this project was hand-positioned by eye. That doesn't survive handoff, so the focal point becomes a thing the volunteer sets once per photo — click anywhere in <a href="#7a">7a</a> and watch all three crops re-derive. Below it, the builder at 1280 and on a donated iPad, which is what shelters actually own.</p>
+  </header>
+
+  <div id="7a" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">7a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">FOCAL POINT · set once per photo · click the photo</span>
+    </div>
+
+    <div style="width:1180px; background:#fff; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; overflow:hidden">
+      <div style="width:660px; flex:none; display:flex; flex-direction:column">
+        <div style="padding:20px 24px; border-bottom:1px solid rgba(35,31,32,.06); display:flex; flex-direction:column; gap:5px">
+          <span style="font-family:'Instrument Serif',serif; font-size:28px; line-height:1.1">Where should the crop hold on?</span>
+          <span style="font-size:14px; line-height:1.55; color:#3d3937">Click her face. Every crop on the site, the phone and the wall is derived from this one point.</span>
+        </div>
+        <div onClick="{{ setFocal }}" style="height:432px; position:relative; cursor:crosshair; overflow:hidden">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:center"></div>
+          <div style="position:absolute; inset:0; background:rgba(8,14,20,.18)"></div>
+          <div style="position:absolute; left:{{ focalLeft }}; top:{{ focalTop }}; width:64px; height:64px; margin:-32px 0 0 -32px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 2px rgba(11,111,180,.9), 0 8px 24px rgba(0,0,0,.45); display:grid; place-items:center">
+            <span style="width:6px; height:6px; border-radius:50%; background:#fff"></span>
+          </div>
+          <div style="position:absolute; left:0; right:0; top:{{ focalTop }}; height:1px; background:rgba(255,255,255,.45)"></div>
+          <div style="position:absolute; top:0; bottom:0; left:{{ focalLeft }}; width:1px; background:rgba(255,255,255,.45)"></div>
+          <span style="position:absolute; left:16px; bottom:14px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; padding:6px 10px; border-radius:3px; background:rgba(8,14,20,.7); color:#fff">focal {{ focalReadout }}</span>
+        </div>
+        <div style="padding:16px 24px; display:flex; align-items:center; gap:12px">
+          <span onClick="{{ centreFocal }}" style="border:1px solid rgba(35,31,32,.24); border-radius:4px; padding:10px 16px; font-size:13.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Reset to centre</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63">Arrow keys nudge by 1%, shift by 10%</span>
+          <div style="flex:1"></div>
+          <span style="background:#0b6fb4; color:#fff; border-radius:4px; padding:11px 20px; font-size:13.5px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">Save focal point</span>
+        </div>
+      </div>
+
+      <div style="flex:1; min-width:0; background:#f6f4f0; border-left:1px solid rgba(35,31,32,.08); padding:22px 24px; display:flex; flex-direction:column; gap:16px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Derived crops · live</span>
+
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">profile hero · 1440×840</span>
+          <div style="height:112px; position:relative; overflow:hidden; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:{{ focalPos }}">
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.2) 0%, rgba(10,20,28,0) 45%, rgba(10,20,28,.7) 100%)"></div>
+            <span style="position:absolute; left:12px; bottom:8px; font-family:'Instrument Serif',serif; font-size:26px; color:#fff">Charlotte</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px">
+          <div style="flex:1; display:flex; flex-direction:column; gap:7px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">phone · 390×560</span>
+            <div style="height:150px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:{{ focalPos }}"></div>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:7px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">list card · 4:3</span>
+            <div style="height:150px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:{{ focalPos }}"></div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">wall · 1920×1080 at drift start</span>
+          <div style="height:104px; position:relative; overflow:hidden; background:#0d0f11">
+            <div style="position:absolute; inset:-5%; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:{{ focalPos }}; transform:scale(1.05)"></div>
+            <div style="position:absolute; inset:0; background:linear-gradient(78deg, rgba(8,12,16,.9) 0%, rgba(8,12,16,.5) 40%, rgba(8,12,16,.08) 70%)"></div>
+          </div>
+        </div>
+
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; line-height:1.75; color:#6f6a63">Rule: crops use <span style="color:#231f20">background-position: {{ focalReadout }}</span> against <span style="color:#231f20">cover</span>. The wall additionally drifts from the focal point outward, so the face never leaves frame mid-beat.</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="7b" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">7b</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">BUILDER AT 1280 · rail narrows, helper docks to a tab</span>
+    </div>
+
+    <div style="width:1280px; height:800px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column; overflow:hidden">
+      <div style="height:56px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:12px; padding:0 16px">
+        <img src="media/logo-transparent.png" alt="" style="height:22px; width:auto; display:block" />
+        <div style="display:flex; align-items:center; gap:8px; border:1px solid rgba(35,31,32,.2); border-radius:4px; padding:8px 11px"><span style="font-size:14px; font-weight:500">Charlotte</span></div>
+        <div style="flex:1"></div>
+        <span style="display:flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63"><span style="width:6px; height:6px; border-radius:50%; background:#0b6fb4"></span>Saved</span>
+        <span style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:8px 14px; font-size:13px">Preview</span>
+        <span style="background:#0b6fb4; color:#fff; border-radius:4px; padding:9px 16px; font-size:13px; font-weight:500">Publish</span>
+      </div>
+      <div style="flex:1; display:flex; min-height:0">
+        <div style="width:210px; flex:none; background:#fff; border-right:1px solid rgba(35,31,32,.08); padding:16px 14px; display:flex; flex-direction:column; gap:18px">
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Add section</span>
+            <div style="display:flex; flex-direction:column; gap:5px">
+              <span style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:9px 11px; font-size:13px">Hero</span>
+              <span style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:9px 11px; font-size:13px">Bio</span>
+              <span style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:9px 11px; font-size:13px">Photo · Gallery · Video</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Theme</span>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px">
+              <span style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#fbfaf8,#e9e6e1); outline:2px solid #0b6fb4; outline-offset:2px"></span>
+              <span style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#fff,#dfe4e7)"></span>
+              <span style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#1a222b,#0a0e12)"></span>
+              <span style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#f4ece0,#dcc9ad)"></span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Media</span>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px">
+              <span style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:60% 40%"></span>
+              <span style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:50% 45%"></span>
+              <span style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center"></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1; min-width:0; background:#efedea; padding:20px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">CANVAS · 1010px available · same stack, tighter gutters</span>
+          <div style="flex:1; background:#f6f4f0; padding:10px; display:flex; flex-direction:column; gap:9px; overflow:hidden">
+            <div style="outline:2px solid #0b6fb4; outline-offset:-1px; background:#fff">
+              <div style="height:186px; position:relative; overflow:hidden">
+                <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:64% 42%"></div>
+                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.16) 0%, rgba(10,20,28,0) 44%, rgba(10,20,28,.76) 100%)"></div>
+                <span style="position:absolute; left:18px; bottom:14px; font-family:'Instrument Serif',serif; font-size:52px; line-height:.9; color:#fff">Charlotte</span>
+              </div>
+              <div style="padding:7px 11px; border-top:1px solid rgba(35,31,32,.08); display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63"><span>HERO</span><span style="display:flex; gap:10px; color:#0b6fb4">replace photo<span>focal point</span><span style="color:#a4552a">remove</span></span></div>
+            </div>
+            <div style="border:1px solid rgba(35,31,32,.12); background:#fff; padding:16px 18px; display:flex; flex-direction:column; gap:9px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Who she is</span>
+              <span style="font-family:'Instrument Serif',serif; font-size:24px; line-height:1.12">An explorer who never gives up, and will loudly ask for pets.</span>
+              <span style="font-size:13px; line-height:1.6; color:#3d3937">Charlotte came in from a laundromat parking lot in April, thin and unbothered.</span>
+            </div>
+            <div style="border:1px dashed rgba(35,31,32,.24); padding:12px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63">+ add section</div>
+          </div>
+        </div>
+
+        <div style="width:52px; flex:none; background:#fff; border-left:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; align-items:center; gap:14px; padding:16px 0">
+          <span style="width:26px; height:26px; border-radius:50%; background:#0b6fb4; display:grid; place-items:center; color:#fff; font-size:13px">✳</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#6f6a63; writing-mode:vertical-rl">Helper · 1 suggestion</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.8; color:#6f6a63; max-width:1280px">Under 1360px the helper collapses to a 52px tab and opens as an overlay drawer above the canvas rather than stealing width. The rail loses its 2-up grid and becomes a single column; nothing else moves. Below 1180px the builder is read-only preview — editing a page layout on a screen narrower than the page is a trap, and we say so instead of shipping it.</div>
+  </div>
+
+  <div id="7c" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">7c</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">iPAD 1024×768 LANDSCAPE · touch-first, 44px minimum</span>
+    </div>
+
+    <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start">
+      <div style="width:1024px; height:768px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column; overflow:hidden">
+        <div style="height:60px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:12px; padding:0 18px">
+          <img src="media/logo-transparent.png" alt="" style="height:24px; width:auto; display:block" />
+          <span style="font-size:15px; font-weight:500">Charlotte</span>
+          <div style="flex:1"></div>
+          <span style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:13px 18px; font-size:14px">Preview</span>
+          <span style="background:#0b6fb4; color:#fff; border-radius:4px; padding:14px 20px; font-size:14px; font-weight:500">Publish</span>
+        </div>
+
+        <div style="height:76px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:10px; padding:0 18px; overflow:hidden">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63; flex:none">Add</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Hero</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Bio</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Photo</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Gallery</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Video</span>
+          <div style="flex:1"></div>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Theme</span>
+          <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:13px 20px; font-size:14px; flex:none">Media 7</span>
+        </div>
+
+        <div style="flex:1; min-height:0; background:#efedea; padding:18px; position:relative; overflow:hidden">
+          <div style="height:100%; background:#f6f4f0; padding:10px; display:flex; flex-direction:column; gap:10px; overflow:hidden">
+            <div style="outline:2px solid #0b6fb4; outline-offset:-1px; background:#fff; position:relative">
+              <div style="height:232px; position:relative; overflow:hidden">
+                <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:64% 42%"></div>
+                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.16) 0%, rgba(10,20,28,0) 44%, rgba(10,20,28,.76) 100%)"></div>
+                <span style="position:absolute; left:20px; bottom:16px; font-family:'Instrument Serif',serif; font-size:58px; line-height:.9; color:#fff">Charlotte</span>
+              </div>
+              <div style="padding:10px 12px; border-top:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.14em; color:#6f6a63; flex:1">HERO</span>
+                <span style="border:1px solid rgba(35,31,32,.2); border-radius:99px; padding:13px 20px; font-size:14px">Replace</span>
+                <span style="border:1px solid rgba(35,31,32,.2); border-radius:99px; padding:13px 20px; font-size:14px">Focal point</span>
+                <span style="border:1px solid rgba(35,31,32,.2); border-radius:99px; padding:13px 20px; font-size:14px">Move</span>
+                <span style="border:1px solid #a4552a; color:#a4552a; border-radius:99px; padding:13px 20px; font-size:14px">Remove</span>
+              </div>
+            </div>
+            <div style="border:1px solid rgba(35,31,32,.12); background:#fff; padding:18px 20px; display:flex; flex-direction:column; gap:10px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Who she is</span>
+              <span style="font-family:'Instrument Serif',serif; font-size:27px; line-height:1.12">An explorer who never gives up, and will loudly ask for pets.</span>
+              <span style="font-size:14.5px; line-height:1.6; color:#3d3937">Charlotte came in from a laundromat parking lot in April, thin and unbothered. Two weeks later she had claimed the highest shelf in the foster room.</span>
+            </div>
+          </div>
+
+          <div style="position:absolute; right:26px; bottom:26px; display:flex; align-items:center; gap:12px; background:#231f20; border-radius:99px; padding:15px 24px; box-shadow:0 18px 46px -14px rgba(11,63,99,.4)">
+            <span style="width:9px; height:9px; border-radius:50%; background:#8fd0ff"></span>
+            <span style="font-size:15px; color:#fff">Helper · 1 suggestion</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:456px; display:flex; flex-direction:column; gap:16px">
+        <div style="background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">What changes on touch</span>
+          <span style="font-size:14.5px; line-height:1.65; color:#3d3937">The rail becomes a horizontal strip of 44px pills. Block actions stop being 10px mono links and become pills inside the selected block — a finger can't hit "duplicate" at 10px. Theme and Media open as sheets. Drag stays, but every block also has explicit Move up / Move down, because dragging a full-width block on a tablet while the page scrolls is unreliable.</span>
+        </div>
+        <div style="background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Breakpoints</span>
+          <div style="display:flex; flex-direction:column; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.6; color:#3d3937">
+            <span><span style="color:#0b6fb4">≥1440</span> — full: 250px rail, canvas, 360px helper</span>
+            <span><span style="color:#0b6fb4">1180–1439</span> — helper docks to a 52px tab, opens as overlay</span>
+            <span><span style="color:#0b6fb4">1024–1179</span> — touch layout: top strip, pill actions, helper as bubble</span>
+            <span><span style="color:#0b6fb4">&lt;1024</span> — read-only preview + "Open on a laptop or tablet to edit"</span>
+          </div>
+        </div>
+        <div style="background:#0a0e12; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Why not a phone builder</span>
+          <span style="font-size:14.5px; line-height:1.65; color:rgba(255,255,255,.86)">Volunteers photograph cats on phones, so the phone job is upload and review — both of which the read-only view plus an upload button cover. Editing a 1440-wide page layout on a 390 screen would need a different product, not a smaller one.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:56px; padding:64px 64px 0">
+  <header style="display:flex; flex-direction:column; gap:12px; max-width:900px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:46px; width:auto; display:block" />
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#0b6fb4">Turn 5 · Hi-fi · the wall, and who runs it</span>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.02em">Deciding what the room sees</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#3d3937; max-width:66ch; text-wrap:pretty">The 1920×1080 wall was signed off in <a href="#2c">2c</a>. This is the screen a volunteer opens twenty minutes before an adoption event: who's in the rotation, how long each cat holds, and one button that puts it on the TV. The preview is live — toggle a cat, change the timing, and it re-times in place.</p>
+  </header>
+
+  <div id="5a" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">5a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">CAROUSEL SET-UP · 1400×820 · rotation, timing, cast to screen</span>
+    </div>
+
+    <div style="width:1400px; height:820px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column; overflow:hidden">
+      <div style="height:58px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:16px; padding:0 22px">
+        <img src="media/logo-transparent.png" alt="" style="height:24px; width:auto; display:block" />
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#6f6a63">All cats /</span>
+        <span style="font-size:14.5px; font-weight:500">Event carousel</span>
+        <div style="flex:1"></div>
+        <span style="display:flex; align-items:center; gap:7px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#6f6a63"><span style="width:6px; height:6px; border-radius:50%; background:#0b6fb4"></span>{{ castStatus }}</span>
+        <span style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:9px 16px; font-size:13.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Copy kiosk link</span>
+        <span onClick="{{ toggleCast }}" style="background:{{ castBg }}; color:#fff; border-radius:4px; padding:10px 18px; font-size:13.5px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">{{ castCta }}</span>
+      </div>
+
+      <div style="flex:1; display:flex; min-height:0">
+        <div style="width:388px; flex:none; border-right:1px solid rgba(35,31,32,.08); background:#fff; display:flex; flex-direction:column; min-height:0">
+          <div style="flex:none; padding:18px 20px 14px; display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Rotation</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#231f20">{{ rotationSummary }}</span>
+            </div>
+            <span style="font-size:13px; line-height:1.55; color:#3d3937">Drag to order. A cat leaves the wall the moment its profile goes back to draft.</span>
+          </div>
+          <div style="flex:1; min-height:0; overflow-y:auto; padding:0 20px 18px; display:flex; flex-direction:column; gap:8px">
+            <sc-for list="{{ castList }}" as="row" hint-placeholder-count="7">
+              <div onClick="{{ row.preview }}" style="display:flex; align-items:center; gap:12px; padding:10px; border:1px solid {{ row.line }}; border-radius:4px; cursor:pointer; background:{{ row.bg }}" style-hover="border-color:#0b6fb4">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#a9a49d">⠿</span>
+                <div style="width:48px; height:36px; flex:none; background-size:cover; background-position:center; background-image:{{ row.photo }}; border-radius:3px"></div>
+                <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px">
+                  <span style="font-size:14px; font-weight:500">{{ row.name }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63">{{ row.media }}</span>
+                </div>
+                <span onClick="{{ row.toggle }}" style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.14em; padding:6px 11px; border-radius:99px; cursor:pointer; background:{{ row.pillBg }}; color:{{ row.pillInk }}; border:1px solid {{ row.pillLine }}">{{ row.pill }}</span>
+              </div>
+            </sc-for>
+            <div style="border:1px dashed rgba(35,31,32,.24); border-radius:4px; padding:12px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#6f6a63; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">+ add a published cat</div>
+          </div>
+        </div>
+
+        <div style="flex:1; min-width:0; background:#efedea; display:flex; flex-direction:column; min-height:0">
+          <div style="flex:none; padding:14px 24px; border-bottom:1px solid rgba(35,31,32,.06); display:flex; align-items:center; justify-content:space-between; gap:16px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63">PREVIEW · 1920×1080 at {{ previewScale }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63">{{ loopLine }}</span>
+          </div>
+
+          <div style="flex:1; min-height:0; overflow-y:auto; padding:22px 24px; display:flex; flex-direction:column; gap:20px; align-items:center">
+            <sc-if value="{{ emptyRotation }}" hint-placeholder-val="{{ false }}">
+              <div style="width:864px; height:486px; flex:none; background:#0d0f11; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:40px; box-sizing:border-box; box-shadow:0 18px 46px -14px rgba(11,63,99,.4)">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:#8fd0ff">Nothing in the rotation</span>
+                <span style="font-family:'Instrument Serif',serif; font-size:44px; line-height:1.06; color:#fff; max-width:22ch">No cats are on the wall right now.</span>
+                <span style="font-size:16px; line-height:1.6; color:rgba(255,255,255,.86); max-width:46ch">Switch a cat back to IN and the loop rebuilds itself. Until then the screen stays dark rather than showing an empty frame.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasRotation }}" hint-placeholder-val="{{ true }}">
+            <div style="width:864px; height:486px; flex:none; position:relative; overflow:hidden; background:#0d0f11; box-shadow:0 18px 46px -14px rgba(11,63,99,.4)">
+              <div style="position:absolute; inset:0; background-size:cover; background-position:center; background-image:{{ wallPhoto }}"></div>
+              <div style="position:absolute; inset:0; background:linear-gradient(78deg, rgba(8,12,16,.94) 0%, rgba(8,12,16,.72) 34%, rgba(8,12,16,.12) 66%, rgba(8,12,16,.42) 100%)"></div>
+              <div style="position:absolute; inset:29px 43px; display:flex; flex-direction:column">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between">
+                  <div style="display:flex; align-items:center; gap:9px">
+                    <img src="media/logo-transparent.png" alt="" style="height:34px; width:auto; display:block; filter:brightness(0) invert(1)" />
+                    <div style="width:1px; height:25px; background:rgba(255,255,255,.28)"></div>
+                    <div style="display:flex; flex-direction:column; gap:2px">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Adoptable now</span>
+                      <span style="font-size:10px; color:rgba(255,255,255,.72)">Ask any volunteer to meet one</span>
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.16em; color:rgba(255,255,255,.6)">{{ wallCounter }}</span>
+                    <div style="display:flex; gap:4px">
+                      <div style="width:28px; height:3px; background:#8fd0ff; border-radius:99px"></div>
+                      <div style="width:28px; height:3px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+                      <div style="width:28px; height:3px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="flex:1; display:flex; align-items:flex-end; padding-bottom:4px">
+                  <div style="max-width:520px; display:flex; flex-direction:column; gap:12px">
+                    <div style="display:flex; align-items:center; gap:9px">
+                      <div style="width:36px; height:2px; background:#0b6fb4"></div>
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.24em; text-transform:uppercase; color:#8fd0ff">{{ wallTag }}</span>
+                    </div>
+                    <span style="font-family:'Instrument Serif',serif; font-size:86px; line-height:.86; letter-spacing:-.03em; color:#fff">{{ wallName }}</span>
+                    <span style="font-size:21px; line-height:1.3; color:rgba(255,255,255,.94)">{{ wallLine }}</span>
+                    <div style="display:flex; gap:7px; margin-top:4px">
+                      <span style="border:1px solid rgba(255,255,255,.45); border-radius:99px; padding:7px 14px; display:flex; flex-direction:column; gap:1px"><span style="font-family:'IBM Plex Mono',monospace; font-size:7px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.7)">Age</span><span style="font-size:13px; color:#fff">{{ wallAge }}</span></span>
+                      <span style="border:1px solid rgba(255,255,255,.45); border-radius:99px; padding:7px 14px; display:flex; flex-direction:column; gap:1px"><span style="font-family:'IBM Plex Mono',monospace; font-size:7px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.7)">Good with</span><span style="font-size:13px; color:#fff">{{ wallGood }}</span></span>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px">
+                  <div style="display:flex; gap:8px; align-items:center">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.5)">Up next</span>
+                    <div style="display:flex; gap:6px">
+                      <div style="width:68px; height:43px; border-radius:4px; background-size:cover; background-position:center; background-image:{{ nextA }}; border:1px solid rgba(255,255,255,.5)"></div>
+                      <div style="width:68px; height:43px; border-radius:4px; background-size:cover; background-position:center; background-image:{{ nextB }}; opacity:.6"></div>
+                    </div>
+                  </div>
+                  <sc-if value="{{ showQr }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:#fff; border-radius:7px; padding:9px; display:flex; align-items:center; gap:10px">
+                      <div style="width:62px; height:62px; background:repeating-conic-gradient(#231f20 0% 25%, #fff 0% 50%) 0 0/9px 9px"></div>
+                      <div style="display:flex; flex-direction:column; gap:3px; max-width:120px">
+                        <span style="font-family:'IBM Plex Mono',monospace; font-size:7px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Scan to keep</span>
+                        <span style="font-family:'Instrument Serif',serif; font-size:17px; line-height:1.05; color:#231f20">{{ wallName }}'s page</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+
+            </sc-if>
+
+            <div style="width:864px; flex:none; display:grid; grid-template-columns:1fr 1fr; gap:14px">
+              <div style="background:#fff; border-radius:6px; padding:18px 20px; display:flex; flex-direction:column; gap:14px">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Hold per cat</span>
+                <div style="display:flex; gap:6px; background:#f6f4f0; border-radius:4px; padding:3px; align-self:flex-start">
+                  <span onClick="{{ hold5 }}" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:8px 14px; border-radius:3px; cursor:pointer; background:{{ h5bg }}; color:{{ h5ink }}">5s</span>
+                  <span onClick="{{ hold65 }}" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:8px 14px; border-radius:3px; cursor:pointer; background:{{ h65bg }}; color:{{ h65ink }}">6.5s</span>
+                  <span onClick="{{ hold8 }}" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:8px 14px; border-radius:3px; cursor:pointer; background:{{ h8bg }}; color:{{ h8ink }}">8s</span>
+                  <span onClick="{{ hold12 }}" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:8px 14px; border-radius:3px; cursor:pointer; background:{{ h12bg }}; color:{{ h12ink }}">12s</span>
+                </div>
+                <span style="font-size:13px; line-height:1.55; color:#3d3937">{{ holdNote }}</span>
+              </div>
+
+              <div style="background:#fff; border-radius:6px; padding:18px 20px; display:flex; flex-direction:column; gap:14px">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">On the wall</span>
+                <div onClick="{{ toggleQr }}" style="display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer">
+                  <span style="font-size:14px">Scan-to-keep QR card</span>
+                  <span style="width:38px; height:22px; border-radius:99px; background:{{ qrTrack }}; position:relative; flex:none"><span style="position:absolute; top:3px; left:{{ qrKnob }}; width:16px; height:16px; border-radius:50%; background:#fff"></span></span>
+                </div>
+                <div onClick="{{ toggleRotate }}" style="display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer">
+                  <span style="font-size:14px">Different photo each loop</span>
+                  <span style="width:38px; height:22px; border-radius:99px; background:{{ rotTrack }}; position:relative; flex:none"><span style="position:absolute; top:3px; left:{{ rotKnob }}; width:16px; height:16px; border-radius:50%; background:#fff"></span></span>
+                </div>
+                <div onClick="{{ toggleClips }}" style="display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer">
+                  <span style="font-size:14px">Play clips, muted</span>
+                  <span style="width:38px; height:22px; border-radius:99px; background:{{ clipTrack }}; position:relative; flex:none"><span style="position:absolute; top:3px; left:{{ clipKnob }}; width:16px; height:16px; border-radius:50%; background:#fff"></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.8; color:#6f6a63; max-width:1400px">The preview is the wall at 45%, not a diagram of it — same scrim, same TV-safe inset, same type ratios, so a volunteer can judge legibility from across the room before casting. Only published cats can enter the rotation; a cat pulled back to draft drops out and the loop re-times itself without anyone touching the TV.</div>
+  </div>
+
+  <div id="5b" style="display:flex; gap:24px; flex-wrap:wrap; max-width:1400px">
+    <div style="width:452px; background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Pairing the TV</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">Open southcountycats.org/tv and type 4821.</span>
+      <span style="font-size:14px; line-height:1.6; color:#3d3937">Six digits would be safer and nobody would type them. The code rotates daily and only works inside the shelter's network.</span>
+    </div>
+    <div style="width:452px; background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#a4552a">Offline</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">The wall keeps looping on yesterday's cats.</span>
+      <span style="font-size:14px; line-height:1.6; color:#3d3937">The last good rotation is cached, so a dropped connection never blanks the screen at an event. A small mono line dates what's showing.</span>
+    </div>
+    <div style="width:452px; background:#0a0e12; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Reduced motion · kiosk</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1; color:#fff">No drift, no auto-advance, arrow keys page it.</span>
+      <span style="font-size:14px; line-height:1.6; color:rgba(255,255,255,.86)">Same composition, held still. Space pauses, and a volunteer can walk a family through the cats by hand.</span>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:56px; padding:64px 64px 0">
+  <header style="display:flex; flex-direction:column; gap:12px; max-width:900px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:46px; width:auto; display:block" />
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#0b6fb4">Turn 4 · Hi-fi · the way in</span>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.02em">Where volunteers land, and how they get in</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#3d3937; max-width:66ch; text-wrap:pretty">The list is the home screen: every cat, live or draft, newest work first. Filters are live, and the sign-in card switches between signing in and first-time set-up. Both are the same 4px-control language as the builder.</p>
+  </header>
+
+  <div id="4a" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">4a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">PROFILE LIST · 1200×760 · filters are live</span>
+    </div>
+
+    <div style="width:1200px; height:760px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column; overflow:hidden">
+      <div style="height:58px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:16px; padding:0 22px">
+        <img src="media/logo-transparent.png" alt="" style="height:24px; width:auto; display:block" />
+        <span style="font-size:14.5px; font-weight:500">Cats</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#6f6a63">{{ countLine }}</span>
+        <div style="flex:1"></div>
+        <div style="display:flex; align-items:center; gap:9px; border:1px solid rgba(35,31,32,.18); border-radius:4px; padding:8px 12px; width:210px" style-hover="border-color:#0b6fb4">
+          <span style="font-size:12px; color:#6f6a63">⌕</span>
+          <span style="font-size:13.5px; color:#6f6a63">Search by name</span>
+        </div>
+        <span style="background:#0b6fb4; color:#fff; border-radius:4px; padding:10px 18px; font-size:13.5px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">New cat</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63; cursor:pointer" style-hover="color:#0b6fb4">Sign out</span>
+      </div>
+
+      <div style="flex:none; padding:18px 22px 0; display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <span onClick="{{ filterAll }}" style="border-radius:99px; padding:8px 16px; font-size:13.5px; cursor:pointer; background:{{ allBg }}; color:{{ allInk }}; border:1px solid {{ allLine }}">All 12</span>
+        <span onClick="{{ filterLive }}" style="border-radius:99px; padding:8px 16px; font-size:13.5px; cursor:pointer; background:{{ liveBg }}; color:{{ liveInk }}; border:1px solid {{ liveLine }}">Live 7</span>
+        <span onClick="{{ filterDraft }}" style="border-radius:99px; padding:8px 16px; font-size:13.5px; cursor:pointer; background:{{ draftBg }}; color:{{ draftInk }}; border:1px solid {{ draftLine }}">Drafts 5</span>
+        <div style="flex:1"></div>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#6f6a63">Sorted by last edited</span>
+      </div>
+
+      <div style="flex:1; min-height:0; padding:20px 22px 24px; overflow:hidden">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px">
+          <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="8">
+            <div style="display:flex; flex-direction:column; gap:10px; cursor:pointer" style-hover="opacity:.94">
+              <div style="aspect-ratio:4/3; background-size:cover; background-position:center; background-image:{{ cat.photo }}; position:relative">
+                <span style="position:absolute; left:8px; top:8px; font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.16em; padding:4px 8px; border-radius:3px; background:{{ cat.badgeBg }}; color:{{ cat.badgeInk }}">{{ cat.status }}</span>
+              </div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px">
+                <span style="font-family:'Instrument Serif',serif; font-size:24px; line-height:1">{{ cat.name }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63">{{ cat.edited }}</span>
+              </div>
+              <span style="font-size:13px; line-height:1.5; color:#3d3937">{{ cat.blurb }}</span>
+            </div>
+          </sc-for>
+          <div style="display:flex; flex-direction:column; gap:10px; cursor:pointer">
+            <div style="aspect-ratio:4/3; border:1px dashed rgba(35,31,32,.26); background:repeating-linear-gradient(45deg,#e9e6e1 0 7px,#f6f4f0 7px 14px); display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63" style-hover="border-color:#0b6fb4; color:#0b6fb4">+ new cat</div>
+            <span style="font-size:13px; line-height:1.5; color:#6f6a63">Starts with a name and one photo. Everything else can wait.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.8; color:#6f6a63; max-width:1200px">Drafts are never hidden or dimmed — a draft is normal work in progress, so it sits in the same grid with an outline badge instead of a filled one. The card shows the first line of the bio so a volunteer can tell two tabbies apart at a glance.</div>
+  </div>
+
+  <div id="4b" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">4b</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">SIGN IN + FIRST-TIME SET-UP · one shared shelter account</span>
+    </div>
+
+    <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start">
+      <div style="width:900px; height:560px; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; overflow:hidden">
+        <div style="width:400px; flex:none; position:relative; overflow:hidden">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:48% 45%"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,14,20,.34) 0%, rgba(8,14,20,.1) 40%, rgba(8,14,20,.82) 100%)"></div>
+          <div style="position:absolute; left:28px; right:28px; bottom:28px; display:flex; flex-direction:column; gap:12px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#c9e7ff">Wakefield, RI</span>
+            <span style="font-family:'Instrument Serif',serif; font-size:38px; line-height:1.04; color:#fff; text-wrap:pretty">Seven cats are waiting on a page.</span>
+          </div>
+          <img src="media/logo-transparent.png" alt="South County Cats" style="position:absolute; left:28px; top:26px; height:38px; width:auto; display:block; filter:brightness(0) invert(1)" />
+        </div>
+
+        <div style="flex:1; background:#fff; padding:44px 46px; display:flex; flex-direction:column; justify-content:center; gap:22px">
+          <div style="display:flex; gap:4px; background:#f6f4f0; border-radius:4px; padding:3px; align-self:flex-start">
+            <span onClick="{{ modeSignIn }}" style="font-size:13px; padding:8px 16px; border-radius:3px; cursor:pointer; background:{{ inBg }}; color:{{ inInk }}">Sign in</span>
+            <span onClick="{{ modeSetUp }}" style="font-size:13px; padding:8px 16px; border-radius:3px; cursor:pointer; background:{{ upBg }}; color:{{ upInk }}">First time here</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <span style="font-family:'Instrument Serif',serif; font-size:38px; line-height:1.05; letter-spacing:-.02em">{{ authTitle }}</span>
+            <span style="font-size:14.5px; line-height:1.6; color:#3d3937; max-width:44ch">{{ authSub }}</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <sc-if value="{{ isSetUp }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:6px">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:#6f6a63">Invite code from your coordinator</span>
+                <div style="border:1px solid #0b6fb4; box-shadow:0 0 0 3px rgba(11,111,180,.16); border-radius:4px; padding:13px 14px; font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.14em">SCC-4•••</div>
+              </div>
+            </sc-if>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:#6f6a63">Username</span>
+              <div style="border:1px solid rgba(35,31,32,.2); border-radius:4px; padding:13px 14px; font-size:14.5px" style-hover="border-color:#0b6fb4">shelter</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:#6f6a63">{{ passLabel }}</span>
+              <div style="border:1px solid {{ passLine }}; border-radius:4px; padding:13px 14px; font-size:14.5px; color:#3d3937" style-hover="border-color:#0b6fb4">••••••••••</div>
+              <sc-if value="{{ showError }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:13.5px; line-height:1.5; color:#a4552a">That username and password don't match.</span>
+              </sc-if>
+              <sc-if value="{{ isSetUp }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:13px; line-height:1.5; color:#6f6a63">Ten characters or more. Write it on the whiteboard — everyone uses this one.</span>
+              </sc-if>
+            </div>
+            <span onClick="{{ submit }}" style="background:#0b6fb4; color:#fff; border-radius:4px; padding:14px; text-align:center; font-size:15px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">{{ authCta }}</span>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6f6a63">Stays signed in for 30 days</span>
+              <span style="font-size:13px; color:#0b6fb4; cursor:pointer" style-hover="text-decoration:underline">{{ authAside }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:456px; display:flex; flex-direction:column; gap:16px">
+        <div style="background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#a4552a">Wrong credentials</span>
+          <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">Never says which half was wrong.</span>
+          <span style="font-size:14px; line-height:1.6; color:#3d3937">Press <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px">{{ authCta }}</span> on the card to see the error state in place. Three misses in a row offers the coordinator's phone number rather than a lockout.</span>
+        </div>
+        <div style="background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Empty shelter</span>
+          <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">No cats listed yet. Start with the one who needs a home soonest.</span>
+          <span style="font-size:14px; line-height:1.6; color:#3d3937">A single primary action, the striped new-cat tile, and nothing else on screen — calm, never a blank grid or a spinner.</span>
+        </div>
+        <div style="background:#0a0e12; padding:22px; display:flex; flex-direction:column; gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Shared account, honest about it</span>
+          <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1; color:#fff">Edits are attributed to “a volunteer”, never to a person.</span>
+          <span style="font-size:14px; line-height:1.6; color:rgba(255,255,255,.86)">The published profile says “Updated 4 days ago by a volunteer”, which is exactly as much as one shared login can truthfully claim.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:56px; padding:64px">
+  <header style="display:flex; flex-direction:column; gap:12px; max-width:900px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:46px; width:auto; display:block" />
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#0b6fb4">Turn 3 · Hi-fi builder · live</span>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.02em">The volunteer's side of it</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#3d3937; max-width:66ch; text-wrap:pretty">Wireframe 1a in the real palette. It works: click a block to select it, switch the canvas between desktop and phone, pick a theme, and let the helper apply its two proposed changes — the theme warms and the video moves above the gallery for real, with one undo.</p>
+  </header>
+
+  <div id="3a" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">3a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#6f6a63">BUILDER · 1440×920 · rail, canvas, helper</span>
+    </div>
+
+    <div style="width:1440px; height:920px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column; overflow:hidden">
+
+      <div style="height:58px; flex:none; background:#fff; border-bottom:1px solid rgba(35,31,32,.08); display:flex; align-items:center; gap:16px; padding:0 18px">
+        <img src="media/logo-transparent.png" alt="" style="height:24px; width:auto; display:block" />
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.06em; color:#6f6a63">All cats /</span>
+        <div style="display:flex; align-items:center; gap:10px; border:1px solid rgba(35,31,32,.2); border-radius:4px; padding:9px 12px; min-width:230px" style-hover="border-color:#0b6fb4">
+          <span style="font-size:14.5px; font-weight:500">Charlotte</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#6f6a63; margin-left:auto">cat name</span>
+        </div>
+        <div style="flex:1"></div>
+        <span style="display:flex; align-items:center; gap:7px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#6f6a63"><span style="width:6px; height:6px; border-radius:50%; background:#0b6fb4"></span>Draft saved 2s ago</span>
+        <div style="display:flex; gap:6px">
+          <span onClick="{{ undo }}" style="width:32px; height:32px; border:1px solid rgba(35,31,32,.2); border-radius:4px; display:grid; place-items:center; font-size:13px; color:#3d3937; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">↶</span>
+          <span style="width:32px; height:32px; border:1px solid rgba(35,31,32,.14); border-radius:4px; display:grid; place-items:center; font-size:13px; color:#a9a49d">↷</span>
+        </div>
+        <span style="border:1px solid rgba(35,31,32,.28); border-radius:4px; padding:9px 16px; font-size:13.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Preview</span>
+        <span style="background:#0b6fb4; color:#fff; border-radius:4px; padding:10px 18px; font-size:13.5px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">Publish</span>
+      </div>
+
+      <div style="flex:1; display:flex; min-height:0">
+
+        <div style="width:250px; flex:none; border-right:1px solid rgba(35,31,32,.08); background:#fff; display:flex; flex-direction:column; gap:24px; padding:20px 18px; overflow:hidden">
+          <div style="display:flex; flex-direction:column; gap:10px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Add section</span>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px">
+              <div style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:60% 40%; border-radius:2px"></div>Hero</div>
+              <div style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; display:flex; flex-direction:column; gap:3px; padding-top:3px"><span style="height:2px; background:#ddd9d3"></span><span style="height:2px; background:#ddd9d3"></span><span style="height:2px; width:60%; background:#ddd9d3"></span></div>Bio</div>
+              <div style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:50% 45%; border-radius:2px"></div>Photo</div>
+              <div style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:3px"><span style="background:#e9e6e1"></span><span style="background:#e9e6e1"></span><span style="background:#e9e6e1"></span></div>Gallery</div>
+              <div style="border:1px solid rgba(35,31,32,.14); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; border-radius:2px; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center; display:grid; place-items:center; font-size:8px; color:#fff">▶</div>Video</div>
+              <div style="border:1px dashed rgba(35,31,32,.24); border-radius:4px; padding:10px; display:flex; flex-direction:column; gap:9px; font-size:12.5px; color:#6f6a63; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4"><div style="height:16px; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px">$</div>Facts</div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px">
+            <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Theme</span><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63">{{ themeName }}</span></div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px">
+              <div onClick="{{ pickPaper }}" style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#fbfaf8,#e9e6e1); cursor:pointer; outline:{{ ring0 }}; outline-offset:2px"></div>
+              <div onClick="{{ pickCard }}" style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#ffffff,#dfe4e7); cursor:pointer; outline:{{ ring1 }}; outline-offset:2px"></div>
+              <div onClick="{{ pickNight }}" style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#1a222b,#0a0e12); cursor:pointer; outline:{{ ring2 }}; outline-offset:2px"></div>
+              <div onClick="{{ pickSand }}" style="aspect-ratio:1; border-radius:4px; background:linear-gradient(160deg,#f4ece0,#dcc9ad); cursor:pointer; outline:{{ ring3 }}; outline-offset:2px"></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:4px">
+              <div style="display:flex; flex-direction:column; gap:7px"><div style="display:flex; justify-content:space-between"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63">warmth</span><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#231f20">{{ warmth }}</span></div><div style="height:3px; background:#e9e6e1; border-radius:99px; position:relative"><div style="position:absolute; left:0; top:0; bottom:0; width:{{ warmthPct }}; background:#0b6fb4; border-radius:99px"></div><div style="position:absolute; left:{{ warmthPct }}; top:-5px; width:13px; height:13px; margin-left:-6px; border-radius:50%; background:#fff; border:2px solid #0b6fb4"></div></div></div>
+              <div style="display:flex; flex-direction:column; gap:7px"><div style="display:flex; justify-content:space-between"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63">contrast</span><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#231f20">0.71</span></div><div style="height:3px; background:#e9e6e1; border-radius:99px; position:relative"><div style="position:absolute; left:0; top:0; bottom:0; width:71%; background:#0b6fb4; border-radius:99px"></div><div style="position:absolute; left:71%; top:-5px; width:13px; height:13px; margin-left:-6px; border-radius:50%; background:#fff; border:2px solid #0b6fb4"></div></div></div>
+            </div>
+            <div style="border-left:3px solid #0b6fb4; background:#f6f4f0; padding:9px 11px; font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:1.6; color:#3d3937">contrast check: {{ contrastNote }}</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px; min-height:0">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Media · 7 items</span>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px">
+              <div style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:60% 40%; cursor:grab"></div>
+              <div style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:50% 45%; cursor:grab"></div>
+              <div style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center; cursor:grab; position:relative"><span style="position:absolute; right:4px; bottom:3px; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.7)">▶</span></div>
+              <div style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:30% 60%; cursor:grab"></div>
+              <div style="aspect-ratio:1; border-radius:3px; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:20% 30%; cursor:grab"></div>
+              <div style="aspect-ratio:1; border:1px dashed rgba(35,31,32,.26); border-radius:3px; display:grid; place-items:center; font-size:15px; color:#6f6a63; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">+</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1; min-width:0; background:#efedea; display:flex; flex-direction:column; min-height:0">
+          <div style="flex:none; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(35,31,32,.06)">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em; color:#6f6a63">{{ canvasNote }}</span>
+            <div style="display:flex; gap:4px; background:#fff; border:1px solid rgba(35,31,32,.12); border-radius:4px; padding:3px">
+              <span onClick="{{ setDesktop }}" style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer; background:{{ deskBg }}; color:{{ deskInk }}">desktop</span>
+              <span onClick="{{ setPhone }}" style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer; background:{{ phoneBg }}; color:{{ phoneInk }}">phone</span>
+            </div>
+          </div>
+
+          <div style="flex:1; min-height:0; overflow-y:auto; padding:24px 28px; display:flex; justify-content:center; align-items:flex-start">
+            <div style="width:{{ canvasWidth }}; max-width:100%; flex:none; background:{{ themeBg }}; display:flex; flex-direction:column; gap:10px; padding:12px; box-sizing:border-box; box-shadow:0 18px 46px -14px rgba(11,63,99,.28)">
+
+              <div onClick="{{ selHero }}" style="display:flex; outline:{{ heroRing }}; outline-offset:-1px; cursor:pointer; background:{{ themeSurface }}">
+                <div style="width:32px; flex:none; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; align-items:center; gap:7px; padding:8px 0; font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ handleInk }}"><span>⠿</span><span>↑</span><span>↓</span></div>
+                <div style="flex:1; min-width:0">
+                  <div style="height:172px; position:relative; overflow:hidden">
+                    <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:64% 42%"></div>
+                    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.18) 0%, rgba(10,20,28,0) 42%, rgba(10,20,28,.78) 100%)"></div>
+                    <div style="position:absolute; left:18px; right:18px; bottom:14px; display:flex; flex-direction:column; gap:5px">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:#c9e7ff">Looking for a home · Wakefield, RI</span>
+                      <span style="font-family:'Instrument Serif',serif; font-size:52px; line-height:.86; letter-spacing:-.03em; color:#fff">Charlotte</span>
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; border-top:1px solid rgba(35,31,32,.08); font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ blockLabelInk }}">
+                    <span>HERO · full-bleed photo + name</span>
+                    <sc-if value="{{ heroSelected }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:flex; gap:12px; color:#0b6fb4">replace photo<span>enhance</span><span>duplicate</span><span style="color:#a4552a">remove</span></span>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div onClick="{{ selBio }}" style="display:flex; outline:{{ bioRing }}; outline-offset:-1px; cursor:pointer; background:{{ themeSurface }}">
+                <div style="width:32px; flex:none; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; align-items:center; gap:7px; padding:8px 0; font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ handleInk }}"><span>⠿</span><span>↑</span><span>↓</span></div>
+                <div style="flex:1; min-width:0">
+                  <div style="padding:20px 22px; display:flex; flex-direction:column; gap:12px">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Who she is</span>
+                    <span style="font-family:'Instrument Serif',serif; font-size:27px; line-height:1.12; letter-spacing:-.015em; color:{{ themeInk }}; max-width:34ch">An explorer who never gives up, and will loudly ask for pets.</span>
+                    <span style="font-size:13.5px; line-height:1.65; color:{{ themeBody }}; max-width:66ch">Charlotte came in from a laundromat parking lot in April, thin and unbothered. Two weeks later she had claimed the highest shelf in the foster room and started supervising the household from it.</span>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; border-top:1px solid rgba(35,31,32,.08); font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ blockLabelInk }}">
+                    <span>BIO · paragraphs, bold, italic, links</span>
+                    <sc-if value="{{ bioSelected }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:flex; gap:12px; color:#0b6fb4">rewrite<span>shorten</span><span>duplicate</span><span style="color:#a4552a">remove</span></span>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div onClick="{{ selVideo }}" style="order:{{ videoOrder }}; display:flex; outline:{{ videoRing }}; outline-offset:-1px; cursor:pointer; background:{{ themeSurface }}">
+                <div style="width:32px; flex:none; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; align-items:center; gap:7px; padding:8px 0; font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ handleInk }}"><span>⠿</span><span>↑</span><span>↓</span></div>
+                <div style="flex:1; min-width:0">
+                  <div style="padding:14px; display:flex; gap:14px; align-items:center; flex-wrap:wrap">
+                    <div style="width:206px; height:92px; flex:none; position:relative; overflow:hidden; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center 40%">
+                      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.1), rgba(10,20,28,.45)); display:grid; place-items:center"><span style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.94); display:grid; place-items:center; font-size:12px; color:#0b6fb4">▶</span></div>
+                    </div>
+                    <div style="flex:1; min-width:170px; display:flex; flex-direction:column; gap:9px">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ blockLabelInk }}">trim 0:04 – 0:12 of 2:07 · muted autoplay + loop</span>
+                      <div style="height:26px; background:#e9e6e1; border-radius:3px; position:relative; overflow:hidden">
+                        <div style="position:absolute; left:14%; width:24%; top:0; bottom:0; border:2px solid #0b6fb4; background:rgba(11,111,180,.12); box-sizing:border-box"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; border-top:1px solid rgba(35,31,32,.08); font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ blockLabelInk }}">
+                    <span>VIDEO · one clip, trimmed</span>
+                    <sc-if value="{{ videoSelected }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:flex; gap:12px; color:#0b6fb4">replace clip<span>re-trim</span><span>cover frame</span><span style="color:#a4552a">remove</span></span>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div onClick="{{ selGallery }}" style="order:{{ galleryOrder }}; display:flex; outline:{{ galleryRing }}; outline-offset:-1px; cursor:pointer; background:{{ themeSurface }}">
+                <div style="width:32px; flex:none; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; align-items:center; gap:7px; padding:8px 0; font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ handleInk }}"><span>⠿</span><span>↑</span><span>↓</span></div>
+                <div style="flex:1; min-width:0">
+                  <div style="padding:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:8px">
+                    <div style="aspect-ratio:4/3; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:40% 50%"></div>
+                    <div style="aspect-ratio:4/3; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:70% 40%"></div>
+                    <div style="aspect-ratio:4/3; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:55% 45%"></div>
+                    <div style="aspect-ratio:4/3; border:1px dashed rgba(35,31,32,.26); display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:#6f6a63; text-align:center; background:repeating-linear-gradient(45deg,#e9e6e1 0 6px,#f6f4f0 6px 12px)">drop a<br />photo</div>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; border-top:1px solid rgba(35,31,32,.08); font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ blockLabelInk }}">
+                    <span>GALLERY · 3 of up to 12</span>
+                    <sc-if value="{{ gallerySelected }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:flex; gap:12px; color:#0b6fb4">add photos<span>reorder</span><span>duplicate</span><span style="color:#a4552a">remove</span></span>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div style="order:9; border:1px dashed rgba(35,31,32,.24); padding:14px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:#6f6a63; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">+ add section</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:360px; flex:none; border-left:1px solid rgba(35,31,32,.08); background:#fff; display:flex; flex-direction:column; min-height:0">
+          <div style="flex:none; padding:16px 18px; border-bottom:1px solid rgba(35,31,32,.06); display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <div style="display:flex; flex-direction:column; gap:3px">
+              <span style="font-size:14px; font-weight:500">Helper</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.06em; color:#6f6a63">sees this page · cannot publish</span>
+            </div>
+            <span onClick="{{ toggleHelper }}" style="font-size:12px; color:#6f6a63; cursor:pointer; padding:6px" style-hover="color:#0b6fb4">{{ helperChevron }}</span>
+          </div>
+
+          <sc-if value="{{ helperOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1; min-height:0; padding:18px; display:flex; flex-direction:column; gap:14px; overflow:hidden">
+              <div style="align-self:flex-end; max-width:82%; background:#f6f4f0; border-radius:10px 10px 3px 10px; padding:10px 13px; font-size:13px; line-height:1.5; color:#3d3937">Warm up the background and move the video above the gallery</div>
+              <div style="max-width:90%; font-size:13px; line-height:1.55; color:#3d3937">Two changes, then. I'll shift the theme warmer and lift the video above the gallery.</div>
+
+              <sc-if value="{{ proposalPending }}" hint-placeholder-val="{{ true }}">
+                <div style="border:1px solid rgba(35,31,32,.14); border-radius:6px; overflow:hidden">
+                  <div style="padding:10px 13px; border-bottom:1px solid rgba(35,31,32,.06); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#6f6a63">Proposed · 2 operations</div>
+                  <div style="padding:12px 13px; display:flex; flex-direction:column; gap:11px; font-size:12.5px; color:#3d3937">
+                    <div style="display:flex; gap:10px; align-items:center">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63; width:52px; flex:none">theme</span>
+                      <span style="width:22px; height:22px; border-radius:3px; background:linear-gradient(160deg,#fbfaf8,#e9e6e1); border:1px solid rgba(35,31,32,.12)"></span>
+                      <span style="color:#a9a49d">→</span>
+                      <span style="width:22px; height:22px; border-radius:3px; background:linear-gradient(160deg,#f4ece0,#dcc9ad)"></span>
+                      <span>warmth 0.34 → 0.62</span>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:baseline">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63; width:52px; flex:none">reorder</span>
+                      <span>Video moves above Gallery (4 → 3)</span>
+                    </div>
+                  </div>
+                  <div style="padding:11px 13px; border-top:1px solid rgba(35,31,32,.06); display:flex; gap:8px; align-items:center">
+                    <span onClick="{{ apply }}" style="background:#0b6fb4; color:#fff; border-radius:4px; padding:9px 17px; font-size:12.5px; font-weight:500; cursor:pointer" style-hover="background:#0a3d63">Apply</span>
+                    <span onClick="{{ dismiss }}" style="border:1px solid rgba(35,31,32,.2); border-radius:4px; padding:8px 14px; font-size:12.5px; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Not this</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6f6a63; margin-left:auto">one undo</span>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ proposalApplied }}" hint-placeholder-val="{{ true }}">
+                <div style="border-left:3px solid #0b6fb4; background:#f6f4f0; padding:12px 14px; display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:13.5px; font-weight:500">Applied — theme warmed, video lifted above the gallery.</span>
+                  <span onClick="{{ undo }}" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#0b6fb4; cursor:pointer; align-self:flex-start" style-hover="text-decoration:underline">↶ undo both</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ proposalDismissed }}" hint-placeholder-val="{{ true }}">
+                <div style="border:1px dashed rgba(35,31,32,.24); border-radius:6px; padding:12px 14px; display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:13px; line-height:1.55; color:#3d3937">Left as it was. Nothing on your page changed.</span>
+                  <span onClick="{{ reopen }}" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#0b6fb4; cursor:pointer; align-self:flex-start" style-hover="text-decoration:underline">show the suggestion again</span>
+                </div>
+              </sc-if>
+
+              <div style="border-left:3px solid #a4552a; background:#f6f4f0; padding:12px 14px; display:flex; flex-direction:column; gap:6px">
+                <span style="font-size:13.5px; font-weight:500">Shortening the bio replaces your text</span>
+                <span style="font-size:12.5px; line-height:1.55; color:#3d3937">You wrote that paragraph. The original is recoverable with one undo, and only one.</span>
+              </div>
+
+              <div style="margin-top:auto; display:flex; flex-direction:column; gap:9px">
+                <div style="border:1px solid rgba(35,31,32,.2); border-radius:6px; padding:11px 13px; font-size:13px; color:#6f6a63" style-hover="border-color:#0b6fb4">Ask for a change…</div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap">
+                  <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3d3937; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Write a bio</span>
+                  <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3d3937; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Pick a theme</span>
+                  <span style="border:1px solid rgba(35,31,32,.16); border-radius:99px; padding:6px 12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3d3937; cursor:pointer" style-hover="border-color:#0b6fb4; color:#0b6fb4">Tidy the order</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ helperClosed }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1; min-height:0; padding:18px; display:flex; flex-direction:column; gap:10px">
+              <span style="font-size:13px; line-height:1.6; color:#3d3937">Collapsed. The canvas keeps the full width, and the helper remembers where you left off.</span>
+              <span onClick="{{ toggleHelper }}" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#0b6fb4; cursor:pointer; align-self:flex-start" style-hover="text-decoration:underline">open helper</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.8; color:#6f6a63; max-width:1440px">Selection is the only blue outline on screen. Block toolbars appear on the selected block and nowhere else, so the canvas reads as a page rather than a form. Theme swatches retint the canvas surface only — photography is never tinted. Every helper action is a proposal first, applies as one operation, and is reversible exactly once.</div>
+  </div>
+
+  <div style="display:flex; gap:24px; flex-wrap:wrap; max-width:1440px">
+    <div style="width:456px; background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#6f6a63">Helper locked</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">Add one photo and I can help.</span>
+      <span style="font-size:14px; line-height:1.6; color:#3d3937">Until then the panel stays visible but inert — no spinner, no greyed mystery, and the reason is written in the panel itself.</span>
+    </div>
+    <div style="width:456px; background:#fff; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#a4552a">Publish blocked</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1">Two things missing: fee, and one photo in the gallery.</span>
+      <span style="font-size:14px; line-height:1.6; color:#3d3937">Publish stays clickable and explains, then scrolls to the first gap. It never silently disables itself.</span>
+    </div>
+    <div style="width:456px; background:#0a0e12; padding:22px; display:flex; flex-direction:column; gap:10px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Reduced motion</span>
+      <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1.1; color:#fff">Blocks land instantly, nothing autoplays.</span>
+      <span style="font-size:14px; line-height:1.6; color:rgba(255,255,255,.86)">Drop indicators and selection still animate colour, never position. The video block shows its cover frame with a visible play control.</span>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;helperOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Builder state&quot;},&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;phone&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;\&quot;desktop\&quot; | \&quot;phone\&quot;&quot;,&quot;section&quot;:&quot;Builder state&quot;}}">
+class Component extends DCLogic {
+  state = {
+    sel: 'hero',
+    viewport: this.props.viewport === 'phone' ? 'phone' : 'desktop',
+    theme: 0,
+    videoAboveGallery: false,
+    proposal: 'pending',
+    helperOpen: this.props.helperOpen ?? true,
+    filter: 'all',
+    authMode: 'in',
+    authError: false,
+    out: { Sorrel: true },
+    hold: 6.5,
+    qr: true,
+    rotateMedia: true,
+    clips: true,
+    previewIdx: 0,
+    casting: false,
+    focal: { x: 64, y: 42 }
+  };
+
+  wall = [
+    { name: 'Charlotte', slug: 'charlotte', tag: 'Explorer', age: '3 years', good: 'Cats, kids', line: 'Never gives up, and will loudly ask for pets.', photo: 'media/charlotte-1.jpg', media: '3 photos · 1 clip' },
+    { name: 'Mango', slug: 'mango', tag: 'Lap specialist', age: '2 years', good: 'Everyone', line: 'Finds the one warm spot in any room and holds it.', photo: 'media/charlotte-2.jpg', media: '4 photos' },
+    { name: 'Juniper', slug: 'juniper', tag: 'Quiet type', age: '5 years', good: 'Calm homes', line: 'Takes a week to decide about you, then never leaves.', photo: 'media/charlotte-3.jpg', media: '2 photos · 1 clip' },
+    { name: 'Pepper', slug: 'pepper', tag: 'Bonded pair', age: '4 years', good: 'Olive, always', line: 'Comes as a pair with Olive. They sleep in one basket.', photo: 'media/charlotte-1.jpg', media: '5 photos' },
+    { name: 'Olive', slug: 'olive', tag: 'Bonded pair', age: '4 years', good: 'Pepper, only', line: 'Quiet half of the pair. Talks only to Pepper.', photo: 'media/charlotte-3.jpg', media: '3 photos' },
+    { name: 'Sorrel', slug: 'sorrel', tag: 'New arrival', age: '1 year', good: 'Older kids', line: 'Two weeks in and already running the hallway.', photo: 'media/charlotte-2.jpg', media: '2 photos' }
+  ];
+
+  roster = [
+    { name: 'Charlotte', photo: 'media/charlotte-1.jpg', pos: '62% 40%', status: 'LIVE', edited: '4d', blurb: 'An explorer who never gives up, and will loudly ask for pets.' },
+    { name: 'Mango', photo: 'media/charlotte-2.jpg', pos: '40% 50%', status: 'LIVE', edited: '5d', blurb: 'Finds the one warm spot in any room and holds it.' },
+    { name: 'Juniper', photo: 'media/charlotte-3.jpg', pos: '55% 45%', status: 'DRAFT', edited: '1h', blurb: 'Takes a week to decide about you, then never leaves.' },
+    { name: 'Bramble', photo: 'media/charlotte-2.jpg', pos: '20% 60%', status: 'DRAFT', edited: '2h', blurb: 'Needs a bio and a fee before he can go live.' },
+    { name: 'Pepper', photo: 'media/charlotte-1.jpg', pos: '25% 35%', status: 'LIVE', edited: '1w', blurb: 'Bonded with Olive — the pair go home together.' },
+    { name: 'Olive', photo: 'media/charlotte-3.jpg', pos: '70% 35%', status: 'LIVE', edited: '1w', blurb: 'Quiet half of the pair. Talks only to Pepper.' },
+    { name: 'Sorrel', photo: 'media/charlotte-2.jpg', pos: '60% 30%', status: 'DRAFT', edited: '3d', blurb: 'Photos uploaded, waiting on the vet record.' }
+  ];
+
+  themes = [
+    { name: 'Paper', bg: '#e9e6e1', surface: '#f6f4f0', ink: '#231f20', body: '#3d3937', warmth: 0.34, note: 'passes AA' },
+    { name: 'Card', bg: '#dfe4e7', surface: '#ffffff', ink: '#231f20', body: '#3d3937', warmth: 0.18, note: 'passes AA' },
+    { name: 'Night', bg: '#0a0e12', surface: '#14191f', ink: '#ffffff', body: 'rgba(255,255,255,.86)', warmth: 0.08, note: 'passes AA · light labels swap in' },
+    { name: 'Sand', bg: '#dcc9ad', surface: '#f4ece0', ink: '#231f20', body: '#3d3937', warmth: 0.62, note: 'passes AA at 0.62 warmth' }
+  ];
+
+  set = (patch) => this.setState(patch);
+
+  renderVals() {
+    const s = this.state;
+    const t = this.themes[s.theme];
+    const ring = (on) => on ? '2px solid #0b6fb4' : '1px solid rgba(35,31,32,.12)';
+    const swatchRing = (i) => s.theme === i ? '2px solid #0b6fb4' : '1px solid rgba(35,31,32,.12)';
+    const night = s.theme === 2;
+
+    const inWall = this.wall.filter(c => !s.out[c.name]);
+    const inCount = inWall.length;
+    const loopSecs = +(inCount * s.hold).toFixed(1);
+    const picked = this.wall[s.previewIdx] || this.wall[0];
+    const cur = (inCount && s.out[picked.name]) ? inWall[0] : picked;
+    const curPos = Math.max(0, inWall.findIndex(c => c.name === cur.name));
+    const pool = inCount ? inWall : this.wall;
+    const nextCats = [pool[(curPos + 1) % pool.length], pool[(curPos + 2) % pool.length]];
+
+    return {
+      themeName: t.name,
+      themeBg: t.bg,
+      themeSurface: t.surface,
+      themeInk: t.ink,
+      themeBody: t.body,
+      handleInk: night ? 'rgba(255,255,255,.5)' : '#a9a49d',
+      blockLabelInk: night ? 'rgba(255,255,255,.62)' : '#6f6a63',
+      warmth: t.warmth.toFixed(2),
+      warmthPct: Math.round(t.warmth * 100) + '%',
+      contrastNote: t.note,
+
+      ring0: swatchRing(0), ring1: swatchRing(1), ring2: swatchRing(2), ring3: swatchRing(3),
+      pickPaper: () => this.set({ theme: 0 }),
+      pickCard: () => this.set({ theme: 1 }),
+      pickNight: () => this.set({ theme: 2 }),
+      pickSand: () => this.set({ theme: 3 }),
+
+      canvasWidth: s.viewport === 'phone' ? '414px' : '100%',
+      canvasNote: s.viewport === 'phone'
+        ? 'CANVAS · phone 390 · same sections, same order'
+        : 'CANVAS · vertical stack, full-width sections only',
+      deskBg: s.viewport === 'desktop' ? '#0b6fb4' : 'transparent',
+      deskInk: s.viewport === 'desktop' ? '#fff' : '#6f6a63',
+      phoneBg: s.viewport === 'phone' ? '#0b6fb4' : 'transparent',
+      phoneInk: s.viewport === 'phone' ? '#fff' : '#6f6a63',
+      setDesktop: () => this.set({ viewport: 'desktop' }),
+      setPhone: () => this.set({ viewport: 'phone' }),
+
+      heroRing: ring(s.sel === 'hero'),
+      bioRing: ring(s.sel === 'bio'),
+      videoRing: ring(s.sel === 'video'),
+      galleryRing: ring(s.sel === 'gallery'),
+      heroSelected: s.sel === 'hero',
+      bioSelected: s.sel === 'bio',
+      videoSelected: s.sel === 'video',
+      gallerySelected: s.sel === 'gallery',
+      selHero: () => this.set({ sel: 'hero' }),
+      selBio: () => this.set({ sel: 'bio' }),
+      selVideo: () => this.set({ sel: 'video' }),
+      selGallery: () => this.set({ sel: 'gallery' }),
+
+      videoOrder: s.videoAboveGallery ? 3 : 4,
+      galleryOrder: s.videoAboveGallery ? 4 : 3,
+
+      proposalPending: s.proposal === 'pending',
+      proposalApplied: s.proposal === 'applied',
+      proposalDismissed: s.proposal === 'dismissed',
+      apply: () => this.setState({ proposal: 'applied', theme: 3, videoAboveGallery: true }),
+      dismiss: () => this.set({ proposal: 'dismissed' }),
+      reopen: () => this.set({ proposal: 'pending' }),
+      undo: () => this.setState({ proposal: 'pending', theme: 0, videoAboveGallery: false }),
+
+      castList: this.wall.map((c, i) => {
+        const inRotation = !s.out[c.name];
+        return {
+          name: c.name,
+          media: c.media,
+          photo: "url('" + c.photo + "')",
+          bg: s.previewIdx === i ? 'rgba(11,111,180,.06)' : '#fff',
+          line: s.previewIdx === i ? '#0b6fb4' : 'rgba(35,31,32,.14)',
+          pill: inRotation ? 'IN' : 'OUT',
+          pillBg: inRotation ? '#0b6fb4' : 'transparent',
+          pillInk: inRotation ? '#fff' : '#6f6a63',
+          pillLine: inRotation ? '#0b6fb4' : 'rgba(35,31,32,.24)',
+          preview: () => this.set({ previewIdx: i }),
+          toggle: (e) => {
+            if (e && e.stopPropagation) e.stopPropagation();
+            this.setState(p => {
+              const out = Object.assign({}, p.out);
+              if (out[c.name]) delete out[c.name]; else out[c.name] = true;
+              let previewIdx = p.previewIdx;
+              if (out[c.name] && previewIdx === i) {
+                const nearest = this.wall.findIndex(x => !out[x.name]);
+                previewIdx = nearest === -1 ? previewIdx : nearest;
+              }
+              return { out, previewIdx };
+            });
+          }
+        };
+      }),
+      rotationSummary: inCount + ' of ' + this.wall.length + ' on the wall',
+      loopLine: inCount + (inCount === 1 ? ' cat × ' : ' cats × ') + s.hold + 's = ' + loopSecs + 's loop',
+      previewScale: '45%',
+      focalPos: s.focal.x + '% ' + s.focal.y + '%',
+      focalLeft: s.focal.x + '%',
+      focalTop: s.focal.y + '%',
+      focalReadout: s.focal.x + '% ' + s.focal.y + '%',
+      setFocal: (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const x = Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)));
+        const y = Math.round(Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)));
+        this.set({ focal: { x, y } });
+      },
+      centreFocal: () => this.set({ focal: { x: 50, y: 50 } }),
+
+      hasRotation: inCount > 0,
+      emptyRotation: inCount === 0,
+      castStatus: inCount === 0
+        ? 'Nothing to cast yet'
+        : (s.casting ? 'Casting to Lobby TV' : 'Not on a screen yet'),
+      castCta: inCount === 0 ? 'Add a cat to cast' : (s.casting ? 'Stop casting' : 'Start on Lobby TV'),
+      castBg: inCount === 0 ? '#a9a49d' : (s.casting ? '#a4552a' : '#0b6fb4'),
+      toggleCast: () => { if (inCount > 0) this.setState(p => ({ casting: !p.casting })); },
+
+      wallName: cur.name,
+      wallSlug: cur.slug,
+      wallTag: cur.tag,
+      wallAge: cur.age,
+      wallGood: cur.good,
+      wallLine: cur.line,
+      wallPhoto: "url('" + cur.photo + "')",
+      wallCounter: String(Math.min(curPos + 1, inCount || 1)).padStart(2, '0') + ' / ' + String(inCount).padStart(2, '0'),
+      nextA: "url('" + nextCats[0].photo + "')",
+      nextB: "url('" + nextCats[1].photo + "')",
+
+      h5bg: s.hold === 5 ? '#0b6fb4' : 'transparent', h5ink: s.hold === 5 ? '#fff' : '#6f6a63',
+      h65bg: s.hold === 6.5 ? '#0b6fb4' : 'transparent', h65ink: s.hold === 6.5 ? '#fff' : '#6f6a63',
+      h8bg: s.hold === 8 ? '#0b6fb4' : 'transparent', h8ink: s.hold === 8 ? '#fff' : '#6f6a63',
+      h12bg: s.hold === 12 ? '#0b6fb4' : 'transparent', h12ink: s.hold === 12 ? '#fff' : '#6f6a63',
+      hold5: () => this.set({ hold: 5 }),
+      hold65: () => this.set({ hold: 6.5 }),
+      hold8: () => this.set({ hold: 8 }),
+      hold12: () => this.set({ hold: 12 }),
+      holdNote: s.hold <= 5
+        ? 'Brisk. Good for a busy doorway where nobody stands still.'
+        : (s.hold >= 12 ? 'Slow enough to read the whole line twice — right for a seated waiting area.' : 'The default. Long enough to read the name, the line, and reach for a phone.'),
+
+      showQr: s.qr,
+      qrTrack: s.qr ? '#0b6fb4' : 'rgba(35,31,32,.22)',
+      qrKnob: s.qr ? '19px' : '3px',
+      toggleQr: () => this.setState(p => ({ qr: !p.qr })),
+      rotTrack: s.rotateMedia ? '#0b6fb4' : 'rgba(35,31,32,.22)',
+      rotKnob: s.rotateMedia ? '19px' : '3px',
+      toggleRotate: () => this.setState(p => ({ rotateMedia: !p.rotateMedia })),
+      clipTrack: s.clips ? '#0b6fb4' : 'rgba(35,31,32,.22)',
+      clipKnob: s.clips ? '19px' : '3px',
+      toggleClips: () => this.setState(p => ({ clips: !p.clips })),
+
+      cats: this.roster
+        .filter(c => s.filter === 'all' || (s.filter === 'live' ? c.status === 'LIVE' : c.status === 'DRAFT'))
+        .map(c => ({
+          name: c.name,
+          blurb: c.blurb,
+          edited: 'edited ' + c.edited,
+          status: c.status,
+          photo: "url('" + c.photo + "')",
+          badgeBg: c.status === 'LIVE' ? '#0b6fb4' : 'rgba(255,255,255,.9)',
+          badgeInk: c.status === 'LIVE' ? '#fff' : '#3d3937'
+        })),
+      countLine: s.filter === 'all' ? '12 · 7 published' : (s.filter === 'live' ? '7 published' : '5 in progress'),
+      allBg: s.filter === 'all' ? '#0b6fb4' : 'transparent',
+      allInk: s.filter === 'all' ? '#fff' : '#3d3937',
+      allLine: s.filter === 'all' ? '#0b6fb4' : 'rgba(35,31,32,.18)',
+      liveBg: s.filter === 'live' ? '#0b6fb4' : 'transparent',
+      liveInk: s.filter === 'live' ? '#fff' : '#3d3937',
+      liveLine: s.filter === 'live' ? '#0b6fb4' : 'rgba(35,31,32,.18)',
+      draftBg: s.filter === 'draft' ? '#0b6fb4' : 'transparent',
+      draftInk: s.filter === 'draft' ? '#fff' : '#3d3937',
+      draftLine: s.filter === 'draft' ? '#0b6fb4' : 'rgba(35,31,32,.18)',
+      filterAll: () => this.set({ filter: 'all' }),
+      filterLive: () => this.set({ filter: 'live' }),
+      filterDraft: () => this.set({ filter: 'draft' }),
+
+      isSetUp: s.authMode === 'up',
+      inBg: s.authMode === 'in' ? '#fff' : 'transparent',
+      inInk: s.authMode === 'in' ? '#231f20' : '#6f6a63',
+      upBg: s.authMode === 'up' ? '#fff' : 'transparent',
+      upInk: s.authMode === 'up' ? '#231f20' : '#6f6a63',
+      authTitle: s.authMode === 'in' ? 'Sign in' : 'Set up the shelter account',
+      authSub: s.authMode === 'in'
+        ? 'One shared account for everyone who writes cat profiles. Ask a coordinator if you don\u2019t have it.'
+        : 'Do this once for the whole shelter. Every volunteer then uses the same username and password.',
+      authCta: s.authMode === 'in' ? 'Continue' : 'Create the account',
+      authAside: s.authMode === 'in' ? 'Forgotten the password?' : 'We already have an account',
+      passLabel: s.authMode === 'in' ? 'Password' : 'Choose a password',
+      passLine: s.authError ? '#a4552a' : 'rgba(35,31,32,.2)',
+      showError: s.authError,
+      modeSignIn: () => this.set({ authMode: 'in', authError: false }),
+      modeSetUp: () => this.set({ authMode: 'up', authError: false }),
+      submit: () => this.setState(p => ({ authError: !p.authError })),
+
+      helperOpen: s.helperOpen,
+      helperClosed: !s.helperOpen,
+      helperChevron: s.helperOpen ? '⌄' : '⌃',
+      toggleHelper: () => this.setState(p => ({ helperOpen: !p.helperOpen }))
+    };
+  }
+}
+</script>
+</body>
+</html>

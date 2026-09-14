@@ -1,0 +1,60 @@
+# Every gate the constitution names, in the order ADR-014 lists them. Any red step blocks
+# merge. `pnpm gen-tokens --check` proves the committed tokens.css matches TOKENS.json.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Design tokens match TOKENS.json
+        run: pnpm gen-tokens --check
+
+      - name: Unit, component and contract tests with coverage thresholds
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: No secret in the client bundle
+        run: bash scripts/check-bundle-secrets.sh
+
+      - name: CLAUDE.md line ceiling
+        run: bash scripts/check-claude-md.sh
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: pnpm test:e2e

@@ -1,0 +1,116 @@
+# Copy this file to terraform.tfvars and fill it in — that file is git-ignored, this one is
+# not (infra/terraform/.gitignore ignores `*.tfvars`; this file's name simply doesn't match
+# that pattern, since it ends in `.example`, not `.tfvars`). Every input variable Terraform
+# accepts is listed below, whether or not it needs a value here.
+
+# --- Required: no default, every project must set these -------------------------------
+
+# What it does: the Google Cloud project everything is created in.
+# Allowed values: any project id you (or the deploying identity) have Owner on.
+# Default: none — `terraform apply` stops with "No value for required variable" without it.
+# When to change: once, for a new project. Never for an existing one.
+project_id = "<project-id>"
+
+# What it does: SHELTER_USERNAME — the one sign-in name the shelter uses (ADR-011). Not a
+# secret; the password itself never appears in any file (see session_secret below).
+# Allowed values: any string.
+# Default: none.
+# When to change: if the shelter wants a different sign-in name. Existing sessions still
+# work (the session token is not tied to the username); only the name the shelter must
+# type on the sign-in form changes.
+shelter_username = "<username>"
+
+# --- Secrets: never typed here — pnpm make-credentials writes them elsewhere ------------
+
+# What they do: SESSION_SECRET signs the session cookie and keys the password hash;
+# SHELTER_PASSWORD_HMAC is the shelter's password run through that key. Because the hash is
+# keyed by the secret, the pair only makes sense together.
+# Allowed values: session_secret at least 32 characters; shelter_password_hmac 64 lowercase
+# hex characters. Both are validated at plan time (variables.tf).
+# Default: none.
+# When to change: run `pnpm make-credentials --force` to rotate; every existing session
+# cookie stops working.
+# Where they actually go: `pnpm make-credentials` (repo root) writes both to
+# infra/terraform/secrets.auto.tfvars, which Terraform loads on its own — do NOT add
+# session_secret or shelter_password_hmac to this file or to terraform.tfvars.
+# session_secret         = <from pnpm make-credentials>
+# shelter_password_hmac  = <from pnpm make-credentials>
+
+# --- Optional: sensible defaults, change only when you have a reason -------------------
+
+# What it does: region for Cloud Run, both buckets and the Artifact Registry repository.
+# Allowed values: any Google Cloud region that offers Cloud Run and Artifact Registry.
+# Default: "us-west1".
+# When to change: to run closer to your users, or to match an existing project's region.
+# region = "us-west1"
+
+# What it does: VERTEX_LOCATION for the app — where the two Gemini calls are served from.
+# Allowed values: "global", or a specific Vertex AI location.
+# Default: "global".
+# When to change: rarely; only for latency or data-residency reasons.
+# vertex_location = "global"
+
+# What it does: name of both the Cloud Run service and the Artifact Registry repository.
+# Allowed values: any valid Cloud Run service name.
+# Default: "cat-profile-builder".
+# When to change: to run more than one instance of this app in the same project.
+# service_name = "cat-profile-builder"
+
+# What it does: escape hatch — a full pre-built image reference for Cloud Run to run
+# instead of the one Terraform builds and pushes itself (image.tf).
+# Allowed values: any image reference the runtime service account can pull, or unset.
+# Default: unset (null) — `terraform apply` builds, pushes and deploys on its own.
+# When to change: only to run something Terraform did not build, e.g. a hand-pushed hotfix.
+# image = "<region>-docker.pkg.dev/<project-id>/<service_name>/app:<tag>"
+
+# What it does: overrides the tag Terraform builds and pushes (image.tf).
+# Allowed values: any valid Docker tag, or unset.
+# Default: unset (null) — the tag is the current commit's short git SHA.
+# When to change: to force a rebuild under a specific tag, e.g. from a CI job.
+# image_tag = "<tag>"
+
+# What it does: PUBLIC_BASE_URL for the app — the service's own https URL, and the source
+# CORS on both buckets is opened for.
+# Allowed values: empty, or an https:// URL.
+# Default: "" — the service boots with a placeholder URL until you know the real one.
+# When to change: after the first apply, `terraform output service_url` prints the real
+# URL; put it here and apply again (README, "First apply"). Stable after that.
+# public_base_url = "https://<service>-<hash>-<region-code>.a.run.app"
+
+# What they do: GCS_PRIVATE_BUCKET / GCS_PUBLIC_BUCKET. Bucket names are global across all
+# of Google Cloud, so a taken name needs an override.
+# Allowed values: any globally-unique, valid GCS bucket name, or unset.
+# Default: unset (null) — derived as "<project_id>-cat-profiles-private" / "-public".
+# When to change: only if the default name is already taken. Renaming later means a new
+# bucket and copying the data; there is no in-place rename.
+# private_bucket_name = "<project-id>-cat-profiles-private"
+# public_bucket_name  = "<project-id>-cat-profiles-public"
+
+# What it does: MODEL_DRAFTING — the Gemini id that drafts and edits profiles (ADR-003).
+# Allowed values: any Gemini model id available in vertex_location.
+# Default: "gemini-3.8-flash".
+# When to change: to try a different model, or pin to an older one during a rollout.
+# model_drafting = "gemini-3.8-flash"
+
+# What it does: MODEL_DESCRIBER — the Gemini id that describes photos and clips (ADR-003).
+# Allowed values: any Gemini model id available in vertex_location.
+# Default: "gemini-2.5-flash-lite".
+# When to change: same as model_drafting.
+# model_describer = "gemini-2.5-flash-lite"
+
+# What it does: grants `allUsers` read on the public bucket. The service's own public
+# access does not depend on this (cloud-run.tf, `invoker_iam_disabled` is unconditional).
+# Allowed values: true or false.
+# Default: true.
+# When to change: set to false only when an organization policy
+# (`iam.allowedPolicyMemberDomains`) rejects `allUsers` and no project-level exception
+# exists yet (README, "Public access"). The stack applies cleanly either way.
+# public_access = true
+
+# What it does: IAM members ("user:…") allowed to impersonate the runtime service account,
+# so they can run the @gcs contract suite with its identity against a hand-created scratch
+# bucket pair (README, "Test buckets" — this stack does not create that pair itself).
+# Allowed values: a list of "user:someone@example.com" strings.
+# Default: [] (empty).
+# When to change: add your own account to run the signed-upload contract test locally.
+# signer_developers = ["user:<you>@example.com"]

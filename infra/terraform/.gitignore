@@ -1,0 +1,19 @@
+# State holds resource ids and, since F17, the two credential values. Local only (decision Q3).
+*.tfstate
+*.tfstate.*
+# Every environment's values, filled in from terraform.tfvars.example (README): project id,
+# region, bucket names, flags — none of it belongs in git. `pnpm make-credentials` writes
+# secrets.auto.tfvars the same way, matched by the `*.auto.tfvars` case below; `*.tfvars`
+# alone would already cover it, but the name is kept as documentation of what that file is.
+# `terraform.tfvars.example` does not match either pattern (it ends in `.example`, not
+# `.tfvars`) and stays tracked.
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+secrets.tfvars
+.terraform/
+crash.log
+*.tfplan
+# Names the GCS state bucket for `terraform init -backend-config=backend.hcl` (README,
+# "State in a GCS bucket") — project-specific, so it never goes in git either.
+backend.hcl

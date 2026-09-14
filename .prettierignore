@@ -1,0 +1,22 @@
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+.data/
+.data-e2e/
+test-media/
+pnpm-lock.yaml
+# Generated verbatim from TOKENS.json; `pnpm gen-tokens --check` is its formatting authority.
+src/ui/tokens.css
+next-env.d.ts
+.specify/
+.superpowers/
+references/
+specs/
+*.md
+.claude/
+.claude/worktrees/
+# Terraform state and provider cache are local and git-ignored (infra/terraform/.gitignore)
+infra/terraform/*.tfstate*
+infra/terraform/.terraform/

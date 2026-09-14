@@ -1,0 +1,734 @@
+/* The event carousel — a port of the comp's frame 6a (references/design/design/Cat Carousel
+   Motion.dc.html) with its sixteen keyframes verbatim (ADR-008: hand-written CSS for the
+   motion surfaces; ADR-009: transform, opacity and clip-path only). Every value is a token
+   from tokens.css — the design's own, or the comp's own under `--carousel-*` — and the
+   only literals are 0, 1, percentages, the keyframe stops and the comp's transform
+   numbers. `--hold` (the beat, set from `?hold=`) is every animation's duration, so the
+   comp's percentages scale with it; `--play` is the one play-state flag. */
+
+/* ---- the page and the 1920×1080 stage --------------------------------------------- */
+
+/* Explicit tracks the size of the viewport, so a stage larger than the screen (every
+   laptop) still centres — an auto track would grow to the stage and pin it at (0,0).
+   `position: relative` gives `.stage[data-fit="snapped"]` below a containing block that is
+   exactly this box, so its `translate` offset (below) starts from the same corner
+   use-stage-fit.ts measured. */
+.page {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100vw;
+  grid-template-rows: 100svh;
+  place-items: center;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-night);
+  color: var(--color-card);
+  font-family: var(--font-text);
+  /* The comp's leaf text sits at the browser's own line height; only the name, the line
+     and the card's two lower strings set their own. */
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The frame is authored at 1920×1080 and scaled to fit whatever screen shows it — the
+   ratio of two lengths, which CSS only yields through tan(atan2()). On a 1080p TV the
+   scale is exactly 1 and every value below is the comp's pixel.
+
+   F64: `transition: none` — use-stage-fit.ts's first measurement flips `data-fit` to
+   "snapped", changing this element's own `position`/`transform-origin`/`translate`/`scale`
+   in one commit; the fit must snap there, never animate. Without this, `transition-property`
+   defaults to `all`, and globals.css's reduced-motion rule (`transition-duration: 0.01ms
+   !important` on every element) turns that one attribute flip into two real, if brief,
+   CSS Transitions on this element — caught by `document.getAnimations()`, which the
+   carousel's reduced-motion contract (below) requires to stay empty. */
+.stage {
+  --play: running;
+  --scale-x: tan(atan2(100vw, var(--container-carousel-width)));
+  --scale-y: tan(atan2(100svh, var(--container-carousel-height)));
+  position: relative;
+  width: var(--container-carousel-width);
+  height: var(--container-carousel-height);
+  flex: none;
+  scale: min(var(--scale-x), var(--scale-y));
+  transition: none;
+}
+
+.stage[data-frozen="true"] {
+  --play: paused;
+}
+
+/* F64 (tasks.md, F64 — the root-cause note there): the `scale` above has
+   no reason to land on a whole device pixel — on a phone it almost never does — and the
+   frame's `overflow: hidden` clips the two media layers (animating `transform` on the
+   compositor thread) along that fractional edge; the browser re-samples the clip every
+   frame, painting a flickering hairline along it. use-stage-fit.ts measures `.page` and
+   computes the largest scale and centring offset that both land on whole device pixels
+   (stage-fit.ts) and writes them here once it has; until then, the CSS-only fit above is
+   the fallback, so the server-rendered first paint still fits the screen. */
+/* The offset is `translate`, not `left`/`top`: Chromium's layout engine stores `left`/`top`
+   as a fixed-point LayoutUnit quantized to 1/64 CSS pixel, which does not divide evenly
+   into a device pixel at most device pixel ratios (3, most phones, among them) — the
+   snapped offset above would itself be re-snapped to the wrong grid. `translate` (like
+   `scale`) is a transform, composited as a full-precision matrix, so it lands exactly
+   where use-stage-fit.ts put it. `left: 0; top: 0` are load-bearing, not redundant with
+   the parent's default: an absolutely positioned child with `auto` insets takes its
+   *static* position from `.page`'s `place-items: center` — the very centring this rule
+   replaces — so without them `translate` would land on top of the grid's own offset
+   instead of `.page`'s corner. */
+.stage[data-fit="snapped"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  translate: var(--stage-left) var(--stage-top);
+  scale: var(--stage-scale);
+}
+
+/* The whole frame is the link to the cat (FR-064); nothing interactive sits inside it.
+   `isolation: isolate` (F62) gives the frame its own stacking context: the z-index values
+   below on the two media layers, the scrim, the bloom and the column are compared only
+   against each other, inside it. Without this the column's z-index would be compared
+   against .stage's OTHER children too — the visible controls and the kiosk's strip, both
+   siblings of this frame with no z-index of their own — and, being a positive number,
+   would win and sit on top of them, swallowing their clicks (caught by the e2e: "Next cat"
+   became unclickable). With isolation, the frame itself stays z-index:auto among those
+   siblings, exactly as before, so DOM order still decides — the frame first, the controls
+   after it, on top. */
+.frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-night);
+  color: inherit;
+  text-decoration: none;
+}
+
+.frame:focus-visible {
+  outline: var(--spacing-4) solid var(--color-blue-light);
+  outline-offset: calc(-1 * var(--spacing-4));
+}
+
+/* ---- the two media layers ------------------------------------------------------------ */
+
+/* Two fixed nodes that swap roles every beat. The incoming one drifts for the whole beat
+   under its wipe; the outgoing one keeps what it showed, held at the transform it had the
+   instant the beat changed (set inline from the computed style — mid-drift on a manual
+   move, the drift's end on an automatic one). The rules below are the fallback for a
+   first paint with nothing captured: under parity a the previous beat ran driftB; under
+   b, driftA.
+
+   F62: both layers are `position: absolute`, so without an explicit `z-index` two
+   positioned siblings paint in DOM order — and since the nodes are fixed (`key={0}`,
+   `key={1}`) and only swap `data-role`, DOM order can no longer be trusted as paint order:
+   on the beats where node 0 is incoming, its wipe or clip would sit under node 1's fully
+   open picture, invisibly. `z-index` below pins paint order to the role instead, with the
+   scrim, bloom and column lifted above both so the picture never floats over the text. */
+.layer {
+  position: absolute;
+  inset: -4%;
+}
+
+.layer[data-role="outgoing"] {
+  z-index: 0;
+}
+
+.layer[data-role="incoming"] {
+  will-change: transform;
+  z-index: 1;
+  animation: var(--keyframes-drift-a) var(--hold) var(--ease-drift) both;
+  animation-play-state: var(--play);
+}
+
+.stage[data-beat="a"] .layer[data-role="outgoing"] {
+  transform: scale(1.05) translate3d(0, 0, 0);
+}
+
+.stage[data-beat="b"] .layer[data-role="outgoing"] {
+  transform: scale(1.19) translate3d(-1.8%, -1.2%, 0);
+}
+
+.slats {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+/* Six slats of the one photo. Each clips its own sixth of a full-width, cover-fitted copy
+   on the photo's focal point (TOKENS.json media.crop) — the comp's `600% auto` sizing with
+   the crop the published page uses, so a portrait phone photo fills the frame the same way.
+   Neighbouring slats overlap by one pixel (the layer's width is not a multiple of six, and
+   a fractional seam shows as a hairline under the drift's scale); each fill is offset back
+   by the same pixel so the six sixths still form one continuous photo. */
+.slat {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  will-change: clip-path;
+  animation: var(--keyframes-slat-a) var(--hold) var(--ease-wipe) both;
+  animation-play-state: var(--play);
+}
+
+.slat + .slat {
+  margin-left: -1px;
+}
+
+.slatFill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(600% - 5px);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.slat:nth-child(1) {
+  animation-delay: 0ms;
+}
+.slat:nth-child(2) {
+  animation-delay: 55ms;
+}
+.slat:nth-child(3) {
+  animation-delay: 110ms;
+}
+.slat:nth-child(4) {
+  animation-delay: 165ms;
+}
+.slat:nth-child(5) {
+  animation-delay: 220ms;
+}
+.slat:nth-child(6) {
+  animation-delay: 275ms;
+}
+
+.slat:nth-child(1) .slatFill {
+  left: 0;
+}
+.slat:nth-child(2) .slatFill {
+  left: calc(-100% + 1px);
+}
+.slat:nth-child(3) .slatFill {
+  left: calc(-200% + 2px);
+}
+.slat:nth-child(4) .slatFill {
+  left: calc(-300% + 3px);
+}
+.slat:nth-child(5) .slatFill {
+  left: calc(-400% + 4px);
+}
+.slat:nth-child(6) .slatFill {
+  left: calc(-500% + 5px);
+}
+
+/* A clip beat: the same layer holds the video under one full-width wipe. */
+.clipWrap {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+  animation: var(--keyframes-slat-a) var(--hold) var(--ease-wipe) both;
+  animation-play-state: var(--play);
+}
+
+.clip {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Above both media layers (F62): a positioned sibling with no z-index of its own would
+   otherwise paint by DOM order, which the two layers can no longer promise. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--carousel-gradient-scrim);
+}
+
+.bloom {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--carousel-gradient-bloom);
+}
+
+/* ---- the content column at the TV-safe inset ---------------------------------------- */
+
+.column {
+  position: absolute;
+  inset: var(--carousel-safe-inset-block) var(--carousel-safe-inset-inline);
+  /* Above both media layers (F62), same reasoning as .scrim/.bloom above. */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.mono {
+  font-family: var(--font-label);
+  font-size: var(--text-carousel-floor);
+  font-weight: 400;
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-20);
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: var(--carousel-logo);
+}
+
+.divider {
+  width: 1px;
+  height: var(--carousel-divider);
+  background: var(--color-carousel-divider);
+}
+
+.label {
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-blue-light);
+}
+
+.counterRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.counter {
+  letter-spacing: var(--carousel-tracking-counter);
+  color: var(--color-carousel-counter);
+}
+
+.ticks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.tick {
+  width: var(--carousel-tick-width);
+  height: var(--carousel-tick-height);
+  border-radius: var(--radius-pill);
+  background: var(--color-carousel-track);
+  overflow: hidden;
+}
+
+.tickBar {
+  height: 100%;
+  background: var(--color-blue-light);
+  transform-origin: left;
+  animation: var(--keyframes-tick-a) var(--hold) var(--ease-progress) both;
+  animation-play-state: var(--play);
+}
+
+/* ---- the middle: rule, name, line, facts ------------------------------------------- */
+
+.middle {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: var(--spacing-8);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--carousel-stack-gap);
+  max-width: var(--carousel-stack-max-width);
+}
+
+/* The comp's mono tag sat beside the rule; there is no such field, so the rule sweeps
+   alone in a row kept at the tag's height so the stack's rhythm holds. */
+.ruleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--carousel-rule-gap);
+  min-height: var(--carousel-tag-row);
+}
+
+.rule {
+  width: var(--spacing-80);
+  height: var(--spacing-4);
+  background: var(--color-blue);
+  transform-origin: left;
+  animation: var(--keyframes-rule-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-carousel-name);
+  line-height: var(--text-carousel-name--line-height);
+  letter-spacing: var(--text-carousel-name--letter-spacing);
+  color: var(--color-card);
+  text-shadow: var(--shadow-carousel-name);
+  will-change: clip-path, transform;
+  animation: var(--keyframes-name-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+  animation-delay: 90ms;
+}
+
+.line {
+  margin: 0;
+  max-width: var(--carousel-line-max-width);
+  font-size: var(--text-carousel-line);
+  line-height: var(--text-carousel-line--line-height);
+  color: var(--color-carousel-line);
+  text-wrap: pretty;
+  animation: var(--keyframes-up-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+  animation-delay: 210ms;
+}
+
+.facts {
+  display: flex;
+  gap: var(--carousel-facts-gap);
+  margin: var(--carousel-facts-top) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--carousel-pill-gap);
+  padding: var(--spacing-16) var(--carousel-pill-pad-inline);
+  border: var(--carousel-edge) solid var(--color-carousel-pill-edge);
+  border-radius: var(--radius-pill);
+  animation: var(--keyframes-up-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+}
+
+.pill:nth-child(1) {
+  animation-delay: 300ms;
+}
+.pill:nth-child(2) {
+  animation-delay: 360ms;
+}
+
+.pillLabel {
+  letter-spacing: var(--carousel-tracking-pill-label);
+  text-transform: uppercase;
+  color: var(--color-carousel-pill-label);
+}
+
+.pillValue {
+  font-size: var(--text-carousel-fact);
+  color: var(--color-card);
+}
+
+/* ---- the bottom row: up next, media lines, the QR card ------------------------------ */
+
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-40);
+}
+
+.upNext {
+  display: flex;
+  align-items: center;
+  gap: var(--carousel-up-next-gap);
+}
+
+.upNextLabel {
+  letter-spacing: var(--carousel-tracking-up-next);
+  text-transform: uppercase;
+  color: var(--color-carousel-footer);
+}
+
+.thumbs {
+  display: flex;
+  gap: var(--carousel-thumb-gap);
+}
+
+/* Content-box, as the comp renders: the first thumbnail's border sits outside its 150×96. */
+.thumb {
+  box-sizing: content-box;
+  width: var(--carousel-thumb-width);
+  height: var(--carousel-thumb-height);
+  border-radius: var(--carousel-thumb-radius);
+  background-size: cover;
+  background-repeat: no-repeat;
+  animation: var(--keyframes-thumb-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+}
+
+.thumb:nth-child(1) {
+  border: var(--carousel-edge) solid var(--color-carousel-footer);
+  animation-delay: 120ms;
+}
+.thumb:nth-child(2) {
+  opacity: 0.6;
+  animation-delay: 180ms;
+}
+.thumb:nth-child(3) {
+  opacity: 0.35;
+  animation-delay: 240ms;
+}
+
+/* The QR card only, now the media/loop lines are gone (user request, 2026-09-12); still
+   flex so a future addition beside the card would not need restructuring. */
+.footer {
+  display: flex;
+  align-items: flex-end;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-20);
+  padding: var(--carousel-card-padding);
+  border-radius: var(--carousel-card-radius);
+  background: var(--color-card);
+  box-shadow: var(--shadow-carousel-card);
+  animation: var(--keyframes-qr-a) var(--hold) var(--ease-default) both;
+  animation-play-state: var(--play);
+  animation-delay: 260ms;
+}
+
+/* FR-088: 240px on the 1080p frame keeps every module of a level-H symbol above 4px. */
+.qr {
+  display: block;
+  flex: none;
+  width: var(--carousel-qr);
+  height: var(--carousel-qr);
+  fill: var(--color-ink);
+  background: var(--color-card);
+}
+
+.cardText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  max-width: var(--carousel-card-text-max-width);
+}
+
+.cardLabel {
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-blue);
+}
+
+.cardName {
+  font-family: var(--font-display);
+  font-size: var(--text-carousel-card-name);
+  line-height: var(--text-carousel-card-name--line-height);
+  color: var(--color-ink);
+}
+
+.cardSentence {
+  font-size: var(--text-carousel-floor);
+  line-height: 1.35;
+  color: var(--color-carousel-sentence);
+  text-wrap: pretty;
+}
+
+/* ---- the controls, outside the frame link, at the safe inset ------------------------ */
+
+/* On the footer's baseline, in the gap between the third thumbnail and the media lines
+   (the offset is the `Up next` group's width plus one 40px step). */
+.controls {
+  position: absolute;
+  bottom: var(--carousel-safe-inset-block);
+  left: calc(var(--carousel-safe-inset-inline) + var(--carousel-controls-offset));
+  display: flex;
+  gap: var(--spacing-8);
+  color: var(--color-card);
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-44);
+  height: var(--spacing-44);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color var(--transition-duration-hover) var(--ease-default);
+}
+
+.control svg {
+  width: var(--spacing-28);
+  height: var(--spacing-28);
+}
+
+.control:hover {
+  background: color-mix(in srgb, var(--color-card) 16%, transparent);
+}
+
+.control:focus-visible {
+  outline: var(--carousel-focus-outline) solid var(--color-blue-light);
+  outline-offset: var(--carousel-focus-outline);
+}
+
+/* ---- the empty rotation (FR-067) ----------------------------------------------------- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+  max-width: var(--carousel-empty-max-width);
+  padding: var(--carousel-safe-inset-block) var(--carousel-safe-inset-inline);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-section-head);
+  line-height: var(--text-section-head--line-height);
+  letter-spacing: var(--text-section-head--letter-spacing);
+}
+
+.emptyLine {
+  margin: 0;
+  font-size: var(--text-carousel-line);
+  line-height: var(--text-carousel-line--line-height);
+  color: var(--color-carousel-line);
+}
+
+.emptyDetail {
+  margin: 0;
+  font-size: var(--text-carousel-floor);
+  line-height: 1.35;
+  color: var(--color-carousel-subhead);
+  text-wrap: pretty;
+}
+
+/* ---- parity: the B pair on odd beats ------------------------------------------------ */
+
+.stage[data-beat="b"] .layer[data-role="incoming"] {
+  animation-name: var(--keyframes-drift-b);
+}
+.stage[data-beat="b"] .slat,
+.stage[data-beat="b"] .clipWrap {
+  animation-name: var(--keyframes-slat-b);
+}
+.stage[data-beat="b"] .tickBar {
+  animation-name: var(--keyframes-tick-b);
+}
+.stage[data-beat="b"] .rule {
+  animation-name: var(--keyframes-rule-b);
+}
+.stage[data-beat="b"] .name {
+  animation-name: var(--keyframes-name-b);
+}
+.stage[data-beat="b"] .line,
+.stage[data-beat="b"] .pill {
+  animation-name: var(--keyframes-up-b);
+}
+.stage[data-beat="b"] .thumb {
+  animation-name: var(--keyframes-thumb-b);
+}
+.stage[data-beat="b"] .card {
+  animation-name: var(--keyframes-qr-b);
+}
+
+/* The outgoing layer's wipe is over: its slats or clip sit fully open, no animation. */
+.layer[data-role="outgoing"] .slat,
+.layer[data-role="outgoing"] .clipWrap {
+  animation: none;
+}
+
+/* ---- reduced motion: the same frame, still ---------------------------------------- */
+
+/* Nothing animates, so every element sits at its resting, fully revealed state; the
+   outgoing layer has no wipe to sit under and is hidden. `[data-reduced]` is the hook's
+   answer for the same query, so the markup and the stylesheet can never disagree. */
+@media (prefers-reduced-motion: reduce) {
+  .stage * {
+    animation: none !important;
+  }
+  .layer[data-role="outgoing"] {
+    visibility: hidden;
+  }
+  .tickBar {
+    transform: scaleX(0);
+  }
+}
+
+.stage[data-reduced="true"] * {
+  animation: none !important;
+}
+.stage[data-reduced="true"] .layer[data-role="outgoing"] {
+  visibility: hidden;
+}
+/* Nothing counts down, so the progress bar sits at rest. */
+.stage[data-reduced="true"] .tickBar {
+  transform: scaleX(0);
+}
+
+/* ---- the kiosk: the controls fade, the offline note ---------------------------------- */
+
+/* The strip spans the stage so the controls inside sit exactly where `/carousel` puts
+   them; it takes no pointer itself, so the frame link under it still opens the cat.
+   Shown while the pointer moves, faded three still seconds later — opacity only, so the
+   four stay in the DOM and in the tab order (FR-063), and focus shows them again. */
+.strip {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-duration-panel) var(--ease-default);
+}
+
+.strip[data-shown="true"] {
+  opacity: 1;
+}
+
+.strip .controls {
+  pointer-events: auto;
+}
+
+/* Under the counter row at the top-right safe inset, in the footer's voice, and empty
+   while the feed answers. Nothing here is interactive. */
+.offline {
+  position: absolute;
+  top: calc(var(--carousel-safe-inset-block) + var(--spacing-56));
+  right: var(--carousel-safe-inset-inline);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-8);
+  pointer-events: none;
+  text-align: right;
+}
+
+.offlineSentence {
+  font-size: var(--text-carousel-floor);
+  color: var(--color-carousel-subhead);
+}
+
+.offlineLine {
+  letter-spacing: var(--carousel-tracking-counter);
+  color: var(--color-carousel-footer);
+}
+
+/* On the empty rotation the note joins the column under the three sentences. */
+.empty .offline {
+  position: static;
+  align-items: flex-start;
+  margin-top: var(--spacing-20);
+  text-align: left;
+}

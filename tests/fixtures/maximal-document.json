@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "id": "kx3f7q2m",
+  "name": "Charlotte",
+  "age": "3 years",
+  "sex": "female",
+  "tagline": "Loves sunbeams and gentle chin scratches.",
+  "theme": { "preset": "night", "warmth": 0.62, "contrast": 0.41 },
+  "updatedAt": "2026-09-10T18:30:00.000Z",
+  "blocks": [
+    { "id": "blockaaaaaaa", "type": "hero", "mediaId": "media2aa" },
+    {
+      "id": "blockaaaaaab",
+      "type": "bio",
+      "content": {
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "Charlotte showed up the way good things do: quietly, then all at once."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "blockaaaaaac",
+      "type": "bio",
+      "content": {
+        "paragraphs": [
+          {
+            "runs": [
+              { "text": "She is " },
+              { "text": "endlessly patient", "bold": true },
+              { "text": " with new people, even the loud ones." }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "blockaaaaaad",
+      "type": "bio",
+      "content": {
+        "paragraphs": [
+          {
+            "runs": [
+              { "text": "Her favorite hour is " },
+              { "text": "golden hour", "italic": true },
+              { "text": ", spent entirely by the window." }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "blockaaaaaae",
+      "type": "bio",
+      "content": {
+        "paragraphs": [
+          {
+            "runs": [
+              { "text": "Read more about her foster journey " },
+              { "text": "here", "href": "https://example.org/charlotte" },
+              { "text": "." }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "blockaaaaaaf",
+      "type": "bio",
+      "content": {
+        "paragraphs": [
+          {
+            "runs": [
+              { "text": "Charlotte in her own words: " },
+              {
+                "text": "soft, curious, a little dramatic.",
+                "bold": true,
+                "italic": true,
+                "href": "https://example.org/charlotte/story"
+              }
+            ]
+          },
+          {
+            "runs": [{ "text": "She will trade a nap for a scratch behind the ears any day." }]
+          }
+        ]
+      }
+    },
+    {
+      "id": "blockaaaaaag",
+      "type": "photo",
+      "mediaId": "media2ab",
+      "caption": "Sunbeam nap, day four with us."
+    },
+    {
+      "id": "blockaaaaaah",
+      "type": "photo",
+      "mediaId": "media2ac",
+      "caption": "Investigating the new cat tree."
+    },
+    {
+      "id": "blockaaaaaai",
+      "type": "photo",
+      "mediaId": "media2ad",
+      "caption": "Mid-stretch, unimpressed by the camera."
+    },
+    {
+      "id": "blockaaaaaaj",
+      "type": "photo",
+      "mediaId": "media2ae",
+      "caption": "A rare moment of full eye contact."
+    },
+    {
+      "id": "blockaaaaaak",
+      "type": "photo",
+      "mediaId": "media2af",
+      "caption": "Guarding the laundry basket."
+    },
+    {
+      "id": "blockaaaaaal",
+      "type": "photo",
+      "mediaId": "media2ag",
+      "caption": "First snow, watched from indoors."
+    },
+    {
+      "id": "blockaaaaaam",
+      "type": "photo",
+      "mediaId": "media2ah",
+      "caption": "Perfected the loaf position."
+    },
+    {
+      "id": "blockaaaaaan",
+      "type": "photo",
+      "mediaId": "media2ai",
+      "caption": "Suspicious of the vacuum cleaner."
+    },
+    {
+      "id": "blockaaaaaao",
+      "type": "photo",
+      "mediaId": "media2aj",
+      "caption": "Afternoon light, favorite windowsill."
+    },
+    {
+      "id": "blockaaaaaap",
+      "type": "photo",
+      "mediaId": "media2ak",
+      "caption": "Curled up mid-purr."
+    },
+    {
+      "id": "blockaaaaaaq",
+      "type": "photo",
+      "mediaId": "media2al",
+      "caption": "Playing with a stray bottle cap."
+    },
+    {
+      "id": "blockaaaaaar",
+      "type": "photo",
+      "mediaId": "media2am",
+      "caption": "Watching birds from the sill."
+    },
+    {
+      "id": "blockaaaaaas",
+      "type": "photo",
+      "mediaId": "media2an",
+      "caption": "Post-breakfast grooming ritual."
+    },
+    {
+      "id": "blockaaaaaat",
+      "type": "gallery",
+      "mediaIds": [
+        "media2aa",
+        "media2ab",
+        "media2ac",
+        "media2ad",
+        "media2ae",
+        "media2af",
+        "media2ag",
+        "media2ah",
+        "media2ai",
+        "media2aj",
+        "media2ak",
+        "media2al"
+      ]
+    },
+    { "id": "blockaaaaaau", "type": "video", "mediaId": "media2ao" },
+    { "id": "blockaaaaaav", "type": "video", "mediaId": "media2ap" },
+    {
+      "id": "blockaaaaaaw",
+      "type": "day",
+      "scenes": [
+        { "mediaId": "media2aq", "caption": "Wakes up slow, always on the warm side of the bed." },
+        {
+          "mediaId": "media2aa",
+          "caption": "Mid-morning patrol of every windowsill in the house."
+        },
+        { "mediaId": "media2ab", "caption": "Evenings end curled against a shoulder, purring." }
+      ]
+    },
+    {
+      "id": "blockaaaaaax",
+      "type": "needs",
+      "cards": [
+        {
+          "title": "A quiet home",
+          "text": "She startles at loud noises and does best without a busy household."
+        },
+        {
+          "title": "Another cat, eventually",
+          "text": "She was raised with siblings and does well with a calm, patient companion."
+        },
+        {
+          "title": "A sunny windowsill",
+          "text": "Non-negotiable. She will find one regardless, so it may as well be furnished."
+        }
+      ]
+    },
+    {
+      "id": "blockaaaaaay",
+      "type": "quote",
+      "mediaId": "media2ac",
+      "text": "She waited by the door every evening until she trusted we'd come back.",
+      "attribution": "Her foster, Priya"
+    },
+    {
+      "id": "blockaaaaaaz",
+      "type": "quote",
+      "mediaId": "media2ad",
+      "text": "Within a week she'd claimed the good armchair and never looked back.",
+      "attribution": "Her foster, Priya"
+    },
+    {
+      "id": "blockaaaaaa2",
+      "type": "quote",
+      "mediaId": "media2ae",
+      "text": "She's the first to greet you and the last to let you leave the couch.",
+      "attribution": "Her foster, Priya"
+    },
+    {
+      "id": "blockaaaaaa3",
+      "type": "quote",
+      "mediaId": "media2af",
+      "text": "Patient with the kids next door in a way that surprised all of us.",
+      "attribution": "Her foster, Priya"
+    },
+    {
+      "id": "blockaaaaaa4",
+      "type": "quote",
+      "mediaId": "media2ag",
+      "text": "Loud purrer, quiet everything else. A very easy cat to love.",
+      "attribution": "Her foster, Priya"
+    },
+    {
+      "id": "blockaaaaaa5",
+      "type": "quote",
+      "mediaId": "media2ah",
+      "text": "She'll do a lap of the yard and then ask, politely, to come back in.",
+      "attribution": "Her foster, Priya"
+    }
+  ]
+}

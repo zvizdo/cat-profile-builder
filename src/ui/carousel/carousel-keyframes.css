@@ -1,0 +1,261 @@
+/* The carousel's sixteen keyframes (comp 6a; DESIGN.md §5), verbatim, in A/B pairs the
+   stylesheet alternates by beat parity so an element re-animates without remounting
+   (ADR-009). Twelve of them are byte-identical pairs on purpose: the name change is what
+   restarts the animation. Global, not a module, so the names stay the comp's; the layout
+   lives in carousel.module.css, which is the only thing that uses them. Offsets are the
+   tokens under `--carousel-motion-*` and `--text-carousel-name--letter-spacing`. */
+
+/* The names, as custom properties: the module is CSS-modules-scoped and would hash a
+   bare animation name, so it reaches these through var(). */
+:root {
+  --keyframes-slat-a: slatA;
+  --keyframes-slat-b: slatB;
+  --keyframes-drift-a: driftA;
+  --keyframes-drift-b: driftB;
+  --keyframes-name-a: nameA;
+  --keyframes-name-b: nameB;
+  --keyframes-rule-a: ruleA;
+  --keyframes-rule-b: ruleB;
+  --keyframes-up-a: upA;
+  --keyframes-up-b: upB;
+  --keyframes-qr-a: qrA;
+  --keyframes-qr-b: qrB;
+  --keyframes-thumb-a: thumbA;
+  --keyframes-thumb-b: thumbB;
+  --keyframes-tick-a: tickA;
+  --keyframes-tick-b: tickB;
+}
+
+@keyframes slatA {
+  0% {
+    clip-path: inset(100% 0 0 0);
+  }
+  14% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes slatB {
+  0% {
+    clip-path: inset(0 0 100% 0);
+  }
+  14% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes driftA {
+  0% {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.19) translate3d(-1.8%, -1.2%, 0);
+  }
+}
+@keyframes driftB {
+  0% {
+    transform: scale(1.19) translate3d(1.6%, 1.1%, 0);
+  }
+  100% {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes nameA {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(var(--carousel-motion-name-rise));
+    letter-spacing: var(--carousel-motion-name-tracking-from);
+  }
+  19% {
+    opacity: 1;
+    clip-path: inset(-28% 0 -28% 0);
+    transform: translateY(0);
+    letter-spacing: var(--text-carousel-name--letter-spacing);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--carousel-motion-name-exit)));
+  }
+}
+@keyframes nameB {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(var(--carousel-motion-name-rise));
+    letter-spacing: var(--carousel-motion-name-tracking-from);
+  }
+  19% {
+    opacity: 1;
+    clip-path: inset(-28% 0 -28% 0);
+    transform: translateY(0);
+    letter-spacing: var(--text-carousel-name--letter-spacing);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--carousel-motion-name-exit)));
+  }
+}
+
+@keyframes ruleA {
+  0% {
+    transform: scaleX(0);
+  }
+  13% {
+    transform: scaleX(1);
+  }
+  88% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+@keyframes ruleB {
+  0% {
+    transform: scaleX(0);
+  }
+  13% {
+    transform: scaleX(1);
+  }
+  88% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes upA {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-up-rise));
+  }
+  21% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--carousel-motion-up-exit)));
+  }
+}
+@keyframes upB {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-up-rise));
+  }
+  21% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--carousel-motion-up-exit)));
+  }
+}
+
+@keyframes qrA {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-qr-rise)) scale(0.96);
+  }
+  23% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  87% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-qr-exit)) scale(0.98);
+  }
+}
+@keyframes qrB {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-qr-rise)) scale(0.96);
+  }
+  23% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  87% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-qr-exit)) scale(0.98);
+  }
+}
+
+@keyframes thumbA {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-thumb-rise));
+  }
+  26% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes thumbB {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--carousel-motion-thumb-rise));
+  }
+  26% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tickA {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes tickB {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}

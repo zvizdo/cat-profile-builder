@@ -1,0 +1,16 @@
+feature: 001-cat-profile-builder
+execute: in_progress
+started: 2026-09-10
+phase: 8
+current_task: T049 part 2 — merge package prepared; push/PR awaits the user
+completed_tasks: [T001, T002, T004, T005, T006, T007, T008, T009, T010, T011, T012, T013, T014, T015, T016, T017, T018, T019, T020, T021, T022, T023, T024, T025, T026, T027, T028, T029, T030, T031, POLISH-1, POLISH-2, F1, F2, F3, F4, F5, F6, T032, T033, T034, T035, T036, T037, F7, F8, F10, T038, F9, F11, T039, T040, F12, T041, T044, T042, T045, T043, F14, F13, T046, T047, F17, F19, F18, F22, F21, F24, F23, F20, F25, F26, F27, F30, F31, F32, F29, F33, F34, F35, F36, F38, F39, F40, F41, F42, F43, F44, F45, F46, F47, F48, F49, F50, F51, F52, F53, F54, F55, F56, F57, T048, T049]
+deferred_tasks: [T003]
+checkpoints_cleared: [phase-1-setup, checkpoint-2, checkpoint-2b, checkpoint-3-part-one, checkpoint-3-complete]
+checkpoints_folded: [checkpoint-1-foundation → reviewed at checkpoint-2 by user decision 2026-09-10]
+awaiting: >-
+  the user — (1) the push and the PR (T003; the description is drafted at
+  .superpowers/sdd/tasks/T049-pr-description.md); (2) the human-pending checks: T048 step 8 on a
+  real phone, step 9's QR scan, step 9b's phone edit (Maple is live for them), the eight-hour
+  kiosk soak (SC-008), the ten-minute first-timer trial (SC-001) and the ten-draft correction
+  count (SC-002), a real-phone LCP number (SC-004 marginal); (3) a ruling on the two open
+  converge tasks F15 (13 lint ceiling warnings: decompose or record) and F16 (doc comments)

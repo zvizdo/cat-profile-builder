@@ -1,0 +1,434 @@
+@import "tailwindcss";
+@import "../ui/tokens.css";
+
+/* The builder's third column (TOKENS.json breakpoints: the helper docks beside the canvas
+   from 1180px; below it the canvas keeps the width). Tailwind's own md (768px) is the
+   builder's floor — under it the page is read-only until phone mode (T030). */
+@theme {
+  --breakpoint-wide: 1180px;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-body);
+}
+
+/* DESIGN.md §5: reduced motion keeps the same composition, order and copy — every
+   animation and transition simply arrives at its end state at once. Scroll-driven and
+   looping surfaces add their own behaviour on top; nothing here is a downgrade. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* The three things the shared components cannot say in token utilities, kept here so no
+   component carries a raw value. */
+
+/* DESIGN.md §4 Media: an empty slot is striped, never a spinner and never a grey box. */
+@utility stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-paper-deep) 0 6px,
+    var(--color-paper) 6px 12px
+  );
+}
+
+/* The 3px clay edge that marks a warning or error toast and a consequence notice. */
+@utility edge-clay {
+  border-left: 3px solid var(--color-clay);
+}
+
+/* The same edge in blue: the rail's contrast note (hi-fi 3a). */
+@utility edge-blue {
+  border-left: 3px solid var(--color-blue);
+}
+
+/* Panel open (DESIGN.md §5, 320ms): opacity and transform only, so it composites, and it
+   collapses to nothing under the reduced-motion rule above. */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@utility enter-panel {
+  animation: panel-in var(--transition-duration-panel) var(--ease-default) both;
+}
+
+/* The phone's drawer sliding up from the bottom (design 2026-09-13 §3, 320ms): transform
+   only, so it composites; under the reduced-motion rule above it appears in place. */
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@utility enter-sheet {
+  animation: sheet-in var(--transition-duration-panel) var(--ease-default) both;
+}
+
+/* The volunteer's own bubble in the helper (hi-fi 3a): a speech shape, the one corner
+   nearest the composer tucked to 3px. The shape has no radius token; it lives here. */
+@utility bubble-volunteer {
+  border-radius: 10px 10px 3px 10px;
+}
+
+/* The helper's collapsed tab (hi-fi 7b): its name runs down the 52px column, the glyphs
+   turned with the line — one property Tailwind has no utility for. */
+@utility text-vertical {
+  writing-mode: vertical-rl;
+}
+
+/* The working dot (DESIGN.md §4, the save-state device): the 6px blue dot breathes while
+   the helper is streaming. Opacity only, so it composites; the reduced-motion rule above
+   holds it at its end state — a still dot. */
+@keyframes dot-breathe {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@utility dot-breathe {
+  animation: dot-breathe 1.2s ease-in-out infinite;
+}
+
+/* The helper's touch on a frame (F34, FR-042): the frame's own 2px blue focus ring, laid
+   over it and blinked twice, slowly — opacity only, so it composites, and the ring is
+   gone at the end (`forwards`) until the builder removes it at 1.6s. Under reduced motion
+   the ring simply stands, still, for the same 1.6s: the general rule above would collapse
+   the blink to its end state — nothing — so this one animation is switched off instead
+   of shortened, and the ring's resting opacity (1) shows. */
+@keyframes ring-blink {
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  25%,
+  75% {
+    opacity: 1;
+  }
+}
+
+@utility pulse-ring {
+  animation: ring-blink 1.6s ease-in-out forwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* The trim editor's two handles (T023, hi-fi video block): two native range inputs laid
+   over one track. The inputs themselves take no pointer, only their thumbs do, so either
+   handle can be grabbed wherever the two stand. From the tablet floor the thumb is the
+   16×44 bar itself; under it (T030, a thumb on a phone) the thumb is 44 wide and
+   transparent, with the same 16px bar and its 2px card edge painted in its middle —
+   so what shows is unchanged and what a finger can grab is 44×44. */
+@utility trim-handle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  outline: none;
+
+  &::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: var(--spacing-16);
+    height: var(--spacing-44);
+    border: 2px solid var(--color-card);
+    border-radius: var(--radius-control);
+    background: var(--color-blue);
+    pointer-events: auto;
+    cursor: ew-resize;
+  }
+
+  &::-moz-range-track {
+    height: 100%;
+    background: transparent;
+  }
+
+  &::-moz-range-thumb {
+    width: var(--spacing-16);
+    height: var(--spacing-44);
+    border: 2px solid var(--color-card);
+    border-radius: var(--radius-control);
+    background: var(--color-blue);
+    pointer-events: auto;
+    cursor: ew-resize;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    background: var(--color-blue-deep);
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    background: var(--color-blue-deep);
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    --trim-thumb-width: var(--spacing-44);
+    --trim-thumb-bar: var(--color-blue);
+    /* The bar: the card edge 20px wide under the blue 16px, both centred in the 44px thumb. */
+    --trim-thumb-paint:
+      linear-gradient(var(--trim-thumb-bar), var(--trim-thumb-bar)) 14px 2px / var(--spacing-16)
+        calc(100% - 4px) no-repeat,
+      linear-gradient(var(--color-card), var(--color-card)) 12px 0 / 20px 100% no-repeat;
+
+    &::-webkit-slider-thumb {
+      width: var(--trim-thumb-width);
+      border: 0;
+      border-radius: 0;
+      background: var(--trim-thumb-paint);
+    }
+
+    &::-moz-range-thumb {
+      width: var(--trim-thumb-width);
+      border: 0;
+      border-radius: 0;
+      background: var(--trim-thumb-paint);
+    }
+
+    /* Focus: the bar darkens and a 2px blue frame paints around its card edge. */
+    &:focus-visible {
+      --trim-thumb-bar: var(--color-blue-deep);
+      --trim-thumb-paint:
+        linear-gradient(var(--trim-thumb-bar), var(--trim-thumb-bar)) 14px 2px / var(--spacing-16)
+          calc(100% - 4px) no-repeat,
+        linear-gradient(var(--color-card), var(--color-card)) 12px 0 / 20px 100% no-repeat,
+        linear-gradient(var(--color-blue), var(--color-blue)) 10px 0 / 24px 100% no-repeat;
+    }
+
+    &:focus-visible::-webkit-slider-thumb,
+    &:focus-visible::-moz-range-thumb {
+      outline: none;
+    }
+  }
+}
+
+/* The theme (T026; ADR-008): a surface carries the four `--profile-*` variables that
+   `themeStyle` puts on it, and these rules are the only readers. The canvas sheet
+   re-points the colour tokens at them for everything beneath it, so every editor's
+   `text-body`, `bg-card` or `border-line-chrome` follows the theme without knowing it —
+   and the paper, deep, card, ink, body, meta, accent and hairline roles keep their
+   meaning on Night, where the ink is light. Body and meta are the ink at the alphas
+   the hi-fi gives them; the hairlines are the ink at their TOKENS.json alphas. */
+@utility theme-scope {
+  --color-paper: var(--profile-bg-a);
+  --color-paper-deep: var(--profile-bg-b);
+  --color-card: var(--profile-bg-a);
+  --color-ink: var(--profile-ink);
+  --color-body: color-mix(in srgb, var(--profile-ink) 86%, transparent);
+  --color-meta: color-mix(in srgb, var(--profile-ink) 68%, transparent);
+  --color-blue: var(--profile-accent);
+  --color-line-panel: color-mix(in srgb, var(--profile-ink) 6%, transparent);
+  --color-line-chrome: color-mix(in srgb, var(--profile-ink) 8%, transparent);
+  --color-line-tag: color-mix(in srgb, var(--profile-ink) 18%, transparent);
+  --color-line-field: color-mix(in srgb, var(--profile-ink) 20%, transparent);
+  --color-line-button: color-mix(in srgb, var(--profile-ink) 28%, transparent);
+  background-color: var(--profile-bg-b);
+}
+
+/* Chrome rendered inside `theme-scope` — a modal, a toast, anything that is the tool and
+   not the page — must opt out with `theme-chrome`, which takes the tokens back; a dialog
+   gets it by role. The root snapshots the tokens the scope re-points, so the reset needs
+   no hex outside tokens.css. */
+:root {
+  --chrome-paper: var(--color-paper);
+  --chrome-paper-deep: var(--color-paper-deep);
+  --chrome-card: var(--color-card);
+  --chrome-ink: var(--color-ink);
+  --chrome-body: var(--color-body);
+  --chrome-meta: var(--color-meta);
+  --chrome-blue: var(--color-blue);
+  --chrome-line-panel: var(--color-line-panel);
+  --chrome-line-chrome: var(--color-line-chrome);
+  --chrome-line-tag: var(--color-line-tag);
+  --chrome-line-field: var(--color-line-field);
+  --chrome-line-button: var(--color-line-button);
+}
+
+@utility theme-chrome {
+  --color-paper: var(--chrome-paper);
+  --color-paper-deep: var(--chrome-paper-deep);
+  --color-card: var(--chrome-card);
+  --color-ink: var(--chrome-ink);
+  --color-body: var(--chrome-body);
+  --color-meta: var(--chrome-meta);
+  --color-blue: var(--chrome-blue);
+  --color-line-panel: var(--chrome-line-panel);
+  --color-line-chrome: var(--chrome-line-chrome);
+  --color-line-tag: var(--chrome-line-tag);
+  --color-line-field: var(--chrome-line-field);
+  --color-line-button: var(--chrome-line-button);
+}
+
+[role="dialog"] {
+  @apply theme-chrome;
+}
+
+/* A preset swatch (hi-fi 3a): the theme's two backgrounds as the 160° gradient. */
+@utility theme-swatch {
+  background-image: linear-gradient(160deg, var(--profile-bg-a), var(--profile-bg-b));
+}
+
+/* The warmth and contrast sliders (hi-fi 3a): a 3px track, blue to the left of the thumb
+   — `--fill` is the value as a percentage, set inline because it is data — and a 13px
+   white thumb ringed in blue, inside a 44px tap target. Focus ringing the thumb is the
+   visible focus state. */
+@utility theme-slider {
+  --fill: 50%;
+  width: 100%;
+  height: var(--spacing-44);
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+
+  &::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(
+      to right,
+      var(--color-blue) var(--fill),
+      var(--color-paper-deep) var(--fill)
+    );
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    margin-top: -5px;
+    border: 2px solid var(--color-blue);
+    border-radius: var(--radius-pill);
+    background: var(--color-card);
+  }
+
+  &::-moz-range-track {
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--color-paper-deep);
+  }
+
+  &::-moz-range-progress {
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--color-blue);
+  }
+
+  &::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: 2px solid var(--color-blue);
+    border-radius: var(--radius-pill);
+    background: var(--color-card);
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    background: var(--color-blue);
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    background: var(--color-blue);
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+}
+
+/* The helper's reply body (F31; ADR-017): the design system's tokens put back onto the safe
+   Markdown subset the model may use, once Tailwind's preflight has stripped every heading
+   and list default. Headings stay at the reply's own 13px (`text-ui-dense`, inherited) and
+   Work Sans — never the profile's serif — distinguished from running text by weight alone,
+   the same weight bold text uses, since the font ships no heavier one (DESIGN.md §2).
+   `src/ui/helper/Markdown.tsx` renders the safe elements; this only styles them. */
+@utility markdown-reply {
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
+
+  & p {
+    margin: var(--spacing-8) 0;
+  }
+
+  & ul,
+  & ol {
+    margin: var(--spacing-8) 0;
+    padding-left: var(--spacing-20);
+  }
+
+  & ul {
+    list-style: disc;
+  }
+
+  & ol {
+    list-style: decimal;
+  }
+
+  & li + li {
+    margin-top: var(--spacing-4);
+  }
+
+  /* F28 review #14: 500 is the heaviest weight the tools use (DESIGN.md §2) — a reply's
+     own emphasis stays inside that ceiling rather than reaching for 600. */
+  & strong,
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    font-weight: 500;
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    margin: var(--spacing-8) 0 var(--spacing-4);
+    color: var(--color-ink);
+  }
+
+  & a {
+    color: var(--color-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  & a:focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+  }
+}

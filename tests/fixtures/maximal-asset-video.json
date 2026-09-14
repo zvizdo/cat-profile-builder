@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "media2ay",
+  "kind": "video",
+  "fileName": "PXL_20260904_202047557.mp4",
+  "mimeType": "video/mp4",
+  "bytes": 29425176,
+  "width": 1080,
+  "height": 1920,
+  "durationSeconds": 9,
+  "focal": { "x": 62, "y": 40 },
+  "status": "ready",
+  "alt": {
+    "text": "Charlotte batting at a raindrop on the porch step.",
+    "source": "model"
+  },
+  "descriptionStatus": "ready",
+  "originalDurationSeconds": 22.4,
+  "trim": { "start": 2.5, "end": 11.5 },
+  "revisions": { "web": "e5f6a7b8c9", "poster": "0123456789" },
+  "createdAt": "2026-09-01T08:16:00.000Z"
+}

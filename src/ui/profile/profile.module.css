@@ -1,0 +1,1400 @@
+/* The published profile (ADR-008: hand-written CSS for the two motion-heavy surfaces;
+   ADR-009: scroll-driven, no library). Every value is a token from tokens.css or the four
+   --profile-* properties `themeStyle` puts on the root; the only literals are 0, 1,
+   percentages and viewport units. Photographic grounds keep the fixed night scrim and
+   white ink of the hi-fi whatever the theme, so text over a photo never depends on it. */
+
+/* ---- page ---------------------------------------------------------------------------- */
+
+.page {
+  --rhythm: clamp(var(--spacing-80), 13vh, var(--spacing-120));
+  --gutter: var(--spacing-28);
+  --scrim-deep: color-mix(in srgb, var(--color-night) 86%, transparent);
+  --scrim-mid: color-mix(in srgb, var(--color-night) 55%, transparent);
+  --scrim-soft: color-mix(in srgb, var(--color-night) 12%, transparent);
+  --hairline: color-mix(in srgb, var(--profile-ink) 8%, transparent);
+  --ink-body: color-mix(in srgb, var(--profile-ink) 86%, transparent);
+  --ink-meta: color-mix(in srgb, var(--profile-ink) 68%, transparent);
+  --white-soft: color-mix(in srgb, var(--color-card) 78%, transparent);
+  --white-strong: color-mix(in srgb, var(--color-card) 90%, transparent);
+  position: relative;
+  overflow-x: clip;
+  background: var(--profile-bg-b);
+  color: var(--profile-ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 768px) {
+  .page {
+    --gutter: var(--spacing-56);
+  }
+}
+
+/* Below the tablet breakpoint the comps use a 40px rhythm, not the desktop's 80–120
+   clamp halved — the Hi-Fi 390 artboard never doubles it either (F43 audit). */
+@media (max-width: 767px) {
+  .page {
+    --rhythm: var(--spacing-40);
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-profile-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+
+/* Sections sit on the theme's surface (bg-a); the strip and the cards are inset in its
+   ground (bg-b), the colour the page itself is painted. Every preset passes AA for the
+   accent on bg-a and for the ink at its two alphas on both. */
+.section {
+  position: relative;
+  z-index: 2;
+  padding-block: var(--rhythm);
+  background: var(--profile-bg-a);
+  scroll-margin-top: var(--spacing-80);
+}
+
+/* Two sections on the same surface (every `.section` sits on `bg-a`) share one rhythm
+   unit between them instead of each paying its own side — the comps never double the
+   gap at a same-surface seam (F43 audit §3). `:has()` has shipped in every evergreen
+   engine since December 2023; the page already requires that generation of browser for
+   `animation-timeline`, so there is no separate fallback to maintain. A `.section` next
+   to a bleed, the pinned day or the facts strip keeps its own full side — those roots
+   carry a different class, so neither rule below matches across that seam. */
+.section:has(+ .section) {
+  padding-bottom: calc(var(--rhythm) / 2);
+}
+
+.section + .section {
+  padding-top: calc(var(--rhythm) / 2);
+}
+
+/* A kicker is the section's heading (an h2), set in the label voice. */
+.kicker {
+  display: block;
+  margin: 0;
+  font-weight: 400;
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--profile-accent);
+}
+
+.head {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-section-head);
+  line-height: var(--text-section-head--line-height);
+  letter-spacing: var(--text-section-head--letter-spacing);
+  text-wrap: pretty;
+}
+
+/* ---- header -------------------------------------------------------------------------- */
+
+/* Zero height and sticky: the bar rides over the hero's top edge like the hi-fi's fixed
+   header, without covering anything a parent draws above the page (the preview bar). */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 0;
+}
+
+.headerBar {
+  background: color-mix(in srgb, var(--profile-bg-a) 80%, transparent);
+  backdrop-filter: blur(var(--spacing-16)) saturate(1.4);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12) var(--spacing-20);
+  min-height: var(--spacing-56);
+  padding-block: var(--spacing-8);
+}
+
+.headerLead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  min-width: 0;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  min-height: var(--spacing-44);
+  flex: none;
+  transition: opacity var(--transition-duration-hover) var(--ease-default);
+}
+
+.wordmark:hover {
+  opacity: 0.7;
+}
+
+.wordmark:focus-visible {
+  outline: var(--spacing-4) solid var(--profile-accent);
+  outline-offset: var(--spacing-4);
+}
+
+.headerName {
+  font-family: var(--font-display);
+  font-size: var(--text-fact-value);
+  white-space: nowrap;
+  padding-left: var(--spacing-16);
+  border-left: 1px solid color-mix(in srgb, var(--profile-ink) 16%, transparent);
+  animation: navName linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0vh 150vh;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-4);
+  max-width: 100%;
+}
+
+/* On a phone the bar is one row that takes its own space above the hero: the wordmark,
+   then the links scrolling sideways (the hi-fi's phone header is 54px, not three rows). */
+@media (max-width: 767px) {
+  .header {
+    position: relative;
+    height: auto;
+  }
+
+  .headerInner {
+    flex-wrap: nowrap;
+  }
+
+  .headerName {
+    display: none;
+  }
+
+  .nav {
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-44);
+  padding-inline: var(--spacing-12);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-text);
+  font-size: var(--text-ui);
+  white-space: nowrap;
+  color: var(--profile-ink);
+  text-decoration: none;
+  transition: background-color var(--transition-duration-hover) var(--ease-default);
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  background: color-mix(in srgb, var(--profile-ink) 8%, transparent);
+  outline: none;
+}
+
+.navLink:focus-visible {
+  outline: var(--spacing-4) solid var(--profile-accent);
+  outline-offset: calc(var(--spacing-4) * -1);
+}
+
+/* ---- hero: the portal ---------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  height: 260svh;
+  view-timeline-name: --portal;
+  view-timeline-axis: block;
+  background: var(--color-night);
+}
+
+.heroPin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  display: flex;
+  align-items: flex-end;
+}
+
+.heroPhoto {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--focal-x, 50%) var(--focal-y, 50%);
+  will-change: transform, opacity;
+  animation: portalPhoto linear both;
+  animation-timeline: --portal;
+  animation-range: contain 0% contain 100%;
+}
+
+.heroStripes {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: 0;
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-night) 40%, transparent) 0%,
+    transparent 34%,
+    var(--scrim-soft) 55%,
+    var(--scrim-deep) 100%
+  );
+}
+
+.heroVeil {
+  position: absolute;
+  inset: 0;
+  background: var(--color-night);
+  opacity: 0.1;
+  animation: portalVeil linear both;
+  animation-timeline: --portal;
+  animation-range: contain 0% contain 100%;
+}
+
+.heroInk {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--spacing-12), 1.6vw, var(--spacing-20));
+  padding-bottom: clamp(var(--spacing-80), 11vh, var(--spacing-120));
+  color: var(--color-card);
+  animation: portalInk linear both;
+  animation-timeline: --portal;
+  animation-range: contain 0% contain 100%;
+}
+
+.heroKicker {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-blue-whisper);
+}
+
+.heroKicker::before {
+  content: "";
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-pill);
+  background: var(--color-blue-light);
+}
+
+.heroName {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-hero-name);
+  line-height: var(--text-hero-name--line-height);
+  letter-spacing: var(--text-hero-name--letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+.heroLine {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--text-hero-line);
+  line-height: var(--text-hero-line--line-height);
+  color: var(--white-strong);
+  text-wrap: pretty;
+}
+
+.heroCue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--spacing-28);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--white-soft);
+  animation: portalCue linear both;
+  animation-timeline: --portal;
+  animation-range: contain 0% contain 100%;
+}
+
+.heroCue::after {
+  content: "";
+  width: 1px;
+  height: var(--spacing-44);
+  background: linear-gradient(180deg, var(--white-soft), transparent);
+}
+
+/* Below the tablet breakpoint the phone header sits in flow above the hero (T028 ruling
+   #3) rather than overlaying it, so the sticky pin's own height must give up exactly that
+   much or its last pixels — where the cue lives — are pushed under the fold at scroll 0
+   (F28 review #4). The ink's padding-bottom is raised to clear the cue's height, its own
+   offset from the pin's bottom edge, and one gap, so the hero line's bottom never meets
+   the cue — 124px total, comfortably above both the 92.8px and 80px the unclamped rhythm
+   gave at 844 and 664 tall, where the review measured a 3px and 16px overlap. */
+@media (max-width: 767px) {
+  .heroPin {
+    height: calc(100svh - var(--spacing-56) - var(--spacing-8));
+  }
+
+  .heroInk {
+    padding-bottom: max(
+      clamp(var(--spacing-80), 11vh, var(--spacing-120)),
+      calc(var(--spacing-28) + var(--spacing-56) + var(--spacing-40))
+    );
+  }
+}
+
+/* ---- facts strip --------------------------------------------------------------------- */
+
+.facts {
+  position: relative;
+  z-index: 2;
+  background: var(--profile-bg-b);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.factsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding: var(--spacing-20) var(--gutter);
+  border-right: 1px solid var(--hairline);
+}
+
+.fact:last-child {
+  border-right: 0;
+}
+
+.factLabel {
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--ink-meta);
+}
+
+.factValue {
+  font-family: var(--font-display);
+  font-size: var(--text-fact-value);
+}
+
+/* ---- bio ----------------------------------------------------------------------------- */
+
+.bioGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(var(--spacing-40), 5vw, var(--spacing-80));
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .bioGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* A following bio has no lead, so its prose is the grid's only child: place it in the
+     second column, where the lead would have sat beside it, rather than leaving column
+     one an empty cell (F43: `Bio.tsx` renders nothing for that lead, so this is CSS-only). */
+  .bioGrid > .prose:first-child {
+    grid-column: 2;
+  }
+}
+
+/* Below the tablet breakpoint the bio's column gap becomes a row gap between the head
+   and the prose; the comps put 20px there, not the wide column clamp (F43 audit). */
+@media (max-width: 767px) {
+  .bioGrid {
+    gap: var(--spacing-20);
+  }
+}
+
+.bioLead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+}
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+  max-width: var(--container-prose);
+}
+
+.prose p {
+  margin: 0;
+  font-size: var(--text-prose);
+  line-height: var(--text-prose--line-height);
+  color: var(--ink-body);
+  text-wrap: pretty;
+}
+
+.prose a {
+  color: var(--profile-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.prose a:hover {
+  color: var(--profile-ink);
+}
+
+.prose a:focus-visible {
+  outline: var(--spacing-4) solid var(--profile-accent);
+  outline-offset: var(--spacing-4);
+}
+
+/* ---- photo, quote: full-bleed with drift --------------------------------------------- */
+
+.bleed {
+  position: relative;
+  z-index: 2;
+  height: 88svh;
+  min-height: 60vh;
+  overflow: clip;
+  display: flex;
+  align-items: flex-end;
+  background: var(--color-night);
+  color: var(--color-card);
+}
+
+.drift {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  animation: drift linear both;
+  animation-timeline: view();
+  animation-range: cover 0% cover 100%;
+}
+
+.bleedScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 38%, var(--scrim-deep) 100%);
+}
+
+.bleedInk {
+  position: relative;
+  width: 100%;
+  padding-bottom: clamp(var(--spacing-40), 6vh, var(--spacing-56));
+}
+
+.bleedText {
+  max-width: min(100%, calc(var(--container-profile-max) / 2));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.photoCaption {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(var(--text-section-head) * 0.75);
+  line-height: 1.12;
+  text-wrap: pretty;
+}
+
+.quoteText {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(var(--text-section-head) * 0.85);
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+.quoteText::before {
+  content: "\201C";
+}
+
+.quoteText::after {
+  content: "\201D";
+}
+
+.quoteWho {
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-blue-whisper);
+}
+
+/* ---- gallery ------------------------------------------------------------------------- */
+
+.galleryHead {
+  margin-bottom: clamp(var(--spacing-28), 4vh, var(--spacing-40));
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: min(22vw, calc(var(--container-profile-max) * 0.22));
+  grid-auto-flow: dense;
+  gap: var(--spacing-16);
+  /* Only the block axis: `margin: 0` used to win over `.container`'s `margin-inline:
+     auto` at equal specificity, pulling the grid left of its own kicker past 1392px wide
+     (F43 audit §2d — the grid centres on the container like everything else in it). */
+  margin-block: 0;
+  padding-block: 0;
+  list-style: none;
+}
+
+.cell {
+  position: relative;
+  grid-column: span 2;
+  overflow: clip;
+  background: var(--profile-bg-b);
+}
+
+.cell:first-child {
+  grid-column: span 4;
+  grid-row: span 2;
+}
+
+/* Below the tablet breakpoint the kicker-to-content gap is the phone's 20px rhythm, not
+   the wider desktop clamp (F43 audit). */
+@media (max-width: 767px) {
+  .galleryHead {
+    margin-bottom: var(--spacing-20);
+  }
+
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 40vw;
+    gap: var(--spacing-8);
+  }
+
+  .cell,
+  .cell:first-child {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .cell:first-child {
+    grid-column: span 2;
+  }
+}
+
+.cellStripes {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* ---- video --------------------------------------------------------------------------- */
+
+.videoHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-20);
+  flex-wrap: wrap;
+  margin-bottom: clamp(var(--spacing-28), 4vh, var(--spacing-40));
+}
+
+/* Below the tablet breakpoint the kicker-to-frame gap is the phone's 20px rhythm, not
+   the wider desktop clamp (F43 audit). */
+@media (max-width: 767px) {
+  .videoHead {
+    margin-bottom: var(--spacing-20);
+  }
+}
+
+.videoMeta {
+  font-size: var(--text-ui);
+  color: var(--ink-meta);
+}
+
+.frame {
+  --ratio: 1.7778;
+  position: relative;
+  width: min(100%, calc(85svh * var(--ratio)));
+  aspect-ratio: var(--ratio);
+  margin-inline: auto;
+  overflow: clip;
+  background: var(--color-night);
+  will-change: transform, clip-path;
+  animation: frameOpen linear both;
+  animation-timeline: view();
+  animation-range: entry 10% cover 40%;
+}
+
+.frameStripes {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: 0;
+}
+
+.clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoControl {
+  position: absolute;
+  left: clamp(var(--spacing-16), 2.4vw, var(--spacing-40));
+  bottom: clamp(var(--spacing-16), 2.4vw, var(--spacing-28));
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: var(--spacing-44);
+  padding: var(--spacing-8) var(--spacing-20) var(--spacing-8) var(--spacing-12);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-card);
+  color: var(--color-blue);
+  font-family: var(--font-text);
+  font-size: var(--text-ui);
+  font-weight: var(--text-ui--font-weight);
+  cursor: pointer;
+  transition: background-color var(--transition-duration-hover) var(--ease-default);
+}
+
+.videoControl:hover {
+  background: var(--color-blue-whisper);
+  color: var(--color-blue-deep);
+}
+
+.videoControl:focus-visible {
+  outline: var(--spacing-4) solid var(--color-card);
+  outline-offset: var(--spacing-4);
+}
+
+/* ---- day: the pinned three scenes ---------------------------------------------------- */
+
+/* The ink column is centred: the kicker row, a gap, then a 34vh slot the captions —
+   which live in their figures for the reader — are positioned into from the same sums. */
+.day {
+  --day-gap: clamp(var(--spacing-20), 4vh, var(--spacing-40));
+  --day-slot: 34vh;
+  --day-slot-top: calc(
+    50% - (var(--spacing-16) + var(--day-gap) + var(--day-slot)) / 2 + var(--spacing-16) +
+      var(--day-gap)
+  );
+  position: relative;
+  z-index: 2;
+  height: 340svh;
+  view-timeline-name: --day;
+  view-timeline-axis: block;
+  background: var(--color-night);
+  color: var(--color-card);
+}
+
+.dayPin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+}
+
+.dayScenes {
+  position: absolute;
+  inset: 0;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+
+/* Before the day's view-timeline range is active (Chromium, while the pin is still
+   scrolling into view — the timeline reads "before phase" until the pin is fully
+   contained) or before `ScrollProgress` has ever measured a rect (WebKit's fallback,
+   `var(--progress, 1)` — the timeline reads "before phase" until the pin is fully
+   contained), an `animation-fill-mode` has no keyframe to hold: nothing has attached
+   yet, so the element paints its plain, un-animated style. Without a resting value
+   here that default is `opacity: 1` for every scene at once — all three photos and
+   captions stacked, the last in the DOM on top — which is what briefly showed inside
+   the day frame before the pin engaged (F5). Each layer's resting state below is
+   exactly its own animation's 0% keyframe, so there is nothing to reconcile once the
+   timeline does attach. */
+.scenePhoto {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.14);
+  will-change: transform, opacity;
+  animation: linear both;
+  animation-timeline: --day;
+  animation-range: contain 0% contain 100%;
+}
+
+.scene:nth-child(1) .scenePhoto {
+  opacity: 1;
+  transform: scale(1.06);
+  animation-name: seqA;
+}
+
+.scene:nth-child(2) .scenePhoto {
+  animation-name: seqB;
+}
+
+.scene:nth-child(3) .scenePhoto {
+  animation-name: seqC;
+}
+
+.dayScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    94deg,
+    color-mix(in srgb, var(--color-night) 90%, transparent) 0%,
+    var(--scrim-mid) 42%,
+    transparent 72%,
+    color-mix(in srgb, var(--color-night) 40%, transparent) 100%
+  );
+}
+
+.dayInk {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dayHead {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  height: var(--spacing-16);
+  margin-bottom: var(--day-gap);
+}
+
+.daySlot {
+  height: var(--day-slot);
+}
+
+.dayKicker {
+  margin: 0;
+  font-weight: 400;
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-blue-light);
+}
+
+.dashes {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.dash {
+  display: block;
+  width: var(--spacing-44);
+  height: var(--spacing-4);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-card) 24%, transparent);
+}
+
+.dashFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-blue-light);
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: linear both;
+  animation-timeline: --day;
+  animation-range: contain 0% contain 100%;
+}
+
+.dash:nth-child(1) .dashFill {
+  transform: scaleX(1);
+  animation-name: dotA;
+}
+
+.dash:nth-child(2) .dashFill {
+  animation-name: dotB;
+}
+
+.dash:nth-child(3) .dashFill {
+  animation-name: dotC;
+}
+
+.sceneCaption {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: var(--day-slot-top);
+  margin: 0;
+  opacity: 0;
+  transform: translateY(var(--spacing-28));
+  animation: linear both;
+  animation-timeline: --day;
+  animation-range: contain 0% contain 100%;
+}
+
+.scene:nth-child(1) .sceneCaption {
+  opacity: 1;
+  transform: translateY(0);
+  animation-name: capA;
+}
+
+.scene:nth-child(2) .sceneCaption {
+  animation-name: capB;
+}
+
+.scene:nth-child(3) .sceneCaption {
+  animation-name: capC;
+}
+
+.sceneCaptionText {
+  display: block;
+  max-width: calc(var(--container-profile-max) * 0.56);
+  font-family: var(--font-display);
+  font-size: calc(var(--text-section-head) * 1.15);
+  line-height: 1.02;
+  letter-spacing: var(--text-section-head--letter-spacing);
+  color: var(--color-card);
+  text-wrap: pretty;
+}
+
+.dayClock {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--spacing-4);
+  height: 34vh;
+  background: color-mix(in srgb, var(--color-card) 16%, transparent);
+}
+
+.dayClock::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-blue-light);
+  transform-origin: top;
+  animation: seqClock linear both;
+  animation-timeline: --day;
+  animation-range: contain 0% contain 100%;
+}
+
+/* ---- needs --------------------------------------------------------------------------- */
+
+.needsHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+  max-width: calc(var(--container-profile-max) * 0.64);
+  margin-bottom: clamp(var(--spacing-40), 6vh, var(--spacing-56));
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, calc(var(--container-profile-max) / 5)), 1fr)
+  );
+  gap: var(--spacing-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: clamp(var(--spacing-28), 3vw, var(--spacing-40));
+  background: var(--profile-bg-b);
+}
+
+/* `--ink-meta` (F28 review #2), not `--profile-accent`: the accent's contrast against
+   `--profile-bg-b` — this card's own ground — is only guaranteed on the section surface
+   (`--profile-bg-a`), and on Paper's ground it reads 4.27:1, a color-contrast violation.
+   `--ink-meta` is the ink at an alpha every preset already keeps ≥ 4.5:1 on both grounds. */
+.cardIndex {
+  font-family: var(--font-label);
+  font-size: var(--text-mono-label);
+  letter-spacing: var(--text-mono-label--letter-spacing);
+  color: var(--ink-meta);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: calc(var(--text-fact-value) * 1.2);
+  line-height: 1.1;
+}
+
+.cardText {
+  margin: 0;
+  font-size: var(--text-ui);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-body);
+}
+
+/* ---- rises: what every section does as it enters ------------------------------------- */
+
+.rise {
+  animation: riseIn linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 85%;
+}
+
+/* The bio's prose can be several paragraphs tall; ending its rise at 85% of the block's
+   own height (like every other `.rise` element) left a long one still fading in well
+   past the middle of the screen. Capping the range at a fixed 30svh of scroll makes it
+   opaque with its top at ~70% of the screen whatever its height — the comp's read (F43
+   audit §2c). Same keyframes, same `@supports not` fallback and reduced-motion rule. */
+.prose.rise {
+  animation-range: entry 0% entry 30vh;
+}
+
+.riseSoft {
+  animation: riseSoft linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 70%;
+}
+
+.wipe {
+  animation: wipeIn linear both;
+  animation-timeline: view();
+  animation-range: entry 5% cover 22%;
+}
+
+/* Ends at `entry 100%`, not the hi-fi's `cover 45%`: the caption sits at the foot of a
+   bleed that may be the page's last section, where it can never scroll further than
+   fully into view. */
+.riseLate {
+  animation: riseIn linear both;
+  animation-timeline: view();
+  animation-range: entry 20% entry 100%;
+}
+
+/* ---- keyframes (the hi-fi's, on transform, opacity and clip-path only) --------------- */
+
+@keyframes portalPhoto {
+  0% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  62% {
+    transform: scale(2.1);
+    opacity: 1;
+  }
+  78% {
+    opacity: 0.94;
+  }
+  100% {
+    transform: scale(4.6);
+    opacity: 0;
+  }
+}
+
+@keyframes portalVeil {
+  0% {
+    opacity: 0.08;
+  }
+  62% {
+    opacity: 0.16;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes portalInk {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  38% {
+    opacity: 1;
+    transform: translateY(-4%) scale(0.98);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(-14%) scale(0.9);
+  }
+}
+
+@keyframes portalCue {
+  0% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes navName {
+  0%,
+  55% {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-56));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes riseSoft {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-28));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wipeIn {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(var(--spacing-20));
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 -12% 0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: scale(1.16) translateY(-6%);
+  }
+  to {
+    transform: scale(1.16) translateY(6%);
+  }
+}
+
+@keyframes frameOpen {
+  from {
+    transform: scale(0.9);
+    clip-path: inset(0 round var(--spacing-40));
+  }
+  to {
+    transform: scale(1);
+    clip-path: inset(0 round var(--radius-panel));
+  }
+}
+
+@keyframes seqA {
+  0%,
+  26% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  36%,
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes seqB {
+  0%,
+  26% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+  36%,
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes seqC {
+  0%,
+  60% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+  70%,
+  100% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes capA {
+  0%,
+  24% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  32%,
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing-28) * -1));
+  }
+}
+
+@keyframes capB {
+  0%,
+  28% {
+    opacity: 0;
+    transform: translateY(var(--spacing-28));
+  }
+  38%,
+  58% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  68%,
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing-28) * -1));
+  }
+}
+
+@keyframes capC {
+  0%,
+  62% {
+    opacity: 0;
+    transform: translateY(var(--spacing-28));
+  }
+  72%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dotA {
+  0%,
+  30% {
+    transform: scaleX(1);
+  }
+  34%,
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes dotB {
+  0%,
+  30% {
+    transform: scaleX(0);
+  }
+  36%,
+  64% {
+    transform: scaleX(1);
+  }
+  70%,
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes dotC {
+  0%,
+  66% {
+    transform: scaleX(0);
+  }
+  72%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes seqClock {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ---- fallback: no scroll-driven animations ------------------------------------------- */
+
+/* The same keyframes, paused, scrubbed by the `--progress` that `ScrollProgress` writes
+   on each `[data-scene]` (ADR-009). Custom properties inherit, so one value on the scene
+   drives every animated child. The header's name reveal has no scene and simply shows. */
+@supports not (animation-timeline: view()) {
+  .heroPhoto,
+  .heroVeil,
+  .heroInk,
+  .heroCue,
+  .drift,
+  .frame,
+  .scenePhoto,
+  .dashFill,
+  .sceneCaption,
+  .dayClock::after,
+  .rise,
+  .riseSoft,
+  .wipe,
+  .riseLate {
+    animation-duration: 1s;
+    animation-play-state: paused;
+    animation-delay: calc(var(--progress, 1) * -1s);
+  }
+
+  .headerName {
+    animation: none;
+  }
+}
+
+/* ---- reduced motion: same composition, resolved ---------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    height: auto;
+  }
+
+  .heroPin {
+    position: relative;
+  }
+
+  .heroPhoto,
+  .heroVeil,
+  .heroInk,
+  .heroCue,
+  .headerName,
+  .drift,
+  .frame,
+  .rise,
+  .riseSoft,
+  .wipe,
+  .riseLate {
+    animation: none;
+  }
+
+  .heroVeil {
+    opacity: 0;
+  }
+
+  .frame {
+    clip-path: inset(0 round var(--radius-panel));
+  }
+
+  /* The day's end state would show scene three alone, so the three stack instead:
+     each photo at a still height with its caption beneath, in order, all visible. */
+  .day {
+    height: auto;
+    padding-block: var(--rhythm);
+  }
+
+  .dayPin {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dayScenes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm);
+    max-width: var(--container-profile-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    padding-top: var(--spacing-56);
+    box-sizing: border-box;
+  }
+
+  .scene {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-20);
+  }
+
+  .scenePhoto {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 4 / 3;
+    max-height: 80svh;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .sceneCaption {
+    position: relative;
+    inset: auto;
+    padding: 0;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .dayScrim,
+  .dayClock,
+  .daySlot,
+  .dashes {
+    display: none;
+  }
+
+  .dayInk {
+    position: relative;
+    inset: auto;
+    justify-content: flex-start;
+  }
+}

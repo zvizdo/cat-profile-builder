@@ -1,0 +1,72 @@
+# Terraform-only deploy (ADR-014): `terraform apply` on a runner instead of a laptop.
+# Terraform itself builds and pushes the image (infra/terraform/image.tf) and then rolls the
+# Cloud Run service — nothing else here builds, pushes or applies anything. Never runs on
+# its own; someone presses "Run workflow".
+#
+# Prerequisites (infra/terraform/README.md, "Deploying from GitHub"):
+#   - a Workload Identity pool/provider and a deploy service account the runner can
+#     impersonate (repository variables GCP_WORKLOAD_IDENTITY_PROVIDER,
+#     GCP_DEPLOY_SERVICE_ACCOUNT);
+#   - Terraform state in a GCS backend, because the runner has no local state file — the
+#     `backend "gcs" {}` block in versions.tf uncommented, and a repository variable
+#     TF_STATE_BUCKET naming the bucket (README). WITHOUT THIS the `terraform init` below
+#     silently keeps using local state, which does not exist on this ephemeral runner: the
+#     apply then tries to create every resource from scratch and fails on the first one that
+#     already exists (e.g. "Error 409: … already exists"). This workflow does not check for
+#     that — the README lists the backend as a prerequisite for a reason.
+#   - every input variable that has no default (infra/terraform/variables.tf) supplied as a
+#     repository secret or variable, read below as TF_VAR_<name> — see the README for the
+#     full list.
+name: deploy
+
+on:
+  workflow_dispatch: {}
+
+# One deploy at a time: two applies against the same state would collide.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Lets google-github-actions/auth mint the OIDC token Workload Identity exchanges.
+      id-token: write
+    defaults:
+      run:
+        working-directory: infra/terraform
+    env:
+      TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+      TF_VAR_shelter_username: ${{ vars.SHELTER_USERNAME }}
+      TF_VAR_public_base_url: ${{ vars.PUBLIC_BASE_URL }}
+      # Terraform reads any variable from TF_VAR_<name>; these two are `sensitive` there.
+      TF_VAR_session_secret: ${{ secrets.SESSION_SECRET }}
+      TF_VAR_shelter_password_hmac: ${{ secrets.SHELTER_PASSWORD_HMAC }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.5"
+          terraform_wrapper: false
+
+      # ubuntu-latest ships Docker already running; the docker provider (image.tf) talks to
+      # it directly, so no separate build step or Docker setup action is needed here.
+      #
+      # `-backend-config` is only meaningful once versions.tf's `backend "gcs" {}` is
+      # uncommented (README); until then Terraform ignores it (a harmless warning) and
+      # falls back to local state, which is the failure mode the comment above describes.
+      - run: >
+          terraform init -input=false
+          -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+          -backend-config="prefix=cat-profile-builder"
+
+      - run: terraform apply -input=false -auto-approve

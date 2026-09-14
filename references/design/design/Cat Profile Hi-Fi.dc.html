@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  body { margin:0; background:#e9e6e1; font-family:'Work Sans', Helvetica, sans-serif; color:#231f20; -webkit-font-smoothing:antialiased; }
+  a { color:#0b6fb4; text-decoration:none; }
+  a:hover { color:#0a3d63; text-decoration:underline; }
+  @keyframes kbA { from { transform:scale(1.04) translate3d(0,0,0);} to { transform:scale(1.22) translate3d(-2.5%,-1.5%,0);} }
+  @keyframes kbB { from { transform:scale(1.22) translate3d(2%,1.5%,0);} to { transform:scale(1.04) translate3d(0,0,0);} }
+  @keyframes fadeA { from { opacity:0; } to { opacity:1; } }
+  @keyframes fadeB { from { opacity:0; } to { opacity:1; } }
+  @keyframes riseA { from { opacity:0; transform:translateY(46px);} to { opacity:1; transform:translateY(0);} }
+  @keyframes riseB { from { opacity:0; transform:translateY(46px);} to { opacity:1; transform:translateY(0);} }
+  @keyframes tickA { from { transform:scaleX(0);} to { transform:scaleX(1);} }
+  @keyframes tickB { from { transform:scaleX(0);} to { transform:scaleX(1);} }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:64px; padding:64px">
+  <header style="display:flex; flex-direction:column; gap:10px; max-width:920px">
+    <div style="display:flex; align-items:center; gap:14px">
+      <img src="media/logo-transparent.png" alt="South County Cats" style="height:52px; width:auto; display:block" />
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#0b6fb4">Turn 2 · Hi-fi · brand palette from logo</div>
+    </div>
+    <h1 style="margin:0; font-family:'Instrument Serif',serif; font-size:52px; font-weight:400; letter-spacing:-.015em">The viewed profile, and the room it plays in</h1>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#57534d; max-width:660px; text-wrap:pretty">Same structure you approved — now in South County blue, real photography, and at the three sizes that matter: desktop, phone, and a 1920×1080 wall. The carousel below is live: it advances on its own, and each time it returns to a cat it brings a different shot.</p>
+  </header>
+
+  <!-- 2c — TV CAROUSEL -->
+  <div id="2c" style="display:flex; flex-direction:column; gap:16px">
+    <div style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">2c</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#57534d">CAROUSEL · 1920×1080 · adoption-event wall · loops forever</span>
+    </div>
+
+    <div style="width:1920px; height:1080px; position:relative; overflow:hidden; background:#0d0f11; box-shadow:0 40px 90px -30px rgba(11,63,99,.55)">
+      <div style="position:absolute; inset:0; overflow:hidden">
+        <div style="position:absolute; inset:-4%; background-size:cover; background-position:center; will-change:transform,opacity; background-image:{{ mediaUrl }}; animation:{{ mediaAnim }}"></div>
+      </div>
+      <div style="position:absolute; inset:0; background:linear-gradient(78deg, rgba(8,12,16,.94) 0%, rgba(8,12,16,.72) 34%, rgba(8,12,16,.12) 66%, rgba(8,12,16,.42) 100%)"></div>
+      <div style="position:absolute; inset:0; background:radial-gradient(120% 90% at 78% 18%, rgba(11,111,180,.28) 0%, rgba(11,111,180,0) 58%)"></div>
+
+      <div style="position:absolute; inset:64px 96px; display:flex; flex-direction:column">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:20px">
+            <img src="media/logo-transparent.png" alt="South County Cats" style="height:76px; width:auto; display:block; filter:brightness(0) invert(1)" />
+            <div style="width:1px; height:56px; background:rgba(255,255,255,.28)"></div>
+            <div style="display:flex; flex-direction:column; gap:4px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:17px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Adoptable now</span>
+              <span style="font-size:22px; color:rgba(255,255,255,.72)">Ask any volunteer to meet one</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:19px; letter-spacing:.16em; color:rgba(255,255,255,.6)">{{ counter }}</span>
+            <div style="display:flex; gap:8px; align-items:center">
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px; overflow:hidden"><div style="height:100%; background:#8fd0ff; transform-origin:left; animation:{{ tickAnim }}"></div></div>
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+              <div style="width:64px; height:5px; background:rgba(255,255,255,.22); border-radius:99px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1; display:flex; align-items:flex-end; padding-bottom:8px">
+          <div style="max-width:1080px; display:flex; flex-direction:column; gap:26px; animation:{{ riseAnim }}">
+            <div style="display:flex; align-items:center; gap:18px">
+              <div style="width:80px; height:4px; background:#0b6fb4"></div>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:20px; letter-spacing:.24em; text-transform:uppercase; color:#8fd0ff">{{ tag }}</span>
+            </div>
+            <div style="font-family:'Instrument Serif',serif; font-size:190px; line-height:.86; letter-spacing:-.03em; color:#fff; text-shadow:0 24px 60px rgba(0,0,0,.4)">{{ name }}</div>
+            <div style="font-size:46px; line-height:1.3; color:rgba(255,255,255,.94); max-width:900px; text-wrap:pretty">{{ line }}</div>
+            <div style="display:flex; gap:14px; margin-top:10px">
+              <div style="border:2px solid rgba(255,255,255,.45); border-radius:99px; padding:16px 30px; display:flex; flex-direction:column; gap:2px"><span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.6)">Age</span><span style="font-size:28px; color:#fff">{{ age }}</span></div>
+              <div style="border:2px solid rgba(255,255,255,.45); border-radius:99px; padding:16px 30px; display:flex; flex-direction:column; gap:2px"><span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.6)">Good with</span><span style="font-size:28px; color:#fff">{{ goodWith }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:40px">
+          <div style="display:flex; gap:18px; align-items:center">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.5)">Up next</span>
+            <div style="display:flex; gap:14px">
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next1 }}; border:2px solid rgba(255,255,255,.5)"></div>
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next2 }}; opacity:.6"></div>
+              <div style="width:150px; height:96px; border-radius:8px; background-size:cover; background-position:center; background-image:{{ next3 }}; opacity:.35"></div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-end; gap:26px">
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; padding-bottom:6px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:rgba(255,255,255,.45)">{{ mediaLabel }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:rgba(255,255,255,.45)">Loop {{ cycleLabel }}</span>
+            </div>
+            <div style="background:#fff; border-radius:14px; padding:18px; display:flex; align-items:center; gap:20px; box-shadow:0 18px 46px -14px rgba(0,0,0,.5)">
+              <div ref="{{ qrRef }}" role="img" aria-label="Scan for this cat's profile" style="width:150px; height:150px; background:#fff; background-size:contain; background-repeat:no-repeat; background-position:center; image-rendering:pixelated"></div>
+              <div style="display:flex; flex-direction:column; gap:8px; max-width:250px">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Scan to keep</span>
+                <span style="font-family:'Instrument Serif',serif; font-size:34px; line-height:1.05; color:#231f20">{{ name }}'s page</span>
+                <span style="font-size:16px; line-height:1.35; color:#57534d">Photos, full story, and the application form</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.8; color:#57534d; max-width:1000px">Each cat holds 6.5s: photo Ken-Burns drifts the whole time, alternating direction per slide, and the name block rises on entry. Media rotates per loop, so pass two shows a different photo or the cat's clip. Video slides play muted and trimmed, and a slide never cuts mid-clip. TV-safe inset 64/96px; smallest type on the wall is 14px at 1080p ≈ 40px perceived at 10 ft. Photos here are the three Charlotte shots standing in for the other cats.</div>
+  </div>
+
+  <!-- 2a + 2b -->
+  <div style="display:flex; gap:64px; align-items:flex-start; flex-wrap:wrap">
+    <div id="2a" style="display:flex; flex-direction:column; gap:16px">
+      <div style="display:flex; align-items:baseline; gap:12px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">2a</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#57534d">PUBLISHED PROFILE · DESKTOP 1440</span>
+      </div>
+      <div style="width:1440px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column">
+        <div style="height:72px; flex:none; background:rgba(246,244,240,.9); border-bottom:1px solid rgba(35,31,32,.1); display:flex; align-items:center; justify-content:space-between; padding:0 56px; box-sizing:border-box">
+          <img src="media/logo-transparent.png" alt="South County Cats" style="height:40px; width:auto; display:block" />
+          <div style="display:flex; align-items:center; gap:34px; font-size:15px; color:#4a4644">
+            <span>All cats</span><span>Foster</span><span>Donate</span>
+            <span style="background:#0b6fb4; color:#fff; border-radius:99px; padding:11px 22px; font-weight:500">Adopt Charlotte</span>
+          </div>
+        </div>
+
+        <div style="height:840px; flex:none; position:relative; overflow:hidden; box-sizing:border-box">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:62% 42%"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.34) 0%, rgba(10,20,28,0) 34%, rgba(10,20,28,.06) 58%, rgba(10,20,28,.72) 100%)"></div>
+          <div style="position:absolute; left:56px; right:56px; bottom:52px; display:flex; align-items:flex-end; justify-content:space-between; gap:40px">
+            <div style="display:flex; flex-direction:column; gap:18px">
+              <div style="display:flex; align-items:center; gap:14px">
+                <span style="width:9px; height:9px; border-radius:50%; background:#8fd0ff"></span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:#c9e7ff">Looking for a home · Wakefield, RI</span>
+              </div>
+              <div style="font-family:'Instrument Serif',serif; font-size:184px; line-height:.82; letter-spacing:-.035em; color:#fff">Charlotte</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end; padding-bottom:14px">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.6)">Scroll</span>
+              <div style="width:1px; height:64px; background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0))"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:none; display:flex; background:#fff; border-bottom:1px solid rgba(35,31,32,.08)">
+          <div style="flex:1; padding:34px 40px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:9px"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Age</span><span style="font-family:'Instrument Serif',serif; font-size:36px">3 years</span></div>
+          <div style="flex:1; padding:34px 40px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:9px"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Sex</span><span style="font-family:'Instrument Serif',serif; font-size:36px">Female</span></div>
+          <div style="flex:1; padding:34px 40px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:9px"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Coat</span><span style="font-family:'Instrument Serif',serif; font-size:36px">Brown tabby</span></div>
+          <div style="flex:1; padding:34px 40px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:9px"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8a857e">Good with</span><span style="font-family:'Instrument Serif',serif; font-size:36px">Cats, kids</span></div>
+          <div style="flex:1; padding:34px 40px; display:flex; flex-direction:column; gap:9px; background:#0b6fb4"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.72)">Fee</span><span style="font-family:'Instrument Serif',serif; font-size:36px; color:#fff">$95</span></div>
+        </div>
+
+        <div style="flex:none; padding:120px 56px 110px; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start">
+          <div style="display:flex; flex-direction:column; gap:26px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#0b6fb4">Who she is</span>
+            <div style="font-family:'Instrument Serif',serif; font-size:64px; line-height:1.05; letter-spacing:-.02em; color:#231f20; text-wrap:pretty">An explorer who never gives up, and will loudly ask for pets.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:26px; padding-top:10px">
+            <p style="margin:0; font-size:21px; line-height:1.65; color:#3d3937; text-wrap:pretty">Charlotte came in from a laundromat parking lot in April, thin and unbothered. Two weeks later she had claimed the highest shelf in the foster room and started supervising the household from it.</p>
+            <p style="margin:0; font-size:21px; line-height:1.65; color:#3d3937; text-wrap:pretty">She is a talker. Not a complainer — a negotiator. She will follow you room to room stating her case for attention, and once you sit down she settles against your leg and goes quiet, as if the matter had been resolved reasonably.</p>
+            <p style="margin:0; font-size:21px; line-height:1.65; color:#3d3937; text-wrap:pretty">She would do best with a window she can own, and she is happy to share a home with other cats or with confident kids.</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:6px">
+              <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:10px 20px; font-size:15px; color:#3d3937">Talkative</span>
+              <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:10px 20px; font-size:15px; color:#3d3937">Lap cat, eventually</span>
+              <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:10px 20px; font-size:15px; color:#3d3937">Loves high places</span>
+              <span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:10px 20px; font-size:15px; color:#3d3937">Spayed · vaccinated</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:none; height:760px; position:relative; overflow:hidden">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:52% 46%"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,0) 40%, rgba(10,20,28,.6) 100%)"></div>
+          <div style="position:absolute; left:56px; bottom:48px; max-width:620px; display:flex; flex-direction:column; gap:14px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#c9e7ff">The window seat</span>
+            <div style="font-family:'Instrument Serif',serif; font-size:52px; line-height:1.1; color:#fff; text-wrap:pretty">Two hours a day, minimum, watching the neighbourhood go by.</div>
+          </div>
+        </div>
+
+        <div style="flex:none; background:#fff; padding:110px 56px; display:flex; flex-direction:column; gap:44px">
+          <div style="display:flex; align-items:baseline; justify-content:space-between">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#0b6fb4">Moving picture</span>
+            <span style="font-size:15px; color:#8a857e">0:14 · no sound needed</span>
+          </div>
+          <div style="height:680px; position:relative; border-radius:6px; overflow:hidden; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center 40%">
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.12), rgba(10,20,28,.5))"></div>
+            <div style="position:absolute; left:36px; bottom:32px; display:flex; align-items:center; gap:18px">
+              <div style="width:74px; height:74px; border-radius:50%; background:rgba(255,255,255,.92); display:grid; place-items:center; font-size:22px; color:#0b6fb4">▶</div>
+              <div style="display:flex; flex-direction:column; gap:5px"><span style="font-size:19px; color:#fff; font-weight:500">Rain-day stakeout</span><span style="font-size:15px; color:rgba(255,255,255,.72)">Autoplays muted · tap for sound</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:none; padding:0 56px 110px; display:grid; grid-template-columns:2fr 1fr; grid-template-rows:340px 340px; gap:16px">
+          <div style="grid-row:span 2; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:40% 50%"></div>
+          <div style="background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:70% 40%"></div>
+          <div style="background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:55% 45%"></div>
+        </div>
+
+        <div style="flex:none; background:#0a3d63; padding:110px 56px; display:flex; align-items:flex-end; justify-content:space-between; gap:60px">
+          <div style="display:flex; flex-direction:column; gap:22px; max-width:760px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#8fd0ff">Next step</span>
+            <div style="font-family:'Instrument Serif',serif; font-size:74px; line-height:1.02; letter-spacing:-.02em; color:#fff; text-wrap:pretty">Come meet Charlotte this Saturday.</div>
+            <p style="margin:0; font-size:19px; line-height:1.6; color:rgba(255,255,255,.8); max-width:600px">Open hours 11–3 at the Wakefield adoption centre, or send an application and we'll call you within two days.</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px; align-items:stretch; min-width:300px">
+            <div style="background:#fff; color:#0a3d63; border-radius:99px; padding:20px; text-align:center; font-size:18px; font-weight:600">Start an application</div>
+            <div style="border:1.5px solid rgba(255,255,255,.5); color:#fff; border-radius:99px; padding:19px; text-align:center; font-size:18px">Ask about Charlotte</div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:rgba(255,255,255,.55); text-align:center; margin-top:6px">Updated 4 days ago by a volunteer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="2b" style="display:flex; flex-direction:column; gap:16px">
+      <div style="display:flex; align-items:baseline; gap:12px">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.1em; background:#0b6fb4; color:#fff; padding:5px 9px; border-radius:3px">2b</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.04em; color:#57534d">PHONE 390</span>
+      </div>
+      <div style="width:390px; background:#f6f4f0; box-shadow:0 30px 70px -28px rgba(11,63,99,.4); display:flex; flex-direction:column">
+        <div style="height:54px; flex:none; display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-sizing:border-box; background:rgba(246,244,240,.94); border-bottom:1px solid rgba(35,31,32,.08)">
+          <img src="media/logo-transparent.png" alt="South County Cats" style="height:26px; width:auto; display:block" />
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:18px; color:#231f20">≡</span>
+        </div>
+        <div style="height:560px; flex:none; position:relative; overflow:hidden">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:64% 42%"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.2) 0%, rgba(10,20,28,0) 40%, rgba(10,20,28,.78) 100%)"></div>
+          <div style="position:absolute; left:20px; right:20px; bottom:26px; display:flex; flex-direction:column; gap:10px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#c9e7ff">Looking · Wakefield, RI</span>
+            <div style="font-family:'Instrument Serif',serif; font-size:76px; line-height:.86; letter-spacing:-.03em; color:#fff">Charlotte</div>
+          </div>
+        </div>
+        <div style="flex:none; background:#fff; display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid rgba(35,31,32,.08)">
+          <div style="padding:16px 20px; border-right:1px solid rgba(35,31,32,.08); border-bottom:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:4px"><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:#8a857e">Age</span><span style="font-family:'Instrument Serif',serif; font-size:24px">3 years</span></div>
+          <div style="padding:16px 20px; border-bottom:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:4px"><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:#8a857e">Sex</span><span style="font-family:'Instrument Serif',serif; font-size:24px">Female</span></div>
+          <div style="padding:16px 20px; border-right:1px solid rgba(35,31,32,.08); display:flex; flex-direction:column; gap:4px"><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:#8a857e">Good with</span><span style="font-family:'Instrument Serif',serif; font-size:24px">Cats, kids</span></div>
+          <div style="padding:16px 20px; display:flex; flex-direction:column; gap:4px; background:#0b6fb4"><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.75)">Fee</span><span style="font-family:'Instrument Serif',serif; font-size:24px; color:#fff">$95</span></div>
+        </div>
+        <div style="flex:none; padding:44px 20px 40px; display:flex; flex-direction:column; gap:20px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Who she is</span>
+          <div style="font-family:'Instrument Serif',serif; font-size:34px; line-height:1.12; letter-spacing:-.015em; text-wrap:pretty">An explorer who never gives up, and will loudly ask for pets.</div>
+          <p style="margin:0; font-size:16.5px; line-height:1.65; color:#3d3937; text-wrap:pretty">Charlotte came in from a laundromat parking lot in April, thin and unbothered. Two weeks later she had claimed the highest shelf in the foster room and started supervising the household from it.</p>
+          <p style="margin:0; font-size:16.5px; line-height:1.65; color:#3d3937; text-wrap:pretty">She is a talker. Not a complainer — a negotiator. Once you sit down she settles against your leg and goes quiet, as if the matter had been resolved reasonably.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap"><span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:8px 15px; font-size:13.5px; color:#3d3937">Talkative</span><span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:8px 15px; font-size:13.5px; color:#3d3937">Loves high places</span><span style="border:1px solid rgba(35,31,32,.18); border-radius:99px; padding:8px 15px; font-size:13.5px; color:#3d3937">Spayed</span></div>
+        </div>
+        <div style="flex:none; height:440px; position:relative; overflow:hidden">
+          <div style="position:absolute; inset:0; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:52% 46%"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,0) 42%, rgba(10,20,28,.66) 100%)"></div>
+          <div style="position:absolute; left:20px; right:20px; bottom:22px; display:flex; flex-direction:column; gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#c9e7ff">The window seat</span>
+            <div style="font-family:'Instrument Serif',serif; font-size:28px; line-height:1.15; color:#fff; text-wrap:pretty">Two hours a day, watching the neighbourhood go by.</div>
+          </div>
+        </div>
+        <div style="flex:none; background:#fff; padding:36px 20px; display:flex; flex-direction:column; gap:16px">
+          <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#0b6fb4">Moving picture</span><span style="font-size:12.5px; color:#8a857e">0:14 · muted</span></div>
+          <div style="height:300px; position:relative; border-radius:5px; overflow:hidden; background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:center 40%">
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,28,.1), rgba(10,20,28,.5))"></div>
+            <div style="position:absolute; left:16px; bottom:16px; display:flex; align-items:center; gap:12px"><div style="width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.94); display:grid; place-items:center; font-size:16px; color:#0b6fb4">▶</div><span style="font-size:14.5px; color:#fff; font-weight:500">Rain-day stakeout</span></div>
+          </div>
+        </div>
+        <div style="flex:none; padding:0 20px 36px; display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:150px; gap:8px">
+          <div style="grid-column:span 2; background-image:url('media/charlotte-2.jpg'); background-size:cover; background-position:40% 50%"></div>
+          <div style="background-image:url('media/charlotte-1.jpg'); background-size:cover; background-position:70% 40%"></div>
+          <div style="background-image:url('media/charlotte-3.jpg'); background-size:cover; background-position:55% 45%"></div>
+        </div>
+        <div style="flex:none; background:#0a3d63; padding:44px 20px 36px; display:flex; flex-direction:column; gap:18px">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8fd0ff">Next step</span>
+          <div style="font-family:'Instrument Serif',serif; font-size:38px; line-height:1.06; letter-spacing:-.015em; color:#fff; text-wrap:pretty">Come meet Charlotte this Saturday.</div>
+          <p style="margin:0; font-size:15.5px; line-height:1.6; color:rgba(255,255,255,.8)">Open 11–3 at the Wakefield adoption centre.</p>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px">
+            <div style="background:#fff; color:#0a3d63; border-radius:99px; padding:16px; text-align:center; font-size:16px; font-weight:600">Start an application</div>
+            <div style="border:1.5px solid rgba(255,255,255,.5); color:#fff; border-radius:99px; padding:15px; text-align:center; font-size:16px">Ask about Charlotte</div>
+          </div>
+        </div>
+        <div style="flex:none; position:sticky; bottom:0; background:rgba(246,244,240,.96); border-top:1px solid rgba(35,31,32,.1); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+          <div style="display:flex; flex-direction:column"><span style="font-size:14px; font-weight:600">Charlotte</span><span style="font-size:12px; color:#8a857e">3 yrs · $95</span></div>
+          <div style="background:#0b6fb4; color:#fff; border-radius:99px; padding:13px 22px; font-size:15px; font-weight:500">Adopt</div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.8; color:#57534d; max-width:390px">Phone keeps every desktop section in the same order — hero, facts, bio, feature photo, video, gallery, CTA — but the facts become a 2×2 and a sticky adopt bar rides along after the hero. 44px minimum targets throughout.</div>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = { step: 0 };
+
+  qrRef = React.createRef();
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState(s => ({ step: s.step + 1 })), 6500);
+    this.paintQr();
+  }
+  componentDidUpdate() { this.paintQr(); }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this.qrPoll); }
+
+  paintQr() {
+    const node = this.qrRef.current;
+    if (!node) return;
+    const slug = this.cats()[this.state.step % this.cats().length].slug;
+    if (node.dataset.qrSlug === slug) return;
+    if (!window.qrcode) {
+      if (this.qrPoll) return;
+      let n = 0;
+      this.qrPoll = setInterval(() => {
+        if (window.qrcode) { clearInterval(this.qrPoll); this.qrPoll = null; this.paintQr(); }
+        else if (++n > 80) { clearInterval(this.qrPoll); this.qrPoll = null; }
+      }, 150);
+      return;
+    }
+    this._qrCache = this._qrCache || {};
+    if (!this._qrCache[slug]) {
+      const qr = window.qrcode(0, 'M');
+      qr.addData('https://southcountycats.org/' + slug);
+      qr.make();
+      this._qrCache[slug] = qr.createDataURL(8, 0);
+    }
+    node.style.backgroundImage = 'url(' + this._qrCache[slug] + ')';
+    node.dataset.qrSlug = slug;
+  }
+
+  cats() {
+    return [
+      { name: 'Charlotte', slug: 'charlotte', tag: 'Explorer', age: '3 years', goodWith: 'Cats, kids',
+        line: 'Never gives up, and will loudly ask for pets.',
+        media: [
+          { url: 'media/charlotte-1.jpg', label: 'Photo 1 of 3' },
+          { url: 'media/charlotte-3.jpg', label: 'Photo 3 of 3' },
+          { url: 'media/charlotte-2.jpg', label: 'Clip · rain-day stakeout' }
+        ] },
+      { name: 'Mango', slug: 'mango', tag: 'Lap specialist', age: '2 years', goodWith: 'Everyone',
+        line: 'Will find the one warm spot in any room and hold it.',
+        media: [
+          { url: 'media/charlotte-2.jpg', label: 'Photo 1 of 2' },
+          { url: 'media/charlotte-1.jpg', label: 'Clip · morning patrol' }
+        ] },
+      { name: 'Juniper', slug: 'juniper', tag: 'Quiet type', age: '5 years', goodWith: 'Calm homes',
+        line: 'Takes a week to decide about you, then never leaves.',
+        media: [
+          { url: 'media/charlotte-3.jpg', label: 'Photo 1 of 3' },
+          { url: 'media/charlotte-2.jpg', label: 'Photo 2 of 3' },
+          { url: 'media/charlotte-1.jpg', label: 'Photo 3 of 3' }
+        ] }
+    ];
+  }
+
+  renderVals() {
+    const cats = this.cats();
+    const step = this.state.step;
+    const i = step % cats.length;
+    const cycle = Math.floor(step / cats.length);
+    const cat = cats[i];
+    const media = cat.media[cycle % cat.media.length];
+    const even = step % 2 === 0;
+    const url = u => "url('" + u + "')";
+    const nextMedia = n => {
+      const c = cats[(i + n) % cats.length];
+      const cy = Math.floor((step + n) / cats.length);
+      return url(c.media[cy % c.media.length].url);
+    };
+
+    return {
+      name: cat.name,
+      slug: cat.slug,
+      tag: cat.tag,
+      line: cat.line,
+      age: cat.age,
+      goodWith: cat.goodWith,
+      qrRef: this.qrRef,
+      mediaUrl: url(media.url),
+      mediaLabel: media.label,
+      counter: String(i + 1).padStart(2, '0') + ' / ' + String(cats.length).padStart(2, '0'),
+      cycleLabel: cycle + 1,
+      mediaAnim: (even ? 'kbA' : 'kbB') + ' 9s linear both, ' + (even ? 'fadeA' : 'fadeB') + ' 1100ms ease both',
+      riseAnim: (even ? 'riseA' : 'riseB') + ' 1000ms cubic-bezier(.16,.84,.28,1) both 180ms',
+      tickAnim: (even ? 'tickA' : 'tickB') + ' 6500ms linear both',
+      next1: nextMedia(1),
+      next2: nextMedia(2),
+      next3: nextMedia(3)
+    };
+  }
+}
+</script>
+</body>
+</html>
