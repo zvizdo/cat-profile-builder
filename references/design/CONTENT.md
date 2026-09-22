@@ -85,7 +85,7 @@ Strings marked **[new]** don't appear in the design files — they're the same v
 | Failure | `I couldn't reach the model. Nothing on your page changed.` · `Try again` — F42: the first sentence names what went wrong: `The connection dropped.` when the network went away mid-stream, `The helper stopped mid-step.` when a step ended with a call nobody could answer (the stall guard); after edits landed, `I added 2 sections before I was cut off. Undo these, or ask me to continue.` as before |
 | Locked | `Add one photo and I can help.` |
 | Collapsed | the 52 px tab: toggle `open CATalyst` · label `CATalyst`, or `CATalyst · 1 suggestion` while a card waits — from 768 px; below 1180 the open panel lies over the canvas and Escape folds it (F46). [superseded 2026-09-13: `Collapsed. The canvas keeps the full width, and CATalyst remembers where you left off.` — the tab is the collapsed state; the sentence described a column that stayed 360 px wide] |
-| Input | `Ask for a change…` · chips `Write a bio` `Pick a theme` `Tidy the order` |
+| Input | `Ask for a change…` · button `Send` (F65: an arrow beside the box, the same as Enter) · chips `Write a bio` `Pick a theme` `Tidy the order` |
 | Greeting **[F55, 2026-09-13]** | One line above the composer while the thread is empty, both layouts, gone once anything is said: `Tell me about Charlotte, or start with Build the page.` while the page is just the hero (the `Build the page` chip is there to press) · `Tell me what to change on Charlotte's page.` once it has sections · the name falls back to `this cat` (`Tell me about this cat, or start with Build the page.`). Pronoun-free — the helper has not been told the cat's sex. |
 
 ## Toasts

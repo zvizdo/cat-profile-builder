@@ -34,13 +34,15 @@ import { SIGN_IN_MESSAGE, withSession } from "@/app/actions/_lib/guard";
 import { signIn, signOut } from "@/app/actions/auth";
 import { chat, type ChatDeps } from "@/app/api/_lib/chat";
 import { serveDerived } from "@/app/api/_lib/derived";
+import { serveOriginal } from "@/app/api/_lib/original";
 import { INTERNAL_MESSAGE, respond } from "@/app/api/_lib/respond";
+import { MAX_RANGE_BYTES } from "@/core/media/byte-range";
 import { RefusedError, UpstreamError } from "@/core/errors";
 import type { DerivedKind } from "@/core/ports";
 import { fixedClock } from "../fakes/clock";
 import { memoryLogger, type MemoryLogger } from "../fakes/logger";
 import { createMemoryMediaStore } from "../fakes/media-store";
-import { photoAsset } from "../unit/core/media/builders";
+import { photoAsset, videoAsset, VIDEO_ID } from "../unit/core/media/builders";
 import { ENV, errorOf, NOW } from "./boundary.helpers";
 
 /** What `signInWith` needs from the container, with a stopped clock and a memory logger. */
@@ -321,6 +323,31 @@ describe("GET and HEAD /media/profiles/{pid}/media/{mid}/{kind}.{rev}.{ext}", ()
     }
   });
 
+  it("206: never more than MAX_RANGE_BYTES in one answer; a plain GET is still the whole file", async () => {
+    const mediaStore = createMemoryMediaStore({ publicBase: "/media" });
+    const size = MAX_RANGE_BYTES + 5;
+    const rev = await mediaStore.writeDerived(PID, MID, "web", new Uint8Array(size));
+    const name = `profiles/${PID}/media/${MID}/web.${rev}.mp4`;
+    const deps = { mediaStore, logger: memoryLogger() };
+
+    const open = await serveDerived(deps, request(name, { headers: { range: "bytes=0-" } }), name);
+    expect(open.status).toBe(206);
+    expect(open.headers.get("content-range")).toBe(`bytes 0-${MAX_RANGE_BYTES - 1}/${size}`);
+    expect(open.headers.get("content-length")).toBe(String(MAX_RANGE_BYTES));
+    expect((await open.arrayBuffer()).byteLength).toBe(MAX_RANGE_BYTES);
+
+    const suffix = await serveDerived(
+      deps,
+      request(name, { headers: { range: `bytes=-${size}` } }),
+      name,
+    );
+    expect(suffix.headers.get("content-range")).toBe(`bytes 0-${MAX_RANGE_BYTES - 1}/${size}`);
+
+    const whole = await serveDerived(deps, request(name), name);
+    expect(whole.status).toBe(200);
+    expect(whole.headers.get("content-length")).toBe(String(size));
+  });
+
   it("HEAD: the same headers as GET and no body", async () => {
     const { deps, rev, name } = await mediaDeps();
     const response = await serveDerived(deps, request(name, { method: "HEAD" }), name);
@@ -393,6 +420,45 @@ describe("GET and HEAD /media/profiles/{pid}/media/{mid}/{kind}.{rev}.{ext}", ()
     expect(error.code).toBe("upstream");
     expect(error.message).not.toContain("X");
     expect(deps.logger.entries.some((entry) => entry.level === "warn")).toBe(true);
+  });
+});
+
+// `GET /api/profiles/{id}/media/{mid}/original` (2026-09-22): Cloud Run refuses an HTTP/1
+// response over 32 MiB, so every answer is a 206 of at most MAX_RANGE_BYTES — with or
+// without a Range — and the trim editor's <video> asks for the rest.
+describe("GET /api/profiles/{id}/media/{mid}/original — capped answers", () => {
+  const PID = "abcdefgh";
+  const SESSION = { sub: "shelter" as const, iat: 0, exp: 4_102_444_800 };
+
+  async function withOriginal(size: number) {
+    const mediaStore = createMemoryMediaStore({ publicBase: "/media" });
+    await mediaStore.writeAsset(PID, VIDEO_ID, videoAsset());
+    await mediaStore.putOriginal(PID, VIDEO_ID, new Uint8Array(size));
+    return { mediaStore, logger: memoryLogger(), readSession: async () => SESSION };
+  }
+
+  function get(range?: string) {
+    const headers = new Headers({ cookie: `${SESSION_COOKIE}=t` });
+    if (range !== undefined) headers.set("range", range);
+    return new NextRequest(`http://localhost:3000/api/profiles/${PID}/media/${VIDEO_ID}/original`, {
+      headers,
+    });
+  }
+
+  it("206: never more than MAX_RANGE_BYTES, whether the Range is open-ended or absent", async () => {
+    const size = MAX_RANGE_BYTES + 5;
+    const deps = await withOriginal(size);
+    const ids = { id: PID, mid: VIDEO_ID };
+    for (const request of [get(), get("bytes=0-")]) {
+      const response = await serveOriginal(deps, request, ids);
+      expect(response.status).toBe(206);
+      expect(response.headers.get("content-range")).toBe(`bytes 0-${MAX_RANGE_BYTES - 1}/${size}`);
+      expect(response.headers.get("content-length")).toBe(String(MAX_RANGE_BYTES));
+      expect((await response.arrayBuffer()).byteLength).toBe(MAX_RANGE_BYTES);
+    }
+    const rest = await serveOriginal(deps, get(`bytes=${MAX_RANGE_BYTES}-`), ids);
+    expect(rest.headers.get("content-range")).toBe(`bytes ${MAX_RANGE_BYTES}-${size - 1}/${size}`);
+    expect((await rest.arrayBuffer()).byteLength).toBe(5);
   });
 });
 

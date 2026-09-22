@@ -168,3 +168,10 @@ export const Open: Icon = (p) => (
     <path d="M6 14l8-8M8 6h6v6" />
   </Svg>
 );
+
+/** An arrow pointing up: send what is typed. */
+export const Send: Icon = (p) => (
+  <Svg {...p}>
+    <path d="M10 16V4M5 9l5-5 5 5" />
+  </Svg>
+);

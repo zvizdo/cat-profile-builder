@@ -5,6 +5,7 @@ import type { DeleteMediaInput } from "@/adapters/pipeline/delete-media";
 import type { SetAltTextInput, SetFocalPointInput } from "@/adapters/pipeline/edit-asset";
 import type { EnhancePhotoInput } from "@/adapters/pipeline/enhance-photo";
 import type { FinalizeUploadInput } from "@/adapters/pipeline/finalize-upload";
+import type { UploadEventInput } from "@/adapters/pipeline/report-upload-event";
 import type { ClearTrimInput, TrimVideoInput } from "@/adapters/pipeline/trim-video";
 import type { ActionResult } from "@/app/actions/_lib/guard";
 import {
@@ -13,6 +14,7 @@ import {
   deleteMediaWith,
   enhancePhotoWith,
   finalizeUploadWith,
+  reportUploadEventWith,
   setAltTextWith,
   setFocalPointWith,
   trimVideoWith,
@@ -20,7 +22,7 @@ import {
   type FinalizedUpload,
 } from "@/app/actions/_lib/media";
 
-// The seven media Server Actions (contracts/server-boundary.md). Each is thin: the work is
+// The media Server Actions (contracts/server-boundary.md). Each is thin: the work is
 // in `_lib/media.ts`, where a test injects the container and the cookie jar. The input
 // types are for the caller's benefit only — every action validates what actually arrives.
 // Every record answered is an `AssetView`: the record plus its derived files' URLs.
@@ -69,4 +71,11 @@ export async function trimVideo(input: TrimVideoInput): Promise<ActionResult<Edi
 /** Removes a clip's trim; a long original goes back to needing one (FR-078). */
 export async function clearTrim(input: ClearTrimInput): Promise<ActionResult<EditedAsset>> {
   return clearTrimWith(getContainer(), input);
+}
+
+/** Logs one upload the browser saw fail, or saw a retry rescue; answers nothing (spec 2026-09-22). */
+export async function reportUploadEvent(
+  input: UploadEventInput,
+): Promise<ActionResult<Record<never, never>>> {
+  return reportUploadEventWith(getContainer(), input);
 }

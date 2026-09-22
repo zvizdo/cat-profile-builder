@@ -1,7 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { ActionResult } from "@/app/actions/_lib/guard";
-import type { FinalizedUpload } from "@/app/actions/_lib/media";
-import type { BeginUploadResult } from "@/adapters/pipeline/begin-upload";
 import { LIMITS } from "@/core/media/validation";
 import {
   ACCEPTED_TYPES,
@@ -10,93 +7,30 @@ import {
   uploadFile,
   UploadFailure,
 } from "@/ui/builder/upload-client";
+import { actions, ASSET, FakeXhr, PID, file, resetForTest } from "./upload-client.helpers";
 
 // The browser's half of an upload (ADR-005): `beginUpload` → the bytes to the signed URL
 // with progress → `finalizeUpload`. `XMLHttpRequest` is the one way to see upload progress,
-// so it is what moves the bytes; it is faked here, and both signed shapes are driven — a
-// direct `PUT` (the filesystem store) and GCS's `POST … x-goog-resumable: start` that
-// answers a session URL to `PUT` to. `screenFile` is the client-side refusal, in core's
-// own sentences, before `beginUpload` is ever called (FR-007, FR-008).
+// so it is what moves the bytes; it is faked here (`./upload-client.helpers`), and both
+// signed shapes are driven — a direct `PUT` (the filesystem store) and GCS's
+// `POST … x-goog-resumable: start` that answers a session URL to `PUT` to. `screenFile` is
+// the client-side refusal, in core's own sentences, before `beginUpload` is ever called
+// (FR-007, FR-008). Resume, retry and stall behaviour is in `upload-client.resume.test.ts`;
+// reporting is in `upload-client.reports.test.ts`.
 
-const actions = {
-  beginUpload: vi.fn<(input: unknown) => Promise<ActionResult<BeginUploadResult>>>(),
-  finalizeUpload: vi.fn<(input: unknown) => Promise<ActionResult<FinalizedUpload>>>(),
-};
 vi.mock("@/app/actions/media", () => ({
   beginUpload: (input: unknown) => actions.beginUpload(input),
   finalizeUpload: (input: unknown) => actions.finalizeUpload(input),
+  reportUploadEvent: (input: unknown) => actions.reportUploadEvent(input),
 }));
 
-type Handler =
-  ((event: { lengthComputable: boolean; loaded: number; total: number }) => void) | null;
-
-/** A scripted XMLHttpRequest: records what was sent and answers with the next scripted reply. */
-class FakeXhr {
-  static instances: FakeXhr[] = [];
-  static replies: { status: number; headers?: Record<string, string>; error?: true }[] = [];
-  method = "";
-  url = "";
-  headers: Record<string, string> = {};
-  body: unknown = undefined;
-  status = 0;
-  onload: (() => void) | null = null;
-  onerror: (() => void) | null = null;
-  upload: { onprogress: Handler } = { onprogress: null };
-  private reply = { status: 200 } as {
-    status: number;
-    headers?: Record<string, string>;
-    error?: true;
-  };
-
-  constructor() {
-    FakeXhr.instances.push(this);
-  }
-
-  open(method: string, url: string) {
-    this.method = method;
-    this.url = url;
-  }
-
-  setRequestHeader(name: string, value: string) {
-    this.headers[name] = value;
-  }
-
-  getResponseHeader(name: string): string | null {
-    return this.reply.headers?.[name] ?? null;
-  }
-
-  send(body: unknown) {
-    this.body = body;
-    this.reply = FakeXhr.replies.shift() ?? { status: 200 };
-    queueMicrotask(() => {
-      if (this.reply.error) {
-        this.onerror?.();
-        return;
-      }
-      if (body instanceof File) {
-        this.upload.onprogress?.({ lengthComputable: true, loaded: 34, total: 50 });
-        this.upload.onprogress?.({ lengthComputable: true, loaded: 50, total: 50 });
-      }
-      this.status = this.reply.status;
-      this.onload?.();
-    });
-  }
-}
-
-const PID = "abcdefgh";
-const file = new File([new Uint8Array(50)], "rain-day.mov", { type: "video/quicktime" });
-const ASSET = { id: "maaaaaab" } as unknown as FinalizedUpload["asset"];
-
 beforeEach(() => {
-  vi.stubGlobal("XMLHttpRequest", FakeXhr);
-  FakeXhr.instances = [];
-  FakeXhr.replies = [];
-  actions.beginUpload.mockReset();
-  actions.finalizeUpload.mockReset();
+  resetForTest();
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 describe("screenFile", () => {
@@ -256,6 +190,9 @@ describe("uploadFile", () => {
       message: UPLOAD_FAILED,
     });
     expect(actions.finalizeUpload).not.toHaveBeenCalled();
+    expect(actions.reportUploadEvent).toHaveBeenLastCalledWith(
+      expect.objectContaining({ stage: "start", outcome: "failed", status: 201 }),
+    );
   });
 
   it("fails in finalizeUpload's words and code when the server refuses the bytes", async () => {

@@ -1,7 +1,12 @@
 import type { Container } from "@/adapters/container";
 import { respond } from "@/app/api/_lib/respond";
 import { NotFoundError } from "@/core/errors";
-import { parseRangeHeader, resolveRange, type RangeRequest } from "@/core/media/byte-range";
+import {
+  capRange,
+  parseRangeHeader,
+  resolveRange,
+  type RangeRequest,
+} from "@/core/media/byte-range";
 import { MEDIA_ROUTE, parsePublicMediaPath, type PublicMediaPath } from "@/core/media/public-path";
 import type { DerivedKind, DerivedStream } from "@/core/ports";
 
@@ -85,7 +90,8 @@ function unsatisfiable(path: PublicMediaPath, size: number): Response {
  * range the file cannot satisfy — or `null` for a header outside the grammar (another
  * unit, several ranges, letters), which RFC 9110 §14.2 says to ignore: the caller answers
  * the whole file. A range with a start goes to the store as it is (the store clamps the end
- * and reports a start past the last byte); a suffix range needs the size first.
+ * and reports a start past the last byte); a suffix range needs the size first. A slice
+ * never spans more than `MAX_RANGE_BYTES`; the player asks for the rest.
  */
 async function partial(
   deps: DerivedDeps,
@@ -96,13 +102,17 @@ async function partial(
   if (request === null) return null;
   let slice: DerivedStream;
   if ("start" in request) {
-    slice = await read(deps, path, { start: request.start, end: request.end ?? Infinity });
+    slice = await read(
+      deps,
+      path,
+      capRange({ start: request.start, end: request.end ?? Infinity }),
+    );
   } else {
     const whole = await read(deps, path);
     await discard(whole);
     const range = resolveRange(request, whole.size);
     if (range === null) return unsatisfiable(path, whole.size);
-    slice = await read(deps, path, range);
+    slice = await read(deps, path, capRange(range));
   }
   if (slice.stream === null) return unsatisfiable(path, slice.size);
   return new Response(slice.stream, {

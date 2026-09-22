@@ -111,6 +111,105 @@ describe("build-profile (F52)", () => {
   });
 });
 
+// F65 (docs/superpowers/specs/2026-09-22-catalyst-send-and-questions-design.md): a
+// standalone bio request looks at the page and photos first and asks one to three
+// questions only when it lacks material; the build interview's questions come from what
+// the helper saw. The skill text is the whole implementation, so its key rules are pinned.
+// Every pinned phrase sits on one line of the Markdown source: `getSkill` does not
+// normalise whitespace, so a phrase broken across lines would not match.
+describe("write-bio asks when it needs to (F65)", () => {
+  function body(): string {
+    const skill = getSkill("write-bio");
+    if ("error" in skill) throw new Error(skill.error);
+    return skill.body;
+  }
+
+  it("looks at the page and the photos before deciding anything, in as few steps as it can", () => {
+    const text = body();
+    expect(text).toContain("## Before you write: look, then ask only if you need to");
+    for (const step of ["`read_page`", "`list_media`", "`view_photos`"]) {
+      expect(text).toContain(step);
+    }
+    expect(text).toContain("in the same step");
+  });
+
+  it("states the 'enough' bar: two things she does and one fact about the home she'd suit", () => {
+    const text = body();
+    expect(text).toContain("at least two concrete things she does");
+    expect(text).toContain("at least one fact about the home she'd suit");
+    expect(text).toContain("write straight away");
+  });
+
+  it("asks one to three questions, one per message, each pointing to what it saw", () => {
+    const text = body();
+    expect(text).toContain("one to three questions");
+    expect(text).toContain("one per message");
+    expect(text).toContain("point to something specific you saw");
+  });
+
+  it("does not look again on an answer, and takes 'I don't know' as settled", () => {
+    const text = body();
+    expect(text).toContain("don't look again");
+    expect(text).toContain('"I don\'t know" settles that gap');
+  });
+
+  it("never writes a photo guess as fact, and stops asking on 'just write it'", () => {
+    const text = body();
+    expect(text).toContain("is a guess, and you must never write a guess from a photo as fact");
+    expect(text).toContain("just write it");
+  });
+
+  it("asks nothing for a rewrite or a shortening, or inside a build", () => {
+    const text = body();
+    expect(text).toContain("**A request to rewrite or shorten**");
+    expect(text).toContain("**Inside `build-profile`.**");
+    expect(text).toContain("The build's own interview has already happened");
+  });
+
+  // Final review, Important 1: the source rules sat inside the section a build and a
+  // rewrite skip, and the round-2 build bio invented "Between naps". They now have a
+  // heading of their own, after the skippable one, that says it holds for every bio.
+  it("keeps the source rules outside the skippable section, for every bio including a build", () => {
+    const text = body();
+    const skippable = text.indexOf("## Before you write");
+    const sources = text.indexOf("## Every sentence has a source");
+    expect(skippable).toBeGreaterThanOrEqual(0);
+    expect(sources).toBeGreaterThan(skippable);
+    expect(text.indexOf("check each sentence against its source")).toBeGreaterThan(sources);
+    expect(text.indexOf("**Photos show; they don't prove.**")).toBeGreaterThan(sources);
+    const section = text.slice(sources, text.indexOf("\n## ", sources + 1));
+    expect(section).toContain("inside `build-profile`");
+    expect(section).toContain("even when you skipped the section above");
+  });
+});
+
+describe("build-profile asks from what it saw (F65)", () => {
+  function body(): string {
+    const skill = getSkill("build-profile");
+    if ("error" in skill) throw new Error(skill.error);
+    return skill.body;
+  }
+
+  it("builds its questions from what it noticed, the bank only as a fallback", () => {
+    const text = body();
+    expect(text).toContain("note to yourself");
+    expect(text).toContain("only as a fallback");
+    expect(text).toContain("point to something specific you saw");
+    expect(text).toContain("Before any interview question");
+    expect(text).not.toContain("Before any question from the bank below");
+  });
+
+  it("never assumes a photo guess into the page", () => {
+    expect(body()).toContain("is a guess, and you must never write a guess from a photo as fact");
+  });
+
+  it("keeps the five-to-ten interview and the proposal gate", () => {
+    const text = body();
+    expect(text).toContain("Ask five to ten questions, **one at a time**");
+    expect(text).toContain('"Want me to build this now?"');
+  });
+});
+
 describe("getSkill", () => {
   it("returns the named skill in full", () => {
     const skill = getSkill("write-bio");

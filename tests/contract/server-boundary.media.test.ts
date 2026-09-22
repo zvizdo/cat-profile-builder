@@ -9,6 +9,7 @@ import {
   deleteMediaWith,
   enhancePhotoWith,
   finalizeUploadWith,
+  reportUploadEventWith,
   setAltTextWith,
   setFocalPointWith,
   trimVideoWith,
@@ -19,6 +20,7 @@ import {
   deleteMedia,
   enhancePhoto,
   finalizeUpload,
+  reportUploadEvent,
   setAltText,
   setFocalPoint,
   trimVideo,
@@ -93,6 +95,18 @@ const INVALID = {
 };
 const UNAUTHORIZED = { ok: false, error: { code: "unauthorized", message: SIGN_IN_MESSAGE } };
 const TRIM = { profileId: PID, mediaId: MID, start: 0, end: 5 };
+const EVENT = {
+  profileId: PID,
+  mediaId: MID,
+  stage: "send" as const,
+  outcome: "failed" as const,
+  status: 0,
+  byteSize: 61_346_637,
+  declaredType: "video/quicktime",
+  confirmedBytes: 20_000_000,
+  attempts: 4,
+};
+const IPHONE = async () => "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X)";
 
 /** A 20 s video record, stored as finalize leaves it: `needs-trim`, nothing produced. */
 async function seedLongVideo(deps: ReturnType<typeof mediaDeps>) {
@@ -196,6 +210,7 @@ describe("media actions — the boundary", () => {
     expect(await clearTrim({ profileId: PID, mediaId: MID })).toMatchObject(internal);
     expect(await deleteMedia({ profileId: PID, mediaId: MID })).toMatchObject(internal);
     expect(await enhancePhoto({ profileId: PID, mediaId: MID })).toMatchObject(internal);
+    expect(await reportUploadEvent(EVENT)).toMatchObject(internal);
     vi.unstubAllEnvs();
   });
 });
@@ -444,5 +459,70 @@ describe("media actions — the happy path and the named denials", () => {
     expect(enhanced.asset.id).not.toBe(MID);
     // The source is untouched — still there, unchanged, to enhance again.
     expect(await deps.mediaStore.readAsset(PID, MID)).toMatchObject({ status: "ready" });
+  });
+});
+
+describe("reportUploadEvent — the upload's own diagnostics (spec 2026-09-22, §3)", () => {
+  it("logs a failure at warn with every field and the phone's user agent, and answers ok", async () => {
+    const deps = mediaDeps();
+    expect(await reportUploadEventWith(deps, EVENT, signedIn, IPHONE)).toEqual({ ok: true });
+    expect(deps.logger.entries).toEqual([
+      {
+        level: "warn",
+        msg: "upload event",
+        fields: { ...EVENT, userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X)" },
+      },
+    ]);
+  });
+
+  it("logs a rescue at info", async () => {
+    const deps = mediaDeps();
+    const rescued = {
+      profileId: PID,
+      mediaId: MID,
+      stage: "start" as const,
+      outcome: "resumed" as const,
+      status: 201,
+      byteSize: 8_905_917,
+      declaredType: "video/mp4",
+      confirmedBytes: 8_905_917,
+      attempts: 2,
+    };
+    expect(await reportUploadEventWith(deps, rescued, signedIn, IPHONE)).toEqual({ ok: true });
+    expect(deps.logger.entries[0]).toMatchObject({ level: "info", fields: rescued });
+  });
+
+  it("refuses any field it does not name — a file name or URL can never reach the log", async () => {
+    const deps = mediaDeps();
+    for (const extra of [
+      { fileName: "rain-day.mov" },
+      { url: "https://storage.googleapis.com/upload?upload_id=secret" },
+    ]) {
+      expect(await reportUploadEventWith(deps, { ...EVENT, ...extra }, signedIn, IPHONE)).toEqual(
+        INVALID,
+      );
+    }
+    expect(
+      await reportUploadEventWith(deps, { ...EVENT, stage: "other" }, signedIn, IPHONE),
+    ).toEqual(INVALID);
+    expect(await reportUploadEventWith(deps, { ...EVENT, attempts: 0 }, signedIn, IPHONE)).toEqual(
+      INVALID,
+    );
+    expect(
+      await reportUploadEventWith(deps, { ...EVENT, mediaId: undefined }, signedIn, IPHONE),
+    ).toEqual(INVALID);
+    expect(deps.logger.entries.filter((entry) => entry.msg === "upload event")).toEqual([]);
+  });
+
+  it("answers unauthorized without a session and logs nothing", async () => {
+    const deps = mediaDeps();
+    expect(await reportUploadEventWith(deps, EVENT, signedOut, IPHONE)).toEqual(UNAUTHORIZED);
+    expect(deps.logger.entries).toEqual([]);
+  });
+
+  it("keeps an absurdly long user agent to 300 characters", async () => {
+    const deps = mediaDeps();
+    await reportUploadEventWith(deps, EVENT, signedIn, async () => "x".repeat(5000));
+    expect(deps.logger.entries[0]?.fields.userAgent).toBe("x".repeat(300));
   });
 });

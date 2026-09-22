@@ -1,11 +1,4 @@
-import {
-  stepCountIs,
-  streamText,
-  type JSONValue,
-  type ModelMessage,
-  type ToolModelMessage,
-  type ToolResultPart,
-} from "ai";
+import { stepCountIs, streamText, type ModelMessage } from "ai";
 import { describe, expect, it } from "vitest";
 import { abortMidTurn } from "@/adapters/fake/scenarios/abort-mid-turn";
 import { badOperation } from "@/adapters/fake/scenarios/bad-operation";
@@ -21,104 +14,25 @@ import { markdownReply, MARKDOWN_REPLY_TEXT } from "@/adapters/fake/scenarios/ma
 import { phoneEdits } from "@/adapters/fake/scenarios/phone-edits";
 import { publishRequest } from "@/adapters/fake/scenarios/publish-request";
 import { truncated } from "@/adapters/fake/scenarios/truncated";
-import { createHelperTools } from "@/core/helper/tools";
+import {
+  lastAssistant,
+  lastText,
+  lastToolNames,
+  OUTLINE_WITH_BIO,
+  resolveBrowserTools,
+  step,
+  toolCallsOf,
+  tools,
+  userText,
+} from "./scenarios.helpers";
 
 // Drives every fake-model scenario (T035 controller ruling 4) through `streamText` far
 // enough to prove its documented script — the panel itself is exercised at T036, but a
 // scenario file with a typo in a tool name or a stuck branch would otherwise ship
-// untested. Tool calls are answered here exactly as `helperReducer` would answer them
-// (`{status:"applied"}` etc.) or with a plain string for a text read, standing in for the
-// browser; `load_skill` and `view_photos` are the two server-executed tools, stubbed here
-// since their real behaviour is `createHelperStream`'s (tested in helper-protocol.test.ts).
-
-function tools() {
-  return createHelperTools({
-    viewPhotos: async () => ({ photos: [], refused: [] }),
-    loadSkill: async (name: string) => ({ name, description: "d", body: "BODY" }),
-  });
-}
-
-function userText(text: string): ModelMessage {
-  return { role: "user", content: [{ type: "text", text }] };
-}
-
-type AssistantToolCall = {
-  type: "tool-call";
-  toolCallId: string;
-  toolName: string;
-  input: unknown;
-};
-
-function isAssistant(message: ModelMessage): message is ModelMessage & { role: "assistant" } {
-  return message.role === "assistant";
-}
-
-function toolCallsOf(message: ModelMessage & { role: "assistant" }): AssistantToolCall[] {
-  if (typeof message.content === "string") return [];
-  return message.content.filter((part): part is AssistantToolCall => part.type === "tool-call");
-}
-
-/** Every tool call in `messages` with no `tool-result` yet, answered with `answer(name, input)`. */
-function resolveBrowserTools(
-  messages: ModelMessage[],
-  answer: (toolName: string, input: unknown) => JSONValue,
-): ModelMessage[] {
-  const calls = messages.filter(isAssistant).flatMap(toolCallsOf);
-  const resolvedIds = new Set(
-    messages
-      .filter((message) => message.role === "tool")
-      .flatMap((message) => message.content)
-      .map((part) => (part as { toolCallId: string }).toolCallId),
-  );
-  const unresolved = calls.filter((call) => !resolvedIds.has(call.toolCallId));
-  if (unresolved.length === 0) return messages;
-  const toolMessage: ToolModelMessage = {
-    role: "tool",
-    content: unresolved.map((call): ToolResultPart => {
-      const value = answer(call.toolName, call.input);
-      // A read tool's real browser answer is the fenced string from reads.ts, which the
-      // client's own `addToolResult` sends as text — matching that here is what lets a
-      // scenario's `resultText` (reads a prior read's output back out) find it.
-      const output: ToolResultPart["output"] =
-        typeof value === "string" ? { type: "text", value } : { type: "json", value };
-      return { type: "tool-result", toolCallId: call.toolCallId, toolName: call.toolName, output };
-    }),
-  };
-  return [...messages, toolMessage];
-}
-
-/** Runs one round: drives every server-executed tool to completion, returns the grown history. */
-async function step(model: Parameters<typeof streamText>[0]["model"], messages: ModelMessage[]) {
-  const result = streamText({ model, tools: tools(), messages, stopWhen: stepCountIs(40) });
-  await result.steps;
-  const response = await result.response;
-  return [...messages, ...response.messages];
-}
-
-function lastAssistant(
-  messages: ModelMessage[],
-): (ModelMessage & { role: "assistant" }) | undefined {
-  return [...messages].reverse().find(isAssistant);
-}
-
-function lastToolNames(messages: ModelMessage[]): string[] {
-  const last = lastAssistant(messages);
-  return last === undefined ? [] : toolCallsOf(last).map((call) => call.toolName);
-}
-
-function lastText(messages: ModelMessage[]): string {
-  const last = lastAssistant(messages);
-  if (last === undefined) return "";
-  if (typeof last.content === "string") return last.content;
-  return last.content
-    .filter((part): part is { type: "text"; text: string } => part.type === "text")
-    .map((part) => part.text)
-    .join("");
-}
+// untested. The harness that stands in for the browser is scenarios.helpers.ts; the
+// `bioInterview` scenario (F65) has its own file, bio-interview.test.ts.
 
 const APPLIED = () => ({ status: "applied", summary: "ok" });
-const OUTLINE_WITH_BIO =
-  "Name: Charlotte\n\nSections:\n1. blockaaaaaaa hero — none.\n2. blockaaaaaab bio — Empty.\n";
 
 describe("buildProfileHappy", () => {
   it("reads the outline, loads build-profile, asks five questions, builds four blocks and a theme, re-reads, and summarises", async () => {

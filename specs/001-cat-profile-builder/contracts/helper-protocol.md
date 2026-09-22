@@ -58,13 +58,14 @@ and they can be edited without touching code.
 
 | Skill | Loaded when | What it contains |
 |---|---|---|
-| `build-profile` | "help me build the page", "make a profile for her", an empty page and a request to start | The whole walkthrough: read the outline and media, look at the photos, **interview** the volunteer — five to ten questions, one per turn, adapted to the photos, stop early on request (FR-033/034) — then choose sections and order, **propose** what it will build and wait for a clear yes (FR-034), write the bio (via `write-bio`), set a tagline, pick a theme (via `pick-theme`), then re-read and summarise |
-| `write-bio` | "write a bio", "shorten the bio", any bio text | The voice: plain, specific, behaviour over adjectives, one concrete detail per sentence, no emoji, no sad-story framing; length and paragraphing; how to open; what a visitor wants to know. Drawn from the design's voice rules and from research into effective adoption bios (a planning task) |
+| `build-profile` | "help me build the page", "make a profile for her", an empty page and a request to start | The whole walkthrough: read the outline and media, look at the photos, **interview** the volunteer — five to ten questions, one per turn, written from what the photos and page showed (each pointing to something seen where it can; a fixed bank only as a fallback), photo guesses asked rather than assumed, stop early on request (FR-033/034) — then choose sections and order, **propose** what it will build and wait for a clear yes (FR-034), write the bio (via `write-bio`), set a tagline, pick a theme (via `pick-theme`), then re-read and summarise |
+| `write-bio` | "write a bio", "shorten the bio", any bio text | For a standalone "write a bio": look first (the outline, `read_page` and the media list in one step, up to six photos), write straight away if it knows two things she does and one fact about the home she'd suit, otherwise ask one to three questions, one per turn, each pointing to something it saw, without looking again on an answer; no questions for a rewrite or shortening, or inside `build-profile`. The source rules apply to every bio it writes — standalone, a rewrite or shortening, and inside `build-profile`: every sentence says no more than its source (a photo, the page, or the volunteer's words), photo guesses are asked, never written as fact, and an "I don't know" leaves that topic out. Then the voice: plain, specific, behaviour over adjectives, one concrete detail per sentence, no emoji, no sad-story framing; length and paragraphing; how to open; what a visitor wants to know. Drawn from the design's voice rules and from research into effective adoption bios (a planning task) |
 | `pick-theme` | "warm it up", "which theme", "make it match her" | How to read the photos' tones, choose a preset, and tune warmth/contrast within the contrast rule |
 | `tidy-order` | "tidy the order", "does this flow" | Ordering heuristics for the eight block types |
 
-The design's helper chips send exactly these requests. `build-profile` is the only place the
-interview exists: there is no counter or mode in the reducer. There is no "Build it now"
+The design's helper chips send exactly these requests. `build-profile` holds the full
+interview; `write-bio` holds a short one of its own, for a bio asked for on its own (F65).
+Neither has a counter or mode in the reducer. There is no "Build it now"
 button — the volunteer ends the interview in conversation, by saying something like "build it"
 or "just build it from what you have," and the skill tells the model to obey it at once. Either
 way the interview ends, the skill has the model write a short plain-text proposal and ask "Want

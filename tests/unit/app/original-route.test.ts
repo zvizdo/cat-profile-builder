@@ -51,12 +51,13 @@ async function withVideo(d: ReturnType<typeof deps>) {
 }
 
 describe("GET …/original", () => {
-  it("streams the whole original of a video with its type, length and Accept-Ranges", async () => {
+  it("answers a request without Range as a 206 from the first byte, with type and Accept-Ranges", async () => {
     const d = deps();
     await withVideo(d);
     const response = await serveOriginal(d, get(VIDEO_ID), { id: PID, mid: VIDEO_ID });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(206);
     expect(response.headers.get("content-type")).toBe("video/quicktime");
+    expect(response.headers.get("content-range")).toBe("bytes 0-9/10");
     expect(response.headers.get("content-length")).toBe("10");
     expect(response.headers.get("accept-ranges")).toBe("bytes");
     expect(new TextDecoder().decode(await response.arrayBuffer())).toBe("0123456789");
@@ -124,14 +125,13 @@ describe("GET …/original", () => {
     });
   });
 
-  it("answers 404 for a video record whose original is not there, or vanishes mid-request", async () => {
+  it("answers 404 for a video record whose original is not there, and 416 when it vanishes mid-request", async () => {
     const d = deps();
     await d.mediaStore.writeAsset(PID, VIDEO_ID, videoAsset());
     expect((await serveOriginal(d, get(VIDEO_ID), { id: PID, mid: VIDEO_ID })).status).toBe(404);
     await d.mediaStore.putOriginal(PID, VIDEO_ID, BYTES);
-    d.mediaStore.readOriginal = async () => null;
-    expect((await serveOriginal(d, get(VIDEO_ID), { id: PID, mid: VIDEO_ID })).status).toBe(404);
     d.mediaStore.readRange = async () => null;
+    expect((await serveOriginal(d, get(VIDEO_ID), { id: PID, mid: VIDEO_ID })).status).toBe(416);
     const range = await serveOriginal(d, get(VIDEO_ID, { range: "bytes=0-1" }), {
       id: PID,
       mid: VIDEO_ID,

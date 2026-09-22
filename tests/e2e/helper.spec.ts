@@ -308,3 +308,42 @@ test("the proposal card shows the current and proposed hero photo side by side; 
 
   await deleteCat(page, "Nora");
 });
+
+// F65: a standalone "Write a bio" on a page with a photo and no bio looks first (the
+// scenario reads the outline and media and views the photo), asks one question that points
+// at the photos, and writes only once it is answered. The answer goes by the Send button,
+// not Enter — the button's one end-to-end proof.
+test("Write a bio asks a question about the photos first, and the answer sent with the Send button writes the bio", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.context().setExtraHTTPHeaders({ "x-fake-scenario": "bio-interview" });
+  await signIn(page);
+  await newCat(page);
+  await upload(page, ["cat-1.jpg"]);
+
+  const helper = page.getByRole("complementary", { name: "CATalyst AI Assistant" });
+  await helper.getByRole("button", { name: "Write a bio" }).click();
+  await expect(
+    helper.getByText(
+      "I can see her settled on a windowsill in the photos. Is that her favourite spot, and what does she do there?",
+    ),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator("[data-block-type='bio']")).toHaveCount(0);
+
+  const send = helper.getByRole("button", { name: "Send" });
+  await expect(send).toBeDisabled();
+  await helper
+    .getByPlaceholder("Ask for a change…")
+    .fill("Yes, the sill is hers. She chirps at pigeons.");
+  await expect(send).toBeEnabled();
+  await send.click();
+
+  await expect(helper.getByText("That's the bio written.")).toBeVisible({ timeout: 15_000 });
+  await expect(frame(page, /^BIO/)).toContainText(
+    "The windowsill is hers from the first light, and she chirps at every pigeon that lands outside.",
+  );
+  await runAxe(page);
+
+  await deleteCat(page, "Unnamed cat");
+});

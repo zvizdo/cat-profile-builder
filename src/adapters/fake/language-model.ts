@@ -2,6 +2,7 @@ import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { InternalError } from "@/core/errors";
 import { abortMidTurn } from "./scenarios/abort-mid-turn";
 import { badOperation } from "./scenarios/bad-operation";
+import { bioInterview } from "./scenarios/bio-interview";
 import { buildProfileHappy } from "./scenarios/build-profile-happy";
 import { buildProposal } from "./scenarios/build-proposal";
 import { cardThenApply } from "./scenarios/card-then-apply";
@@ -36,6 +37,7 @@ const SCENARIOS: Record<string, () => LanguageModelV3> = {
   "card-then-apply": cardThenApply,
   "text-proposals": textProposals,
   "image-proposals": imageProposals,
+  "bio-interview": bioInterview,
 };
 
 /** The names `FAKE_MODEL_SCENARIO` accepts. */

@@ -34,9 +34,12 @@ resource "google_storage_bucket" "private" {
   # match the headers `createSignedUpload` signs in `src/adapters/gcs/media-store.ts`: the
   # browser's preflight names all of them and GCS answers with no CORS headers on any miss.
   cors {
-    origin          = local.cors_origins
-    method          = ["POST", "PUT", "OPTIONS"]
-    response_header = ["Content-Type", "Location", "x-goog-resumable", "x-goog-content-length-range", "x-goog-if-generation-match"]
+    origin = local.cors_origins
+    method = ["POST", "PUT", "OPTIONS"]
+    # `Content-Range` is sent on a resumed upload's status check and resend; `Range` is read
+    # off the 308 that says how much arrived (spec 2026-09-22, §4). GCS uses this one list for
+    # both the headers a browser may send and the ones it may read.
+    response_header = ["Content-Type", "Location", "Range", "Content-Range", "x-goog-resumable", "x-goog-content-length-range", "x-goog-if-generation-match"]
     max_age_seconds = 3600
   }
 

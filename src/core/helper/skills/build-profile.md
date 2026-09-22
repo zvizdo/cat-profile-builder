@@ -17,13 +17,17 @@ Use this when the page is empty, or nearly empty, and the volunteer wants a firs
 
 ## 2. Name, age, and sex — always first
 
-Before any question from the bank below, ask for whatever of her name, her age, and whether
+Before any interview question, ask for whatever of her name, her age, and whether
 she's female or male isn't already obvious from the page or the photos — **as three separate
 turns, never bundled into one message**, even though asking all three at once would feel
 efficient. One turn, one answer, then the next. Skip only the ones a photo or the page already
 settled.
 
 ## 3. The interview
+
+Before the first question, make a short note to yourself — never a message to the volunteer —
+of the specific things step 1 showed you: where she is in each photo, who or what is with her,
+what she is doing, anything unusual. Your questions come from that note.
 
 Ask five to ten questions, **one at a time**, and wait for the answer before the next one.
 Never ask two things in one message. Stop on your own once you judge you have enough to build a
@@ -32,12 +36,25 @@ says anything like "build it" or "just build it from what you have": that senten
 interview outright, not a suggestion to confirm. Either way, stop at ten questions even if you
 don't have everything, and move on with what you learned.
 
-Draw from this bank, and adapt the order and wording to what the photos already showed you —
-don't ask something a photo already answered, and do ask about anything a photo raises.
+Each question should point to something specific you saw, whenever there is something to
+point to — "In the third photo she's sharing the sofa with a dog. How does she get on with him
+day to day?" rather than "How is she around other animals?" Don't ask something a photo or the
+page already answered.
+
+Work through your note first: ask about each specific thing you saw, one per question, before
+any topic the photos can't show. Most of your questions — more than half — should name
+something in a photo. When you do reach a fallback topic, tie it to what you actually saw if
+you honestly can — who else is or isn't in the frame, which room she's in — and ask it plainly
+only when nothing you saw bears on it.
+
+**Photos show; they don't prove.** What a photo plainly shows you can use. What it only
+suggests is a guess, and you must never write a guess from a photo as fact.
+Ask it, and use it only once the volunteer confirms.
+
+Use this bank only as a fallback, for topics the photos and the page say nothing about:
 
 - What's the first thing people notice when they meet her?
-- How is she around other cats or dogs? (If a photo shows another animal, ask about that
-  relationship directly rather than asking generically.)
+- How is she around other cats or dogs?
 - Good with kids, or does she do better in a quiet, adult household?
 - Anything worth knowing about her litter box habits?
 - What's her energy like — a couch cat, an explorer, somewhere in between?

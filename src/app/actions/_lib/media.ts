@@ -1,4 +1,5 @@
 import "server-only";
+import { headers } from "next/headers";
 import type { Container } from "@/adapters/container";
 import { assetView, type AssetView } from "@/adapters/pipeline/asset-view";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/adapters/pipeline/edit-asset";
 import { enhancePhoto, EnhancePhotoInputSchema } from "@/adapters/pipeline/enhance-photo";
 import { finalizeUpload, FinalizeUploadInputSchema } from "@/adapters/pipeline/finalize-upload";
+import { reportUploadEvent, UploadEventInputSchema } from "@/adapters/pipeline/report-upload-event";
 import {
   clearTrim,
   ClearTrimInputSchema,
@@ -25,7 +27,7 @@ import { withSession, type ActionResult, type GetCookies } from "@/app/actions/_
 import { parseOrThrow } from "@/core/errors";
 import type { MediaAsset } from "@/core/media/schema";
 
-// The logic behind the seven media Server Actions in `src/app/actions/media.ts`
+// The logic behind the media Server Actions in `src/app/actions/media.ts`
 // (contracts/server-boundary.md). Each one does exactly three things: re-check the session
 // (`withSession`, ADR-011), validate the input against its schema, and call the one
 // pipeline function — nothing else (constitution, Principle I), except that every record
@@ -182,6 +184,26 @@ export function clearTrimWith(
       const parsed = parseOrThrow(ClearTrimInputSchema, input);
       return viewed(deps, parsed.profileId, await clearTrim(deps, parsed));
     },
+    getCookies,
+  )();
+}
+
+/** How the report reaches the browser's user agent; the request's header in the app. */
+export type GetUserAgent = () => Promise<string>;
+
+const requestUserAgent: GetUserAgent = async () => (await headers()).get("user-agent") ?? "";
+
+/** Logs one upload failure or rescue the browser saw (spec 2026-09-22, §3). */
+export function reportUploadEventWith(
+  deps: MediaDeps,
+  input: unknown,
+  getCookies?: GetCookies,
+  getUserAgent: GetUserAgent = requestUserAgent,
+): Promise<ActionResult<Record<never, never>>> {
+  return withSession(
+    deps,
+    async () =>
+      reportUploadEvent(deps, parseOrThrow(UploadEventInputSchema, input), await getUserAgent()),
     getCookies,
   )();
 }

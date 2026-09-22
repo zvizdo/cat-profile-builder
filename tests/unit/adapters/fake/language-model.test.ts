@@ -22,6 +22,7 @@ describe("scenario", () => {
         "card-then-apply",
         "text-proposals",
         "image-proposals",
+        "bio-interview",
       ].sort(),
     );
   });

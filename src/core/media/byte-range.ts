@@ -61,3 +61,19 @@ export function parseByteRange(header: string, size: number): ByteRange | null {
   const request = parseRangeHeader(header);
   return request === null ? null : resolveRange(request, size);
 }
+
+/**
+ * The most bytes any media route answers in one response (8 MiB). Cloud Run refuses an
+ * HTTP/1 response over 32 MiB that declares its length, so a `<video>` asking for
+ * `bytes=0-` of a 60 MB original got a `500`; a short `206` is always legal, and the
+ * player asks for the next slice.
+ */
+export const MAX_RANGE_BYTES = 8 * 1024 * 1024;
+
+/**
+ * `range` with its end pulled in so it spans at most {@link MAX_RANGE_BYTES}. The end may
+ * be `Infinity` (an open-ended request not yet clamped to a file); the start never moves.
+ */
+export function capRange(range: ByteRange): ByteRange {
+  return { start: range.start, end: Math.min(range.end, range.start + MAX_RANGE_BYTES - 1) };
+}

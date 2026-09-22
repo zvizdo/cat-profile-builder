@@ -245,6 +245,20 @@ describe("the CATalyst drawer's state machine", () => {
     expect(peek()).toHaveTextContent("Applied — added photo section.");
   });
 
+  // F65: the Send button is the drawer's other way to send — it drops Full to Peek exactly
+  // as Enter does, with the working line on the bar.
+  it("a send with the Send button from Full drops to Peek too", async () => {
+    renderBuilder(addPhotoModel());
+    const user = userEvent.setup();
+    await user.click(within(bottom()).getByRole("button", { name: "CATalyst" }));
+    const full = screen.getByRole("dialog", HELPER);
+    await user.type(within(full).getByPlaceholderText("Ask for a change…"), "Add a photo.");
+    await user.click(within(full).getByRole("button", { name: "Send" }));
+
+    expect(screen.queryByRole("dialog", HELPER)).toBeNull();
+    await waitFor(() => expect(peek()).toHaveTextContent("Applied — added photo section."));
+  });
+
   it("a card raises Half with the card, the canvas still reachable; Apply drops to Peek; the receipt follows", async () => {
     renderBuilder(removeBioModel());
     const user = userEvent.setup();

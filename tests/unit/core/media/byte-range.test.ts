@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { parseByteRange, parseRangeHeader } from "@/core/media/byte-range";
+import {
+  capRange,
+  MAX_RANGE_BYTES,
+  parseByteRange,
+  parseRangeHeader,
+} from "@/core/media/byte-range";
 
 // The `Range` header grammar the `/media` route honours (F23; RFC 9110 §14.1.2): one
 // `bytes=` range in any of its three forms, resolved against the file's size to an inclusive
@@ -53,5 +58,38 @@ describe("parseByteRange", () => {
   it("answers null for every range of an empty file", () => {
     expect(parseByteRange("bytes=0-", 0)).toBeNull();
     expect(parseByteRange("bytes=-1", 0)).toBeNull();
+  });
+});
+
+describe("capRange", () => {
+  it("is 8 MiB — well under Cloud Run's 32 MiB response limit", () => {
+    expect(MAX_RANGE_BYTES).toBe(8 * 1024 * 1024);
+  });
+
+  it("leaves a range of at most MAX_RANGE_BYTES alone", () => {
+    expect(capRange({ start: 0, end: 0 })).toEqual({ start: 0, end: 0 });
+    expect(capRange({ start: 5, end: 99 })).toEqual({ start: 5, end: 99 });
+    expect(capRange({ start: 0, end: MAX_RANGE_BYTES - 1 })).toEqual({
+      start: 0,
+      end: MAX_RANGE_BYTES - 1,
+    });
+  });
+
+  it("pulls in the end of a longer range so it spans exactly MAX_RANGE_BYTES", () => {
+    expect(capRange({ start: 0, end: MAX_RANGE_BYTES })).toEqual({
+      start: 0,
+      end: MAX_RANGE_BYTES - 1,
+    });
+    expect(capRange({ start: 100, end: 60_000_000 })).toEqual({
+      start: 100,
+      end: 100 + MAX_RANGE_BYTES - 1,
+    });
+  });
+
+  it("caps an open-ended range (end = Infinity)", () => {
+    expect(capRange({ start: 7, end: Infinity })).toEqual({
+      start: 7,
+      end: 7 + MAX_RANGE_BYTES - 1,
+    });
   });
 });
