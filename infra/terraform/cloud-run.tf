@@ -24,9 +24,11 @@ resource "google_cloud_run_v2_service" "app" {
   template {
     service_account = google_service_account.run.email
     # ffmpeg wants the full Linux syscall surface of gen2.
-    execution_environment            = "EXECUTION_ENVIRONMENT_GEN2"
-    timeout                          = "900s"
-    max_instance_request_concurrency = 20
+    execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
+    timeout               = "900s"
+    # 50, not the original 20 (ADR-007's media-streaming note assumed 20): raised in the
+    # Cloud Console and adopted here on 2026-09-22 so an apply keeps what runs live.
+    max_instance_request_concurrency = 50
     session_affinity                 = false
 
     scaling {
