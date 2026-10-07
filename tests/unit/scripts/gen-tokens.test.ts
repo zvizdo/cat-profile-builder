@@ -38,8 +38,10 @@ describe("generateTokensCss", () => {
 
   it("names every colour in TOKENS.json exactly once, after its key", () => {
     const values = new Set(tokensJson.match(/#[0-9A-F]{6}/g));
-    // 13 system colours plus the carousel comp's one own hex (its QR card sentence).
-    expect(values.size).toBe(14);
+    // 13 system colours, the carousel comp's one own hex (its QR card sentence), and the
+    // fundraiser display's refusal tint `#F0A27C` (spec 002, R11): a warm tint that reads on
+    // the night ground, where `--color-clay` measures 3.6:1 and fails for text.
+    expect(values.size).toBe(15);
     for (const value of values) {
       expect(css.split(value)).toHaveLength(2);
     }
@@ -341,6 +343,18 @@ describe("runGenTokens", () => {
     const outPath = tempOutPath();
     writeFileSync(outPath, "/* stale */\n");
     const result = runGenTokens({ tokensPath, outPath, check: true });
+    expect(result.exitCode).toBe(1);
+    expect(result.message).toContain("pnpm gen-tokens");
+  });
+
+  it("--check fails when a fundraiser token was edited and the file was not regenerated", () => {
+    const outPath = tempOutPath();
+    runGenTokens({ tokensPath, outPath, check: false });
+    const edited = readTokens() as { fundraiser: { size: Record<string, string> } };
+    edited.fundraiser.size["thermometerFloorStack"] = "40cqh";
+    const editedPath = join(mkdtempSync(join(tmpdir(), "gen-tokens-")), "TOKENS.json");
+    writeFileSync(editedPath, JSON.stringify(edited));
+    const result = runGenTokens({ tokensPath: editedPath, outPath, check: true });
     expect(result.exitCode).toBe(1);
     expect(result.message).toContain("pnpm gen-tokens");
   });

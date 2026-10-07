@@ -46,3 +46,6 @@ Thumbs.db
 # Spec-kit tool cache and the per-tool integration manifest are local
 .specify/extensions/.cache/
 .specify/integrations/claude.manifest.json
+
+# Visual brainstorming mockups (superpowers companion)
+.superpowers/

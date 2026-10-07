@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import type { CarouselCat } from "@/core/carousel/roster";
 import { formatTimeOfDay } from "@/core/format/time-of-day";
 import { useReducedMotion } from "@/ui/profile/use-reduced-motion";
+import { useWakeLock } from "@/ui/shared/use-wake-lock";
 import { Carousel, type ControlsContext } from "./Carousel";
 import styles from "./carousel.module.css";
 import { KioskControls } from "./KioskControls";
@@ -44,38 +45,6 @@ function useFullscreenOnFirstPress(): void {
     return () => {
       window.removeEventListener("pointerdown", request);
       window.removeEventListener("keydown", request);
-    };
-  }, []);
-}
-
-/**
- * Keeps the screen awake for as long as the page is visible: a screen wake lock is
- * released by the browser when the page hides, so it is asked for again each time the
- * page is visible. The request is refused (its promise rejects) when the page is hidden
- * or the device is saving power; the loop runs regardless. Browsers without the API
- * (Firefox before 126) have nothing to hold.
- */
-function useWakeLock(): void {
-  useEffect(() => {
-    const wakeLock: WakeLock | undefined = navigator.wakeLock;
-    if (wakeLock === undefined) return;
-    let sentinel: WakeLockSentinel | undefined;
-    const request = (): void => {
-      wakeLock.request("screen").then(
-        (granted) => {
-          sentinel = granted;
-        },
-        () => undefined,
-      );
-    };
-    const onVisibility = (): void => {
-      if (document.visibilityState === "visible") request();
-    };
-    request();
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      void sentinel?.release();
     };
   }, []);
 }

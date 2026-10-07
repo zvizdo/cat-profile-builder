@@ -60,6 +60,17 @@ const tokensSchema = z.object({
     tracking: z.record(z.string(), z.string()),
     motion: z.record(z.string(), z.union([z.string(), px])),
   }),
+  // The fundraiser display's own values (spec 002). Unlike the carousel's fixed 1080p frame
+  // it is sized from its container, so every size is a unit string (`15cqh`, `5cqw`,
+  // `max(...)`, a bare ratio) and a bare number is rejected: it would have no unit to be read in.
+  fundraiser: z.object({
+    note: z.string(),
+    color: z.record(z.string(), z.string().min(1)),
+    gradient: z.record(z.string(), z.string().min(1)),
+    shadow: z.record(z.string(), z.string().min(1)),
+    size: z.record(z.string(), z.string().min(1)),
+    tracking: z.record(z.string(), z.string().min(1)),
+  }),
 });
 
 type Tokens = z.infer<typeof tokensSchema>;
@@ -238,6 +249,23 @@ function carouselLines(tokens: Tokens): string[] {
   ];
 }
 
+// The fundraiser display's values (TOKENS.json `fundraiser`), read only by
+// src/ui/fundraiser. Colours join the colour namespace; gradients, shadows, sizes and
+// trackings are plain `--fundraiser-*` properties, since the display is hand-written CSS like
+// the carousel's. Values pass through untouched: they are already CSS.
+function fundraiserLines(tokens: Tokens): string[] {
+  const { fundraiser } = tokens;
+  const entries = (prefix: string, group: Record<string, string>): string[] =>
+    Object.entries(group).map(([key, value]) => declaration(`${prefix}-${kebab(key)}`, value));
+  return [
+    ...entries("--color-fundraiser", fundraiser.color),
+    ...entries("--fundraiser-gradient", fundraiser.gradient),
+    ...entries("--fundraiser-shadow", fundraiser.shadow),
+    ...entries("--fundraiser", fundraiser.size),
+    ...entries("--fundraiser-tracking", fundraiser.tracking),
+  ];
+}
+
 function fontLines(tokens: Tokens): string[] {
   const roles: FontRole[] = ["display", "text", "label"];
   return [
@@ -282,6 +310,8 @@ export function generateTokensCss(tokens: unknown): string {
     ...layoutLines(parsed),
     "",
     ...carouselLines(parsed),
+    "",
+    ...fundraiserLines(parsed),
     "}",
     "",
     "@theme static inline {",

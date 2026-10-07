@@ -169,3 +169,16 @@ The front door at `/cats`, built from the profile page's parts (design audit, 20
 | Footer | `southcountycats.org · a volunteer-run rescue in South County, Rhode Island` |
 
 Cat-specific copy (bio, day captions, quote, trait pills) is written per cat by a volunteer — the strings in the files are Charlotte's, and they set the register: behaviour over adjectives, one concrete detail per sentence.
+
+## Fundraiser display (`/fundraiser`)
+
+Source of truth: `src/ui/fundraiser/strings.ts`.
+
+| Where | String |
+|---|---|
+| Label | `Current fundraiser` · `raised of` · `goal` · `Goal reached` |
+| Starting hint | `Hover, tap or Tab to the thermometer to set your goal.` |
+| Controls | `Full screen` · `Full screen isn't available in this browser.` · `Edit the amount raised and the goal` · `Edit headline` · `Done` |
+| Refusals (amount) | `Type an amount, for example 6,500.` · `That doesn't look like an amount. Use digits, like 6,500 or 6,500.50.` · `An amount can't be negative.` · `Use dollars and cents only, like 6,500.50.` · `That's more than this page can show. The most is $99,999,999.99.` · `The goal has to be more than $0.` |
+| Refusals (headline) | `The headline can't be empty.` · `Keep the headline to 60 characters or fewer.` |
+| Spoken | `Updated: $7,200 raised of $10,000, 72 percent.` · `Editing closed after a minute. Nothing was changed.` |

@@ -24,3 +24,4 @@ by saying so explicitly.
 | [015](015-bucket-layout-and-draft-persistence.md) | Bucket layout and draft persistence |
 | [016](016-photo-enhancement.md) | Photo enhancement (deterministic, no model) |
 | [017](017-helper-markdown.md) | The helper's replies render Markdown |
+| [018](018-fundraiser-state-in-the-address.md) | The fundraiser display keeps its numbers in the page address |

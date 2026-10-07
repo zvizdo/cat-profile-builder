@@ -142,6 +142,10 @@ Plain, specific, never cute. Cats are described by behaviour, not adjectives ("a
 
 ---
 
+## Note — the fundraiser display's one extra tint
+
+The fundraiser display (`/fundraiser`) adds one colour outside the 13: `#F0A27C` (`--color-fundraiser-refusal`), the tint for refusal sentences on the night ground. `--color-clay` is 3.6:1 there and fails 4.5:1; this tint is 9.4:1. It is the one exception to "13 colours" and is used nowhere else.
+
 ## Implementation note — Tailwind
 
 Reasonable for the app, with two conditions.

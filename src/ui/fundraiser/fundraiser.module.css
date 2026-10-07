@@ -1,0 +1,966 @@
+/* The fundraiser display (spec 002, contracts/display-layout.md): the stage, the two
+   arrangements and the thermometer's drawing. Every size is a `--fundraiser-*` token, so
+   tuning is an edit in TOKENS.json and `pnpm gen-tokens`, never a hunt through this file. The
+   literals left are not geometry: 0, 1, 50 % and 100 % (centring, full-box and transform
+   arithmetic the contract spells out), `z-index` layers, `flex` shorthands, `font-weight`,
+   `line-height` ratios, `aspect-ratio: 1` for the round bulb, and `left: 50%` with
+   `translateX(-50%)` to centre the neck.
+
+   The stage is one size container, so every `cqh` and `cqw` below is a share of the stage
+   itself, not of the window, and nothing is measured in script. `@container (aspect-ratio < 1.1)`
+   switches from side by side to the centred stack.
+
+   Motion: only `transform` and `opacity` animate, nothing on load. The fill and the
+   percentage tag share one duration and easing; paws and the highlight fade on opacity.
+   Under reduced motion globals.css cuts every duration to 0.01ms, so no rule here
+   checks the preference. */
+
+/* ---- the stage ---------------------------------------------------------------------- */
+
+/* Fixed to the viewport, so overscroll never shows the body's paper colour, and a size
+   container so its descendants size from the stage. */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  background: var(--color-night);
+  color: var(--color-card);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One soft blue glow behind the left group. Static: nothing here is decorative motion. */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: var(--fundraiser-gradient-glow);
+  pointer-events: none;
+}
+
+/* The box the arrangement query reads. It is the stage's own box, so it changes nothing; it
+   exists so a held arrangement (below) can be given a box of the other shape without resizing
+   the stage. Everything that changes with the arrangement sits inside it, the Full screen
+   button too (its label folds away in the stack); only the glow and the hint stay on the stage,
+   which decides for them as it always did. */
+.shape {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+}
+
+/* While an editing session is open the page holds the arrangement it opened in (display-layout.md,
+   Known risk). The soft keyboard shrinks the stage; a phone held upright becomes a landscape box
+   and the container query would flip stack to side by side under the volunteer's fingers. Giving
+   the shape a box limit (`--held-ratio`, set with the attribute) that keeps its ratio on the held
+   side of the query's threshold keeps the query on the held answer, with no second copy of the
+   arrangement's rules. The limit is never below the opening stage's own ratio (a stack) or above
+   it (side by side), so on the stage the session opened on it changes nothing. Centred, so the
+   held box stays on screen. Without the attribute, the container query decides, as always. */
+.shape[data-arrangement="stack"] {
+  max-width: calc(var(--fundraiser-stage-height) * var(--held-ratio));
+  margin-inline: auto;
+}
+
+.shape[data-arrangement="side"] {
+  max-height: calc(var(--fundraiser-stage-width) / var(--held-ratio));
+  margin-block: auto;
+}
+
+/* A grid, so the thermometer's button can stand over the thermometer by naming its area. The
+   left group is the first column, its width fixed by a token, and the thermometer is placed by
+   its own offsets. */
+.layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: var(--fundraiser-left-width);
+  grid-template-rows: minmax(0, 1fr);
+  padding: var(--fundraiser-safe-inset-block) 0 var(--fundraiser-safe-inset-block)
+    var(--fundraiser-safe-inset-inline);
+}
+
+/* ---- the left group (side by side) ---------------------------------------------------- */
+
+/* The logo at the top of the safe area and the copy anchored to its foot, so the amount,
+   the goal line and the reserved edit row never move when the headline wraps; a longer
+   headline grows upward into the gap. The column stops short of the thermometer's paws. */
+.left {
+  min-height: 0;
+  width: var(--fundraiser-left-width);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Overrides the image's own width and height attributes; the height alone sets the size. */
+.logo {
+  display: block;
+  flex: none;
+  height: var(--fundraiser-logo-height);
+  width: auto;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 0;
+}
+
+.label {
+  margin: 0 0 var(--fundraiser-gap-tight);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: max(var(--fundraiser-label-size), var(--fundraiser-text-floor));
+  letter-spacing: var(--fundraiser-tracking-label);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-blue-light);
+}
+
+/* Wraps within half the stage's width and never wider than its column; `anywhere` lets an
+   unbroken run of wide letters wrap instead of running out of the stage. */
+.headline {
+  margin: 0;
+  max-width: min(var(--fundraiser-headline-max-width), 100%);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: var(--fundraiser-headline-line-height);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  color: var(--color-card);
+}
+
+/* In the editing view the headline's words are a button that looks like nothing but the words:
+   it takes the heading's font, colour, wrapping and alignment, and is a block so the heading is
+   exactly as tall and as wide as the plain text it replaces (no shift between the editing view
+   and full screen). */
+.headlineButton {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-wrap: inherit;
+  overflow-wrap: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* A headline of look-alike blanks has almost no text to press. The press area is the line box
+   at least, and never under the tap floor, drawn around the button's centre without taking room. */
+.headlineButton::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  min-width: var(--fundraiser-headline-hit-min);
+  min-height: var(--fundraiser-headline-hit-min);
+  transform: translate(-50%, -50%);
+}
+
+.headlineButton:focus-visible {
+  outline: var(--fundraiser-focus-outline-width) solid var(--color-blue-light);
+  outline-offset: var(--fundraiser-focus-outline-offset);
+}
+
+/* While the field is open the button stays in the page (focus goes back to it after a keyboard
+   close) but shows nothing and takes no room: the field stands where its words were. */
+.headlineAway {
+  position: absolute;
+  width: var(--fundraiser-hairline);
+  height: var(--fundraiser-hairline);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.headlineAway::after {
+  content: none;
+}
+
+/* The headline field's box: a block in the heading, so the field is as wide as the words. */
+.headlineBox {
+  display: block;
+}
+
+/* One size per fit step (data-fit, from the length of the text), each the smaller of a
+   height-based and a width-based size so the widest text of the step fits its column. */
+.headline[data-fit="0"] {
+  font-size: max(var(--fundraiser-headline-fit0), var(--fundraiser-text-floor));
+}
+
+.headline[data-fit="1"] {
+  font-size: max(var(--fundraiser-headline-fit1), var(--fundraiser-text-floor));
+}
+
+.headline[data-fit="2"] {
+  font-size: max(var(--fundraiser-headline-fit2), var(--fundraiser-text-floor));
+}
+
+/* The amount block: the raised figure and the goal line, and the region a mouse hovers to open
+   them. It is a plain column that passes the arrangement's alignment through, so wrapping the
+   two lines in it moves nothing. */
+.figures {
+  display: flex;
+  flex-direction: column;
+  align-items: inherit;
+  max-width: 100%;
+}
+
+.amount {
+  margin: var(--fundraiser-gap-copy) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: var(--fundraiser-amount-line-height);
+  white-space: nowrap;
+  color: var(--color-card);
+}
+
+.amount[data-fit="0"] {
+  font-size: max(var(--fundraiser-amount-fit0), var(--fundraiser-text-floor));
+}
+
+.amount[data-fit="1"] {
+  font-size: max(var(--fundraiser-amount-fit1), var(--fundraiser-text-floor));
+}
+
+.amount[data-fit="2"] {
+  font-size: max(var(--fundraiser-amount-fit2), var(--fundraiser-text-floor));
+}
+
+.amount[data-fit="3"] {
+  font-size: max(var(--fundraiser-amount-fit3), var(--fundraiser-text-floor));
+}
+
+.amount[data-fit="4"] {
+  font-size: max(var(--fundraiser-amount-fit4), var(--fundraiser-text-floor));
+}
+
+/* "raised of $10,000 goal", then the pill once the goal is met. The figure is bolder
+   than the words around it, and the line wraps rather than clip when the goal is long. */
+.goalLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fundraiser-gap-tight) var(--fundraiser-gap-copy);
+  margin: var(--fundraiser-gap-copy) 0 0;
+  font-size: max(var(--fundraiser-goal-size), var(--fundraiser-text-floor));
+  line-height: 1.25;
+  color: var(--color-fundraiser-body);
+}
+
+.goalFigure {
+  font-weight: 500;
+}
+
+/* Blue-light on night is the tag's own pairing (11.7:1); the pill is the same shape. */
+.pill {
+  flex: none;
+  padding: var(--fundraiser-tag-pad-block) var(--fundraiser-tag-pad-inline);
+  border-radius: var(--radius-pill);
+  background: var(--color-blue-light);
+  color: var(--color-night);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: max(var(--fundraiser-label-size), var(--fundraiser-text-floor));
+  letter-spacing: var(--fundraiser-tracking-tag);
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Reserved in every mode, so adding Done and the refusal sentence never reflows. One row: Done,
+   then, on the phone stack, the refusal sentence below it. */
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fundraiser-gap-copy);
+  width: 100%;
+  min-height: var(--fundraiser-edit-row-min-height);
+  /* Fixed, not a minimum: the room for the longest refusal (both amounts refused) is kept in
+     every mode, so a sentence arriving never moves the figures or the thermometer. */
+  height: var(--fundraiser-edit-row-height);
+  margin-top: var(--fundraiser-gap-tight);
+}
+
+/* The design system's primary button, in the display's text size: its own 13px is smaller than the
+   display's text floor on a big screen, and its own line height would make the button taller than
+   the reserved row. Its focus state darkens the blue and clears the outline,
+   which does not read on the night ground, so the ring is the display's own, blue-light. */
+.editRow .doneButton {
+  flex: none;
+  font-size: max(var(--fundraiser-label-size), var(--fundraiser-text-floor));
+  line-height: 1;
+}
+
+.editRow .doneButton:focus-visible {
+  outline: var(--fundraiser-focus-outline-width) solid var(--color-blue-light);
+  outline-offset: var(--fundraiser-focus-outline-offset);
+}
+
+/* Why the entry was refused, in the refusal tint (clay is 3.6:1 on night and fails 4.5:1). It
+   wraps inside the row, and is empty (and takes no room) until there is a sentence. */
+.refusal {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-size: max(var(--fundraiser-refusal-size), var(--fundraiser-text-floor));
+  line-height: 1.3;
+  color: var(--color-fundraiser-refusal);
+}
+
+/* Said aloud and never drawn: the confirmation after a change. */
+.srOnly {
+  position: absolute;
+  width: var(--fundraiser-hairline);
+  height: var(--fundraiser-hairline);
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- the thermometer's place (side by side) -------------------------------------------- */
+
+.thermometerBox,
+.thermometerButton {
+  position: absolute;
+  right: var(--fundraiser-thermometer-right);
+  width: var(--fundraiser-thermometer-width);
+  top: var(--fundraiser-thermometer-top);
+  height: calc(var(--fundraiser-thermometer-bottom) - var(--fundraiser-thermometer-top));
+}
+
+/* The edit button stands over the drawing and shows nothing of its own. It sits in the page
+   among the amounts, so the next Tab lands in the first field, and takes the drawing's box by
+   the same offsets (and, in the stack, by the same grid area). */
+.thermometerButton {
+  /* Above the bulb (1) and the neck (2), which would otherwise catch a press meant for it. */
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.thermometerButton:focus-visible {
+  outline: var(--fundraiser-focus-outline-width) solid var(--color-blue-light);
+  outline-offset: var(--fundraiser-focus-outline-offset);
+}
+
+/* ---- the Full screen control ------------------------------------------------------------ */
+
+/* Top right at the safe insets, over everything else. Wide: the status line sits to the
+   left of the button. On the phone stack it drops below the button. The sentence that replaces
+   the button where there is no full screen is the same line, wrapped to a narrow column and
+   right-aligned so it hugs the corner. */
+.fullscreen {
+  position: absolute;
+  top: var(--fundraiser-safe-inset-block);
+  right: var(--fundraiser-safe-inset-inline);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--fundraiser-gap-tight);
+}
+
+.fullscreenNote {
+  margin: 0;
+  max-width: var(--fundraiser-fullscreen-note-max-width);
+  text-align: right;
+  font-family: var(--font-label);
+  font-size: var(--fundraiser-text-floor);
+  line-height: 1.3;
+  color: var(--color-fundraiser-body);
+}
+
+/* Outlined in the display's voice: the tube's outline colour, mono label text, no fill. */
+.fullscreenButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fundraiser-fullscreen-button-gap);
+  min-height: var(--fundraiser-fullscreen-button-min-height);
+  padding: 0 var(--fundraiser-fullscreen-button-pad-inline);
+  border: var(--fundraiser-hairline) solid var(--color-fundraiser-tube-outline);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-fundraiser-body);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--fundraiser-text-floor);
+  letter-spacing: var(--fundraiser-tracking-tag);
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* The words are in the button's name; on a narrow stack only the icon is drawn, so the
+   button never reaches under the centred logo. */
+.fullscreenLabel {
+  display: inline;
+}
+
+/* A stack no wider than a phone: the label is visually hidden, the name stays. The 30rem
+   is a container-query condition, which cannot read a token. */
+@container (aspect-ratio < 1.1) and (max-width: 30rem) {
+  .fullscreenButton {
+    position: relative;
+    justify-content: center;
+    min-width: var(--fundraiser-fullscreen-button-min-height);
+    padding: 0;
+  }
+
+  .fullscreenLabel {
+    position: absolute;
+    width: var(--fundraiser-hairline);
+    height: var(--fundraiser-hairline);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.fullscreenButton:hover {
+  background: var(--color-fundraiser-tube-fill);
+}
+
+/* Selected text (Tab into a field selects it all): the browser's own colours measured 4.37:1 here. */
+.fieldControl::selection {
+  background: var(--color-fundraiser-selection);
+  color: var(--color-fundraiser-selection-text);
+}
+
+/* A one-line field can be 18 to 22 px tall on a phone. Its pointer area is at least the WCAG 2.2
+   minimum, drawn around its centre without taking room (the box stays as the text made it). */
+.field:not(.fieldWrap) {
+  position: relative;
+}
+
+/* The control stays above the hit area, so a press on the control itself is still the control's. */
+.field:not(.fieldWrap) > .fieldControl {
+  position: relative;
+  z-index: 1;
+}
+
+.field:not(.fieldWrap)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: var(--fundraiser-field-hit-min);
+  transform: translateY(-50%);
+}
+
+/* The shadow ring is too faint on the night ground, so the outline is blue-light. */
+.fullscreenButton:focus-visible {
+  outline: var(--fundraiser-focus-outline-width) solid var(--color-blue-light);
+  outline-offset: var(--fundraiser-focus-outline-offset);
+}
+
+/* ---- the starting hint ------------------------------------------------------------------ */
+
+/* One mono line in the band under the content, editing view only. Absolute, so showing or
+   clearing it never moves anything. */
+.hint {
+  position: absolute;
+  left: var(--fundraiser-safe-inset-inline);
+  right: var(--fundraiser-safe-inset-inline);
+  bottom: 0;
+  height: var(--fundraiser-safe-inset-block);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-label);
+  font-size: max(var(--fundraiser-label-size), var(--fundraiser-text-floor));
+  line-height: 1.3;
+  color: var(--color-fundraiser-body);
+}
+
+/* ---- the centred stack (a stage taller than wide) ------------------------------------------ */
+
+/* The contract starts the threshold at 1 and says to move it to 1.1 if a near-square stage
+   looks cramped. At 1:1 the 999%+ tag ran off the stage and the left column left room for
+   only 40cqw of text, so it is 1.1 (a container query cannot read a token). Every width-based
+   size in TOKENS.json is made for the 45cqw column this shape leaves. */
+@container (aspect-ratio < 1.1) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(var(--fundraiser-thermometer-floor-stack), 1fr);
+    row-gap: var(--fundraiser-gap-copy);
+    justify-items: center;
+    padding-block: max(var(--fundraiser-logo-top-stack), var(--fundraiser-safe-inset-block))
+      var(--fundraiser-safe-inset-block);
+    padding-inline: var(--fundraiser-safe-inset-inline);
+  }
+
+  .left {
+    width: var(--fundraiser-stack-text-width);
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo {
+    height: min(var(--fundraiser-logo-height-stack), var(--fundraiser-logo-height-stack-cap));
+    margin-bottom: var(--fundraiser-gap-stack);
+  }
+
+  .copy {
+    align-items: center;
+  }
+
+  /* In the stack the status line drops below the button (on night, so it stays legible over
+     what it crosses) instead of crowding the centred logo. */
+  .fullscreen {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+
+  .fullscreenNote {
+    background: var(--color-night);
+  }
+
+  /* The label is dropped in the stack to save height. */
+  .label {
+    display: none;
+  }
+
+  .headline {
+    max-width: 100%;
+  }
+
+  .headline[data-fit="0"] {
+    font-size: max(var(--fundraiser-headline-stack-fit0), var(--fundraiser-text-floor));
+  }
+
+  .headline[data-fit="1"] {
+    font-size: max(var(--fundraiser-headline-stack-fit1), var(--fundraiser-text-floor));
+  }
+
+  .headline[data-fit="2"] {
+    font-size: max(var(--fundraiser-headline-stack-fit2), var(--fundraiser-text-floor));
+  }
+
+  .amount {
+    margin-top: var(--fundraiser-gap-stack);
+  }
+
+  .amount[data-fit="0"] {
+    font-size: max(var(--fundraiser-amount-stack-fit0), var(--fundraiser-text-floor));
+  }
+
+  .amount[data-fit="1"] {
+    font-size: max(var(--fundraiser-amount-stack-fit1), var(--fundraiser-text-floor));
+  }
+
+  .amount[data-fit="2"] {
+    font-size: max(var(--fundraiser-amount-stack-fit2), var(--fundraiser-text-floor));
+  }
+
+  .amount[data-fit="3"] {
+    font-size: max(var(--fundraiser-amount-stack-fit3), var(--fundraiser-text-floor));
+  }
+
+  .amount[data-fit="4"] {
+    font-size: max(var(--fundraiser-amount-stack-fit4), var(--fundraiser-text-floor));
+  }
+
+  .goalLine {
+    justify-content: center;
+    margin-top: var(--fundraiser-gap-stack);
+    font-size: max(
+      min(var(--fundraiser-goal-size-stack), var(--fundraiser-goal-size-stack-cap)),
+      var(--fundraiser-text-floor)
+    );
+  }
+
+  .editRow {
+    min-height: var(--fundraiser-edit-row-min-height-stack);
+    height: var(--fundraiser-edit-row-height-stack);
+    margin-top: var(--fundraiser-gap-stack);
+  }
+
+  /* Takes all the height the text leaves, never under its floor; centred. */
+  .thermometerBox {
+    position: static;
+    grid-row: 2;
+    height: auto;
+    min-height: var(--fundraiser-thermometer-floor-stack);
+    width: var(--fundraiser-thermometer-width-stack);
+  }
+
+  /* The same area as the thermometer, wherever the button sits in the page. All four lines are
+     given: a line left `auto` would reach to the stage's padding edge instead of the row's end. */
+  .thermometerButton {
+    grid-area: 2 / 1 / 3 / 2;
+    inset: 0;
+    height: auto;
+    width: var(--fundraiser-thermometer-width-stack);
+    margin-inline: auto;
+  }
+
+  .refusal {
+    font-size: max(var(--fundraiser-refusal-size-stack), var(--fundraiser-text-floor));
+  }
+
+  .hint {
+    left: 0;
+    right: 0;
+    justify-content: center;
+    text-align: center;
+    font-size: max(var(--fundraiser-hint-size-stack), var(--fundraiser-text-floor));
+  }
+}
+
+/* ---- the drawing's box ------------------------------------------------------------- */
+
+/* Fills whatever box its parent gives it; the parent decides the width and height. The
+   column is the tube (the scale box), then the bulb tucked half over the tube's foot. */
+.thermometer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* The scale box: the tube from its bottom edge to its round tip. The fill line, the tag
+   and the paws all measure from this one box, so they share one linear map. */
+.scale {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: var(--fundraiser-thermometer-tube-ratio);
+}
+
+/* ---- tube and bulb ------------------------------------------------------------------ */
+
+.tube {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  border-radius: var(--radius-pill) var(--radius-pill) 0 0;
+}
+
+/* The outline and the highlight are overlays laid over the fill, so neither takes room
+   from the box the level is measured on. The highlight fades in on opacity. */
+.tube::before,
+.tube::after,
+.bulb::before,
+.bulb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.tube::before,
+.bulb::before {
+  border: var(--fundraiser-thermometer-tube-outline) solid var(--color-fundraiser-tube-outline);
+}
+
+/* The bulb's overlays sit just outside its circle, as the tube's outline sits on its edge. */
+.bulb::before,
+.bulb::after {
+  inset: calc(-1 * var(--fundraiser-thermometer-tube-outline));
+}
+
+.tube::after,
+.bulb::after {
+  border: var(--fundraiser-thermometer-tube-outline) solid var(--color-blue-light);
+  box-shadow: var(--fundraiser-shadow-highlight);
+  opacity: 0;
+  transition: opacity var(--transition-duration-panel) var(--ease-default);
+}
+
+.tube[data-highlighted="true"]::after,
+.bulb[data-highlighted="true"]::after {
+  opacity: 1;
+}
+
+.fillClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--color-fundraiser-tube-fill);
+}
+
+/* The transform reveal: the mask rises by `level` of its own height while the gradient
+   layer inside it falls by the same amount, so the colour stays pinned to the tube and
+   brightens as the level rises. Both percentages are of the same height. */
+.fillMask {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transition: transform var(--transition-duration-panel) var(--ease-default);
+}
+
+.fillGradient {
+  position: absolute;
+  inset: 0;
+  background: var(--fundraiser-gradient-fill);
+  transition: transform var(--transition-duration-panel) var(--ease-default);
+}
+
+/* Always filled, so an empty thermometer still reads as one. It is as wide as the whole
+   drawing, square, and its centre sits on the scale box's bottom edge. */
+.bulb {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 100%;
+  aspect-ratio: 1;
+  margin-top: var(--fundraiser-thermometer-bulb-lift);
+  border-radius: 50%;
+  background: var(--color-blue);
+}
+
+/* The neck joins tube and bulb: it covers the bulb's top outline where the tube enters. */
+.neck {
+  position: absolute;
+  left: 50%;
+  bottom: var(--fundraiser-thermometer-neck-bottom);
+  width: var(--fundraiser-thermometer-neck-ratio);
+  height: var(--fundraiser-thermometer-neck-height);
+  z-index: 2;
+  transform: translateX(-50%);
+  background: var(--color-blue);
+}
+
+/* ---- the percentage tag ------------------------------------------------------------- */
+
+/* A track the size of the scale box, lifted by `level` of its own height, with the tag
+   riding its bottom edge: at level 1 the tag sits on the tube's round tip. */
+.tagTrack {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: transform var(--transition-duration-panel) var(--ease-default);
+}
+
+.tag {
+  position: absolute;
+  left: calc(100% + var(--fundraiser-tag-gap));
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--fundraiser-tag-leader-gap);
+  transform: translateY(50%);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: max(var(--fundraiser-tag-size-large), var(--fundraiser-text-floor));
+  letter-spacing: var(--fundraiser-tracking-tag);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* The leader line, then the pill that holds the text. */
+.tag::before {
+  content: "";
+  width: var(--fundraiser-tag-leader-length);
+  height: var(--fundraiser-hairline);
+  background: var(--color-blue-light);
+}
+
+.tagText {
+  padding: var(--fundraiser-tag-pad-block) var(--fundraiser-tag-pad-inline);
+  border-radius: var(--radius-pill);
+  background: var(--color-blue-light);
+  color: var(--color-night);
+}
+
+/* Longer text steps the size down toward the text floor; the pill grows instead of
+   clipping, and there is room to the right of the tube for it. */
+.tag[data-fit="1"] {
+  font-size: max(var(--fundraiser-tag-size-mid), var(--fundraiser-text-floor));
+}
+
+.tag[data-fit="2"] {
+  font-size: max(var(--fundraiser-tag-size), var(--fundraiser-text-floor));
+}
+
+/* ---- the paw prints ----------------------------------------------------------------- */
+
+/* Down the tube's left side, each centred on its share of the scale box (`bottom` is set
+   inline from the milestone). Lit and unlit differ in colour at once; the glow fades. */
+.paw {
+  position: absolute;
+  right: calc(100% + var(--fundraiser-paw-gap));
+  display: flex;
+  align-items: center;
+  gap: var(--fundraiser-paw-label-gap);
+  transform: translateY(50%);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: max(var(--fundraiser-paw-label-size), var(--fundraiser-text-floor));
+  letter-spacing: var(--fundraiser-tracking-paw-label);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-fundraiser-paw-unlit-label);
+}
+
+.paw[data-lit="true"] {
+  color: var(--color-blue-light);
+}
+
+.pawIcon {
+  position: relative;
+  flex: none;
+  width: var(--fundraiser-paw-size);
+  height: var(--fundraiser-paw-size);
+  color: var(--color-fundraiser-paw-unlit);
+}
+
+.pawIcon[data-lit="true"] {
+  color: var(--color-blue-light);
+}
+
+.pawIcon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: var(--fundraiser-shadow-paw-lit);
+  opacity: 0;
+  transition: opacity var(--transition-duration-panel) var(--ease-default);
+}
+
+.pawIcon[data-lit="true"]::after {
+  opacity: 1;
+}
+
+.pawMark {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- the in-place field ----------------------------------------------------------------- */
+
+/* The control and a hidden copy of its text share one grid cell, so the cell is as wide (and,
+   for the wrapping kind, as tall) as the text itself. Nothing is measured and nothing shifts.
+   The caller's class sets the font size and line height of the text being replaced. */
+.field {
+  display: inline-grid;
+  max-width: 100%;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  color: inherit;
+  vertical-align: top;
+}
+
+/* The wrapping kind fills the width it is given and grows down as the text wraps. */
+.fieldWrap {
+  display: grid;
+  /* The hairline of caret room hangs past the box (the margin below takes it back), so the cap is
+     the box plus that hairline: the hidden copy gets the room and the last word stays on its line. */
+  max-width: calc(100% + var(--fundraiser-hairline));
+}
+
+.fieldMirror,
+.fieldControl {
+  grid-area: 1 / 1;
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+  word-spacing: inherit;
+  overflow-wrap: break-word;
+}
+
+/* The one-line kind's room for the caret: a hairline-wide box after the text, with the same
+   hairline taken back from the field's outer edge, so the cell is exactly as wide as the plain
+   text it replaces and nothing after it moves. */
+.fieldCaretRoom {
+  display: inline-block;
+  width: var(--fundraiser-hairline);
+}
+
+.field {
+  margin-inline-end: calc(-1 * var(--fundraiser-hairline));
+}
+
+/* An emptied field is still a field to aim at: as wide as one digit, so its underline shows. Text
+   is never narrower than that, so this moves nothing while there is text. */
+.fieldMirror {
+  min-width: 1ch;
+}
+
+/* Painted by nothing and read by no one; it only gives the cell its size. */
+.fieldMirror {
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+}
+
+.fieldWrap > .fieldMirror {
+  white-space: pre-wrap;
+}
+
+/* Zero width and height with full-size minimums: the control never asks for its own default size
+   (a text input is taller than a tight line-height asks for), so the mirror alone decides how big
+   the cell is, and the control still fills the cell. */
+.fieldControl {
+  width: 0;
+  min-width: 100%;
+  height: 0;
+  min-height: 100%;
+  background: transparent;
+  color: inherit;
+  caret-color: var(--color-blue-light);
+  appearance: none;
+  resize: none;
+  overflow: hidden;
+  /* Drawn as a shadow so it takes no room and the text does not move when it appears. */
+  box-shadow: 0 var(--fundraiser-field-underline-thickness) 0 0 var(--color-blue-light);
+}
+
+.fieldWrap > .fieldControl {
+  height: 100%;
+  /* A textarea scrolls by the glyphs' own height beyond a tight line (line-height under 1) as soon
+     as it is typed in, and the text slides up out of place. Clip is not a scroll container, so it
+     cannot; the box is as tall as its text, so nothing is ever cut. Where `clip` is not known the
+     rule above stays `hidden`. */
+  overflow: clip;
+}
+
+.fieldControl[aria-invalid="true"] {
+  box-shadow: 0 var(--fundraiser-field-underline-thickness) 0 0 var(--color-fundraiser-refusal);
+}
+
+/* The shadow ring is too faint on the night ground, so the outline is blue-light. */
+.fieldControl:focus-visible {
+  outline: var(--fundraiser-focus-outline-width) solid var(--color-blue-light);
+  outline-offset: var(--fundraiser-focus-outline-offset);
+}

@@ -175,3 +175,10 @@ export const Send: Icon = (p) => (
     <path d="M10 16V4M5 9l5-5 5 5" />
   </Svg>
 );
+
+/** Four corner brackets pointing outward: go full screen. */
+export const Expand: Icon = (p) => (
+  <Svg {...p}>
+    <path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4" />
+  </Svg>
+);

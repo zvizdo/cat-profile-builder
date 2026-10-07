@@ -50,7 +50,9 @@ QR card that opens the cat's page.
 3. The draft saves itself as they go. Publish makes it live at `/cats/<name>-<id>`.
 4. Visitors read the page; `/cats` lists every published cat.
 5. `/carousel` plays every published cat in a loop as a web page; `/kiosk` is the same
-   carousel for a TV at an event, unattended, with the QR card.
+   carousel for a TV at an event, unattended, with the QR card. `/fundraiser` is a fundraising
+   thermometer for a screen at the shelter; the numbers live in the address, so keep it as a
+   bookmark (nothing is stored, and there is no sign-in).
 6. Unpublish takes a page down; the draft stays for next time.
 
 ## The technical part
@@ -188,7 +190,7 @@ history that started elsewhere.
 | --- | --- |
 | `src/core` | The domain: profile document, edit operations, media rules, carousel roster, auth. Plain TypeScript, no framework imports (the lint gate enforces it) |
 | `src/adapters` | Everything that touches the outside world: stores (`memory`, `fs`, `gcs`), the language model (`fake`, `vertex`), `sharp`, `ffmpeg`, config, logging |
-| `src/app` | Next.js routes: the builder, the public pages, the carousel and kiosk, the API |
+| `src/app` | Next.js routes: the builder, the public pages, the carousel, kiosk and fundraiser, the API |
 | `src/ui` | React components: builder, helper panel, profile page, carousel, shared pieces |
 | `tests` | Unit, component, contract and end-to-end suites, with the fakes and fixtures they share |
 | `specs` | The feature specification, plan and tasks — the record of what was decided and why |
