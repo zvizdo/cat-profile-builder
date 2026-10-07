@@ -124,7 +124,7 @@ describe("FundraiserDisplay figures", () => {
   it("shows the Goal reached pill and the true 120% at $12,000 of $10,000", () => {
     const { container } = show({ ...SPRING, raisedCents: 1_200_000 });
     expect(within(part(container, "[data-goal-line]")).getByText("Goal reached")).toBeVisible();
-    expect(screen.getByText("120%")).toBeInTheDocument();
+    expect(screen.getByText("120% ($12K)")).toBeInTheDocument();
     expect(screen.getByRole("meter")).toHaveAttribute(
       "aria-valuetext",
       "$12,000 raised of a $10,000 goal, 120 percent, goal reached",
@@ -138,7 +138,7 @@ describe("FundraiserDisplay figures", () => {
 
   it("caps the tag at 999%+ and says more than 999 percent aloud", () => {
     show({ headline: "Tiny", raisedCents: 9_999_999_999, goalCents: 1 });
-    expect(screen.getByText("999%+")).toBeInTheDocument();
+    expect(screen.getByText("999%+ ($100M)")).toBeInTheDocument();
     expect(screen.getByRole("meter").getAttribute("aria-valuetext")).toContain(
       "more than 999 percent, goal reached",
     );

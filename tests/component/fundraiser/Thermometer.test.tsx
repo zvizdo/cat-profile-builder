@@ -111,9 +111,10 @@ describe("Thermometer drawing", () => {
     );
   });
 
-  it("shows the tag text, true up to the 999 percent cap", () => {
+  it("shows the percent and the raised amount in the tag, true up to the 999 percent cap", () => {
     const { container, props } = draw({ raised: 650000, goal: 1000000 });
-    expect(within(part(container, "[data-fit]")).getByText("65%")).toBeInTheDocument();
+    expect(within(part(container, "[data-fit]")).getByText("65% ($6.5K)")).toBeInTheDocument();
+    expect(props.progress.tagLabel).toBe("65% ($6.5K)");
     expect(props.progress.percentLabel).toBe("65%");
   });
 
@@ -121,12 +122,12 @@ describe("Thermometer drawing", () => {
     const stepFor = (raised: number): string | null => {
       const { container, props, unmount } = draw({ raised, goal: 1000000 });
       const step = part(container, "[data-fit]").getAttribute("data-fit");
-      expect(step).toBe(String(fitStep(codePointLength(props.progress.percentLabel), TAG_FIT)));
+      expect(step).toBe(String(fitStep(codePointLength(props.progress.tagLabel), TAG_FIT)));
       unmount();
       return step;
     };
-    // 65% (3 characters), 100% (4), 999%+ (5)
-    expect([stepFor(650000), stepFor(1000000), stepFor(12345600)]).toEqual(["0", "1", "2"]);
+    // 0% ($0) is 7 characters, 100% ($10K) 11, 999%+ ($123K) 13
+    expect([stepFor(0), stepFor(1000000), stepFor(12345600)]).toEqual(["0", "1", "2"]);
   });
 });
 

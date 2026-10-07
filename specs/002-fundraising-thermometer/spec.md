@@ -38,7 +38,7 @@ of the repository):
   headline, the amount raised in very large type, and "raised of $X goal" beneath.
 - **Right group: the thermometer.** A tall, chunky thermometer (bulb at the bottom) filled with a
   blue gradient that brightens as it rises. A small tag riding on the fill line states the
-  percentage reached. Down its left side, paw prints replace tick marks at 25%, 50%, 75%, and the
+  percentage reached and the amount raised in compact dollars (`65% ($6.5K)`). Down its left side, paw prints replace tick marks at 25%, 50%, 75%, and the
   goal; each paw lights up once the fill reaches it.
 - **No separate cat outline.** The logo already carries a drawn cat, and the paw prints carry the
   cat theme, so no second cat illustration is shown.
@@ -253,8 +253,9 @@ the new headline is shown, no input box remains, and it is still there after rel
   (amount raised ÷ goal), capped at fully full, and MUST be redrawn to match whenever either
   number changes.
 - **FR-004**: The page MUST state, in large legible text beside the thermometer, the amount raised
-  and the goal in dollars, and MUST show the percentage of the goal reached as a tag on the
-  thermometer's fill line.
+  and the goal in dollars, and MUST show the percentage of the goal reached, with the amount
+  raised in compact dollars beside it (`65% ($6.5K)`), as one line in a tag on the thermometer's
+  fill line.
 - **FR-005**: The thermometer MUST sit on the right of the screen and the logo, headline, and
   amounts on the left, the two groups balanced and neither crowding the other.
 - **FR-031**: The thermometer MUST carry paw-print milestones at 25%, 50%, 75%, and the goal. A

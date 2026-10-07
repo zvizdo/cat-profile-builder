@@ -165,7 +165,7 @@ describe("confirming a change (quickstart 3 and 7)", () => {
     expect(fieldsOpen()).toBe(false);
     expect(raisedText(container)).toHaveTextContent(/^\$7,200$/);
     expect(screen.getByRole("meter")).toHaveAttribute("aria-valuenow", "7200");
-    expect(screen.getByText("72%")).toBeInTheDocument();
+    expect(screen.getByText("72% ($7.2K)")).toBeInTheDocument();
     expect(container.querySelector("[data-fill]")).toHaveStyle({
       transform: "translateY(calc((1 - var(--level)) * 100%))",
     });
@@ -233,7 +233,7 @@ describe("confirming a change (quickstart 3 and 7)", () => {
     typeInto("Amount raised", "12,000");
     enterIn("Amount raised");
     expect(screen.getByText("Goal reached")).toBeInTheDocument();
-    expect(screen.getByText("120%")).toBeInTheDocument();
+    expect(screen.getByText("120% ($12K)")).toBeInTheDocument();
     expect(litPaws(container)).toHaveLength(4);
   });
 

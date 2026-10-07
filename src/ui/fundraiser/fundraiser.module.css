@@ -772,7 +772,7 @@
   font-family: var(--font-label);
   font-weight: 500;
   font-size: max(var(--fundraiser-tag-size-large), var(--fundraiser-text-floor));
-  letter-spacing: var(--fundraiser-tracking-tag);
+  letter-spacing: var(--fundraiser-tracking-tag-label);
   white-space: nowrap;
   line-height: 1;
 }
@@ -800,6 +800,23 @@
 
 .tag[data-fit="2"] {
   font-size: max(var(--fundraiser-tag-size), var(--fundraiser-text-floor));
+}
+
+/* The tag's room is the slice of the stage to the right of the tube, so in the stack its size
+   follows the stage's width as well as its height; the floor still holds. This sits after the
+   rules above because a later rule of equal weight wins. */
+@container (aspect-ratio < 1.1) {
+  .tag {
+    font-size: max(var(--fundraiser-tag-size-stack), var(--fundraiser-text-floor));
+  }
+
+  .tag[data-fit="1"] {
+    font-size: max(var(--fundraiser-tag-size-mid-stack), var(--fundraiser-text-floor));
+  }
+
+  .tag[data-fit="2"] {
+    font-size: max(var(--fundraiser-tag-size-small-stack), var(--fundraiser-text-floor));
+  }
 }
 
 /* ---- the paw prints ----------------------------------------------------------------- */

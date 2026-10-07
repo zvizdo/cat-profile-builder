@@ -216,7 +216,7 @@
   --fundraiser-thermometer-width: 18cqh;
   --fundraiser-thermometer-bottom: 93cqh;
   --fundraiser-thermometer-top: max(14cqh, calc(var(--fundraiser-safe-inset-block) + 44px + 3.5cqh));
-  --fundraiser-thermometer-right: max(12cqw, 17cqh);
+  --fundraiser-thermometer-right: max(12cqw, 17cqh, calc(22cqh + 2cqw));
   --fundraiser-paw-size: 3.8cqh;
   --fundraiser-paw-label-size: 2.4cqh;
   --fundraiser-tag-size: 2.4cqh;
@@ -240,13 +240,16 @@
   --fundraiser-thermometer-bulb-lift: -50%;
   --fundraiser-paw-gap: 2.1cqh;
   --fundraiser-paw-label-gap: 1.2cqh;
-  --fundraiser-tag-gap: 1.9cqh;
-  --fundraiser-tag-leader-length: 3cqh;
-  --fundraiser-tag-leader-gap: 1cqh;
-  --fundraiser-tag-pad-block: 0.5cqh;
-  --fundraiser-tag-pad-inline: 1.4cqh;
+  --fundraiser-tag-gap: 0.3em;
+  --fundraiser-tag-leader-length: 0.8em;
+  --fundraiser-tag-leader-gap: 0.3em;
+  --fundraiser-tag-pad-block: 0.2em;
+  --fundraiser-tag-pad-inline: 0.45em;
   --fundraiser-tag-size-large: 2.8cqh;
   --fundraiser-tag-size-mid: 2.6cqh;
+  --fundraiser-tag-size-stack: min(2.8cqh, 6cqw);
+  --fundraiser-tag-size-mid-stack: min(2.6cqh, 4.5cqw);
+  --fundraiser-tag-size-small-stack: min(2.4cqh, 3.9cqw);
   --fundraiser-hairline: 1px;
   --fundraiser-thermometer-reach: 20cqh;
   --fundraiser-left-width: calc(100cqw - var(--fundraiser-safe-inset-inline) - var(--fundraiser-thermometer-right) - var(--fundraiser-thermometer-width) - var(--fundraiser-thermometer-reach));
@@ -274,6 +277,7 @@
   --fundraiser-tracking-label: 0.2em;
   --fundraiser-tracking-paw-label: 0.12em;
   --fundraiser-tracking-tag: 0.1em;
+  --fundraiser-tracking-tag-label: 0.04em;
 }
 
 @theme static inline {

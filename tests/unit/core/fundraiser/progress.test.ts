@@ -113,6 +113,30 @@ describe("progress: the tag's ceiling", () => {
   });
 });
 
+describe("progress: the tag's text", () => {
+  it.each([
+    [0, GOAL, "0% ($0)"],
+    [650_000, GOAL, "65% ($6.5K)"],
+    [85_000, GOAL, "8% ($850)"],
+    [1_000_000, GOAL, "100% ($10K)"],
+    [1_200_000, GOAL, "120% ($12K)"],
+    [1, 1, "100% ($0.01)"],
+    [650_050, GOAL, "65% ($6.5K)"],
+  ])("$%i of $%i reads %s", (raised, goal, text) => {
+    expect(progress(raised, goal).tagLabel).toBe(text);
+  });
+
+  it("rounds a raise just under $1,000 to the next unit instead of writing $1000K", () => {
+    expect(progress(99_999_900, 100_000_000).tagLabel).toBe("99% ($1M)");
+  });
+
+  it("keeps the 999%+ ceiling and the true raised amount", () => {
+    expect(progress(AMOUNT_MAX_CENTS, 1).tagLabel).toBe("999%+ ($100M)");
+    expect(progress(1000_00, 100_00).tagLabel).toBe("999%+ ($1K)");
+    expect(progress(999_00, 100_00).tagLabel).toBe("999% ($999)");
+  });
+});
+
 describe("progress: milestone labels", () => {
   it("names the first three by percent and the last by the goal in compact dollars", () => {
     const labels = (goal: number) => progress(0, goal).milestones.map((m) => m.label);

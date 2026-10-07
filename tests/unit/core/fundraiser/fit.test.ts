@@ -75,7 +75,7 @@ describe("the fit constants", () => {
   it("hold the starting breakpoints", () => {
     expect(HEADLINE_FIT).toEqual([24, 40]);
     expect(AMOUNT_FIT).toEqual([6, 8, 10, 12]);
-    expect(TAG_FIT).toEqual([3, 4]);
+    expect(TAG_FIT).toEqual([9, 11]);
   });
 
   it.each([

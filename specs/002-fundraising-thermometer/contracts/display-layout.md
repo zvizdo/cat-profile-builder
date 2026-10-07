@@ -100,7 +100,7 @@ The **goal figure** is deliberately not stepped (decided in T012): the goal line
 T014's shape check confirms the goal line stays inside the stage with `$99,999,999.99` at 320×568.
 The per-step sizes for each text live in `references/design/TOKENS.json` (`fundraiser.size`:
 `headlineFit*`, `amountFit*`, and their `Stack` forms) and are the numbers tuned at Checkpoint 2.
-| Percentage tag | characters of the tag text (`65%` = 3) | 3, 4 | 3 (`999%+` is 5) |
+| Percentage tag | characters of the whole tag text (`0% ($0)` = 7, `65% ($6.5K)` = 11, `999%+ ($100M)` = 13) | 9, 11 | 3 |
 
 **Rule.** A size is `min(<height-based>, <width-based>)` so that the widest allowed text still
 fits its column at every shape. The five-shape end-to-end check renders the longest allowed
@@ -133,6 +133,10 @@ scale box, and the test says so.
   with the same duration and easing as the fill (`--transition-duration-panel`, `--ease-default`).
   Its text is the true percentage, capped for display at **`999%+`** (a $0.01 goal reached with
   $99,999,999.99 would otherwise print a 12-digit number); FR-009 in the spec carries the cap.
+  The raised amount follows in compact dollars on the same line (`65% ($6.5K)`). One line is wide,
+  so its type steps down to the text floor and its spacing is in `em`; the thermometer's right
+  offset is `max(12cqw, 17cqh, 22cqh + 2cqw)` so the longest tag (`999%+ ($100M)`) stays on the stage at
+  every shape, and in the stack its size follows the stage's width too (`tagSize*Stack`).
 - **Paw prints** at 25 %, 50 %, 75 %, and the goal, down the left side of the tube at
   `bottom: calc(<at> * 1%)` of the scale box, each with its label (`25%`, `50%`, `75%`, and the goal
   in short form: `$850`, `$10K`, `$1.25M`). Lit = `--color-blue-light` with a soft glow. Unlit =

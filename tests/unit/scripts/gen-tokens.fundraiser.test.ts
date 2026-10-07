@@ -53,7 +53,7 @@ const fundraiserSizes: Record<string, string> = {
   thermometerWidth: "18cqh",
   thermometerBottom: "93cqh",
   thermometerTop: "max(14cqh, calc(var(--fundraiser-safe-inset-block) + 44px + 3.5cqh))",
-  thermometerRight: "max(12cqw, 17cqh)",
+  thermometerRight: "max(12cqw, 17cqh, calc(22cqh + 2cqw))",
   pawSize: "3.8cqh",
   pawLabelSize: "2.4cqh",
   tagSize: "2.4cqh",
@@ -79,13 +79,16 @@ const fundraiserSizes: Record<string, string> = {
   thermometerBulbLift: "-50%",
   pawGap: "2.1cqh",
   pawLabelGap: "1.2cqh",
-  tagGap: "1.9cqh",
-  tagLeaderLength: "3cqh",
-  tagLeaderGap: "1cqh",
-  tagPadBlock: "0.5cqh",
-  tagPadInline: "1.4cqh",
+  tagGap: "0.3em",
+  tagLeaderLength: "0.8em",
+  tagLeaderGap: "0.3em",
+  tagPadBlock: "0.2em",
+  tagPadInline: "0.45em",
   tagSizeLarge: "2.8cqh",
   tagSizeMid: "2.6cqh",
+  tagSizeStack: "min(2.8cqh, 6cqw)",
+  tagSizeMidStack: "min(2.6cqh, 4.5cqw)",
+  tagSizeSmallStack: "min(2.4cqh, 3.9cqw)",
   hairline: "1px",
   // The page and stage (T012): how far the paws reach left of the thermometer, the two text
   // column widths, the gaps, the stack's hint size, and one size per fit step of the headline
@@ -162,6 +165,7 @@ describe("generateTokensCss fundraiser group", () => {
     expect(css).toContain("--fundraiser-tracking-label: 0.2em;");
     expect(css).toContain("--fundraiser-tracking-paw-label: 0.12em;");
     expect(css).toContain("--fundraiser-tracking-tag: 0.1em;");
+    expect(css).toContain("--fundraiser-tracking-tag-label: 0.04em;");
   });
 
   it("emits every key of the group exactly once, and nothing the group does not name", () => {

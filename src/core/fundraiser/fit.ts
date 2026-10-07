@@ -28,5 +28,5 @@ export const HEADLINE_FIT: readonly number[] = Object.freeze([24, 40]);
 /** Raised and goal amount step edges, in code points of the formatted text (`$1,250,000`). */
 export const AMOUNT_FIT: readonly number[] = Object.freeze([6, 8, 10, 12]);
 
-/** Percentage tag step edges, in code points (`65%`, `100%`, `1000%`). */
-export const TAG_FIT: readonly number[] = Object.freeze([3, 4]);
+/** Percentage tag step edges, in code points of the whole tag (`0% ($0)`, `100% ($10K)`, `999%+ ($100M)`). */
+export const TAG_FIT: readonly number[] = Object.freeze([9, 11]);

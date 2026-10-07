@@ -24,6 +24,11 @@ export interface Progress {
   percent: number;
   /** The tag's text: `65%`, or `999%+` once `percent` passes 999. */
   percentLabel: string;
+  /**
+   * What the tag on the fill line prints: the percent and the raised amount in compact dollars,
+   * `65% ($6.5K)`. The amount is the true raised figure, not capped at the goal.
+   */
+  tagLabel: string;
   /** Raised is at or above the goal. */
   reached: boolean;
   /** The four paws, in order, 25 to 100. */
@@ -57,6 +62,7 @@ export function progress(raisedCents: number, goalCents: number): Progress {
     level: Math.min(1, raisedCents / goalCents),
     percent,
     percentLabel: labelFor(percent),
+    tagLabel: `${labelFor(percent)} (${formatCompactDollars(raisedCents)})`,
     reached: raisedCents >= goalCents,
     milestones: [
       { at: 25, lit: lit(25), label: "25%" },

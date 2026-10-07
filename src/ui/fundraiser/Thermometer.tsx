@@ -55,7 +55,7 @@ export function Thermometer({
   valuetext,
   highlighted,
 }: ThermometerProps) {
-  const { level, percentLabel, milestones } = progress;
+  const { level, tagLabel, milestones } = progress;
   const levelStyle = { "--level": level } as CSSProperties;
   const flag = highlighted === true;
 
@@ -87,8 +87,8 @@ export function Thermometer({
           style={{ transform: TAG_TRANSFORM }}
           aria-hidden="true"
         >
-          <div className={styles.tag} data-fit={fitStep(codePointLength(percentLabel), TAG_FIT)}>
-            <span className={styles.tagText}>{percentLabel}</span>
+          <div className={styles.tag} data-fit={fitStep(codePointLength(tagLabel), TAG_FIT)}>
+            <span className={styles.tagText}>{tagLabel}</span>
           </div>
         </div>
       </div>

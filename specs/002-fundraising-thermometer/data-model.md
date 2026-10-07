@@ -51,7 +51,8 @@ counted after normalising ([address.md](contracts/address.md)).
 |---|---|
 | `level` | `min(1, raised ÷ goal)`: the fill, as 0–1. The only float, used only for drawing. |
 | `percent` | `floor(raised × 100 ÷ goal)`: the whole percent. **True, not capped**: 120 for $12,000 of $10,000. |
-| `percentLabel` | The tag's text: `"65%"`, and `"999%+"` once `percent` exceeds 999 (a $0.01 goal against the largest raise would otherwise print twelve digits). |
+| `tagLabel` | What the tag prints: the percent and the raised amount in compact dollars, `"65% ($6.5K)"`; the amount is the true raised figure, not capped at the goal. `percentLabel` still feeds the spoken text. |
+| `percentLabel` | The percent part of the tag: `"65%"`, and `"999%+"` once `percent` exceeds 999 (a $0.01 goal against the largest raise would otherwise print twelve digits). |
 | `reached` | `raised ≥ goal`. |
 | `milestones` | Four entries, see below. |
 

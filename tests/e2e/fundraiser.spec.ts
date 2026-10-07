@@ -42,19 +42,19 @@ const CASES = [
   {
     name: "60 wide letters with $99,999,999.99 both",
     query: `headline=${WIDE_HEADLINE}&raised=99999999.99&goal=99999999.99`,
-    tag: "100%",
+    tag: "100% ($100M)",
   },
   {
     name: "a 1-cent goal, the largest percentage",
     query: "goal=0.01&raised=99999999.99",
-    tag: "999%+",
+    tag: "999%+ ($100M)",
   },
   {
     name: "the 65% sample",
     query: "headline=Spring%20Vet%20Fund&raised=6500&goal=10000",
-    tag: "65%",
+    tag: "65% ($6.5K)",
   },
-  { name: "a blank address with the starting hint", query: "", tag: "0%" },
+  { name: "a blank address with the starting hint", query: "", tag: "0% ($0)" },
 ] as const;
 
 /** The address of a case; a blank one has no question mark at all. */
