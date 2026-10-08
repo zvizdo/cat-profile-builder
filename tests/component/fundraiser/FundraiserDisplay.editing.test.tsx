@@ -202,11 +202,11 @@ describe("confirming a change (quickstart 3 and 7)", () => {
 
   it("lights the paws the new share has reached, and no others", () => {
     const { container } = show();
-    expect(litPaws(container)).toEqual(["25%", "50%"]);
+    expect(litPaws(container)).toEqual(["25% ($2.5K)", "50% ($5K)"]);
     open();
     typeInto("Amount raised", "7,500");
     enterIn("Amount raised");
-    expect(litPaws(container)).toEqual(["25%", "50%", "75%"]);
+    expect(litPaws(container)).toEqual(["25% ($2.5K)", "50% ($5K)", "75% ($7.5K)"]);
   });
 
   it("recalculates the milestones when the goal changes", () => {
@@ -218,7 +218,7 @@ describe("confirming a change (quickstart 3 and 7)", () => {
       "aria-valuetext",
       "$6,500 raised of a $20,000 goal, 32 percent",
     );
-    expect(litPaws(container)).toEqual(["25%"]);
+    expect(litPaws(container)).toEqual(["25% ($5K)"]);
     expect(screen.getByText("$20K")).toBeInTheDocument();
     expect(replaceState).toHaveBeenCalledWith(
       null,

@@ -12,7 +12,7 @@ export interface Milestone {
   at: 25 | 50 | 75 | 100;
   /** Raised has reached this paw. Decided on integers, never on `level`. */
   lit: boolean;
-  /** `25%`, `50%`, `75%`, and the goal in compact dollars for the last. */
+  /** `25% ($2.5K)`, `50% ($5K)`, `75% ($7.5K)`, and the goal in compact dollars for the last. */
   label: string;
 }
 
@@ -43,6 +43,11 @@ function reachedPercent(raisedCents: number, goalCents: number, at: number): boo
   return raisedCents * 100 >= goalCents * at;
 }
 
+/** `at` percent of the goal, as the paw's label: `25% ($2.5K)`. Whole cents, rounded down. */
+function shareLabel(goalCents: number, at: 25 | 50 | 75): string {
+  return `${at}% (${formatCompactDollars(Math.floor((goalCents * at) / 100))})`;
+}
+
 /** The tag's text for a true `percent`: its digits, or `999%+` above the ceiling. */
 function labelFor(percent: number): string {
   return percent > PERCENT_LABEL_CEILING ? `${PERCENT_LABEL_CEILING}%+` : `${percent}%`;
@@ -65,9 +70,9 @@ export function progress(raisedCents: number, goalCents: number): Progress {
     tagLabel: `${labelFor(percent)} (${formatCompactDollars(raisedCents)})`,
     reached: raisedCents >= goalCents,
     milestones: [
-      { at: 25, lit: lit(25), label: "25%" },
-      { at: 50, lit: lit(50), label: "50%" },
-      { at: 75, lit: lit(75), label: "75%" },
+      { at: 25, lit: lit(25), label: shareLabel(goalCents, 25) },
+      { at: 50, lit: lit(50), label: shareLabel(goalCents, 50) },
+      { at: 75, lit: lit(75), label: shareLabel(goalCents, 75) },
       { at: 100, lit: lit(100), label: formatCompactDollars(goalCents) },
     ],
   };

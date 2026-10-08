@@ -56,6 +56,7 @@ const fundraiserSizes: Record<string, string> = {
   thermometerRight: "max(12cqw, 17cqh, calc(22cqh + 2cqw))",
   pawSize: "3.8cqh",
   pawLabelSize: "2.4cqh",
+  pawLabelSizeStack: "min(2.4cqh, 3.2cqw)",
   tagSize: "2.4cqh",
   logoHeightStack: "14cqw",
   logoHeightStackCap: "8cqh",
@@ -94,7 +95,7 @@ const fundraiserSizes: Record<string, string> = {
   // column widths, the gaps, the stack's hint size, and one size per fit step of the headline
   // and the amount raised (`min(<height based>, <width based>)`, so the widest text of a step
   // fits its column at every shape; starting values, tuned at Checkpoint 2).
-  thermometerReach: "20cqh",
+  thermometerReach: "22cqh",
   leftWidth:
     "calc(100cqw - var(--fundraiser-safe-inset-inline) - var(--fundraiser-thermometer-right) - var(--fundraiser-thermometer-width) - var(--fundraiser-thermometer-reach))",
   stackTextWidth: "calc(100cqw - 2 * var(--fundraiser-safe-inset-inline))",
@@ -163,7 +164,7 @@ describe("generateTokensCss fundraiser group", () => {
 
   it("emits the tracking", () => {
     expect(css).toContain("--fundraiser-tracking-label: 0.2em;");
-    expect(css).toContain("--fundraiser-tracking-paw-label: 0.12em;");
+    expect(css).toContain("--fundraiser-tracking-paw-label: 0.04em;");
     expect(css).toContain("--fundraiser-tracking-tag: 0.1em;");
     expect(css).toContain("--fundraiser-tracking-tag-label: 0.04em;");
   });

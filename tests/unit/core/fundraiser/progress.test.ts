@@ -138,12 +138,13 @@ describe("progress: the tag's text", () => {
 });
 
 describe("progress: milestone labels", () => {
-  it("names the first three by percent and the last by the goal in compact dollars", () => {
+  it("names the first three by percent and the dollars it stands for, and the last by the goal in compact dollars", () => {
     const labels = (goal: number) => progress(0, goal).milestones.map((m) => m.label);
-    expect(labels(GOAL)).toEqual(["25%", "50%", "75%", "$10K"]);
-    expect(labels(85_000)).toEqual(["25%", "50%", "75%", "$850"]);
-    expect(labels(125_000_000)).toEqual(["25%", "50%", "75%", "$1.25M"]);
-    expect(labels(1)).toEqual(["25%", "50%", "75%", "$0.01"]);
+    expect(labels(GOAL)).toEqual(["25% ($2.5K)", "50% ($5K)", "75% ($7.5K)", "$10K"]);
+    expect(labels(85_000)).toEqual(["25% ($213)", "50% ($425)", "75% ($638)", "$850"]);
+    expect(labels(125_000_000)).toEqual(["25% ($313K)", "50% ($625K)", "75% ($938K)", "$1.25M"]);
+    expect(labels(1)).toEqual(["25% ($0)", "50% ($0)", "75% ($0)", "$0.01"]);
+    expect(labels(100)).toEqual(["25% ($0.25)", "50% ($0.50)", "75% ($0.75)", "$1"]);
   });
 
   it("has the four milestones at 25, 50, 75 and 100", () => {

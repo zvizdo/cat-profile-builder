@@ -151,9 +151,14 @@ describe("Thermometer paws", () => {
     expect(litOf(container)).toEqual(["true", "true", "false", "false"]);
   });
 
-  it("labels the last paw with the goal in short form", () => {
+  it("labels the first three paws with their share in dollars and the last with the goal in short form", () => {
     const { container } = draw({ raised: 650000, goal: 1000000 });
-    expect(paws(container).map((paw) => paw.textContent)).toEqual(["25%", "50%", "75%", "$10K"]);
+    expect(paws(container).map((paw) => paw.textContent)).toEqual([
+      "25% ($2.5K)",
+      "50% ($5K)",
+      "75% ($7.5K)",
+      "$10K",
+    ]);
   });
 
   it("places each paw at its share of the scale box from the bottom", () => {

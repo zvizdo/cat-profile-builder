@@ -138,8 +138,8 @@ scale box, and the test says so.
   offset is `max(12cqw, 17cqh, 22cqh + 2cqw)` so the longest tag (`999%+ ($100M)`) stays on the stage at
   every shape, and in the stack its size follows the stage's width too (`tagSize*Stack`).
 - **Paw prints** at 25 %, 50 %, 75 %, and the goal, down the left side of the tube at
-  `bottom: calc(<at> * 1%)` of the scale box, each with its label (`25%`, `50%`, `75%`, and the goal
-  in short form: `$850`, `$10K`, `$1.25M`). Lit = `--color-blue-light` with a soft glow. Unlit =
+  `bottom: calc(<at> * 1%)` of the scale box, each with its label (`25% ($2.5K)`, `50% ($5K)`, `75% ($7.5K)`: the share and the dollars it stands for, in compact form, rounded down to whole cents; and the goal
+  in short form for the last: `$850`, `$10K`, `$1.25M`). The labels are one line, so their spacing is tight (`tracking.pawLabel` 0.04em), `thermometerReach` is 22cqh, and in the stack their size follows the stage's width too (`pawLabelSizeStack`). Lit = `--color-blue-light` with a soft glow. Unlit =
   the same hue at **50 % for the paw** (3.6:1 on night, above the 3:1 non-text rule) and **60 % for
   its label** (alpha .7 since T026: the glow brightens the ground behind it, and the first .6 measured 4.08–4.18:1 in the phone stack; now 5.0:1 or more at 390×844, 320×568 and 1920×1080 — above the 4.5:1 text rule). The mockup's 35 % is 2.4:1 and is not used.
   Exactly the paws whose share has been reached are lit (FR-031; the test compares integers).

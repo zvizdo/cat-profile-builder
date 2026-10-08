@@ -875,6 +875,15 @@
   height: 100%;
 }
 
+/* The label's room is the slice of the stage to the left of the tube, so in the stack its size
+   follows the stage's width as well as its height; the floor still holds. After the base rule,
+   because a later rule of equal weight wins. */
+@container (aspect-ratio < 1.1) {
+  .paw {
+    font-size: max(var(--fundraiser-paw-label-size-stack), var(--fundraiser-text-floor));
+  }
+}
+
 /* ---- the in-place field ----------------------------------------------------------------- */
 
 /* The control and a hidden copy of its text share one grid cell, so the cell is as wide (and,

@@ -38,8 +38,8 @@ of the repository):
   headline, the amount raised in very large type, and "raised of $X goal" beneath.
 - **Right group: the thermometer.** A tall, chunky thermometer (bulb at the bottom) filled with a
   blue gradient that brightens as it rises. A small tag riding on the fill line states the
-  percentage reached and the amount raised in compact dollars (`65% ($6.5K)`). Down its left side, paw prints replace tick marks at 25%, 50%, 75%, and the
-  goal; each paw lights up once the fill reaches it.
+  percentage reached and the amount raised in compact dollars (`65% ($6.5K)`). Down its left side, paw prints replace tick marks at 25%, 50%, 75% (each labelled with its
+  dollars too: `25% ($2.5K)`), and the goal; each paw lights up once the fill reaches it.
 - **No separate cat outline.** The logo already carries a drawn cat, and the paw prints carry the
   cat theme, so no second cat illustration is shown.
 - **Editing view.** The same page plus one small control: a "Full screen" button in the top-right
